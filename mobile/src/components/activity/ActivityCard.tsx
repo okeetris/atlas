@@ -58,9 +58,23 @@ function getComplianceColor(percent: number): string {
   return "#F44336";
 }
 
+function getActivityTypeLabel(activityType: string): string | null {
+  switch (activityType) {
+    case "treadmill_running":
+      return "Treadmill";
+    case "trail_running":
+      return "Trail";
+    case "track_running":
+      return "Track";
+    default:
+      return null;
+  }
+}
+
 export function ActivityCard({ activity, onPress }: ActivityCardProps) {
   const pace = formatPace(activity.distanceKm, activity.durationSeconds);
   const hasCompliance = activity.compliancePercent != null;
+  const activityTypeLabel = getActivityTypeLabel(activity.activityType);
 
   return (
     <Pressable
@@ -69,7 +83,14 @@ export function ActivityCard({ activity, onPress }: ActivityCardProps) {
     >
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <Text style={styles.date}>{formatDate(activity.startTime)}</Text>
+          <View style={styles.dateRow}>
+            <Text style={styles.date}>{formatDate(activity.startTime)}</Text>
+            {activityTypeLabel && (
+              <View style={styles.activityTypeBadge}>
+                <Text style={styles.activityTypeText}>{activityTypeLabel}</Text>
+              </View>
+            )}
+          </View>
           {hasCompliance && (
             <View style={[
               styles.complianceBadge,
@@ -145,9 +166,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 4,
   },
+  dateRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   date: {
     fontSize: 12,
     color: "#49454F",
+  },
+  activityTypeBadge: {
+    backgroundColor: "#E8E8E8",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  activityTypeText: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "#616161",
   },
   complianceBadge: {
     paddingHorizontal: 8,

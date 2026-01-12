@@ -104,6 +104,7 @@ def extract_session_summary(fitfile: FitFile) -> dict:
         "avgPace": 0,
         "avgHeartRate": None,
         "activityName": "Run",
+        "activityType": "running",  # Default to outdoor running
     }
 
     for record in fitfile.get_messages("session"):
@@ -120,6 +121,16 @@ def extract_session_summary(fitfile: FitFile) -> dict:
         summary["totalDistance"] = data.get("total_distance", 0)
         summary["totalDuration"] = data.get("total_elapsed_time", 0)
         summary["avgHeartRate"] = data.get("avg_heart_rate")
+
+        # Extract sub_sport to determine activity type
+        # FIT sub_sport values: 1=treadmill, 2=street, 4=track, 5=trail, etc.
+        sub_sport = data.get("sub_sport")
+        if sub_sport == 1 or sub_sport == "treadmill":
+            summary["activityType"] = "treadmill_running"
+        elif sub_sport == 5 or sub_sport == "trail":
+            summary["activityType"] = "trail_running"
+        elif sub_sport == 4 or sub_sport == "track":
+            summary["activityType"] = "track_running"
 
         # Calculate average pace (sec/km)
         if summary["totalDistance"] > 0:

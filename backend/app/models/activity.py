@@ -26,6 +26,7 @@ class ActivitySummary(BaseModel):
     startTime: str  # ISO 8601
     distanceKm: float
     durationSeconds: int
+    activityType: str = "running"  # running, treadmill_running, trail_running, track_running
     fitFilePath: Optional[str] = None
     hasBeenAnalyzed: bool = False
     workoutName: Optional[str] = None  # Scheduled workout name if matched

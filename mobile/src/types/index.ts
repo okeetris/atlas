@@ -30,6 +30,9 @@ export interface GradeSummary {
   verticalRatio: Grade;
 }
 
+// Activity type
+export type ActivityType = "running" | "treadmill_running" | "trail_running" | "track_running";
+
 // Activity summary for list view
 export interface ActivitySummary {
   id: string;
@@ -37,6 +40,7 @@ export interface ActivitySummary {
   activityName: string;
   distanceKm: number;
   durationSeconds: number;
+  activityType: ActivityType; // running, treadmill_running, trail_running, track_running
   workoutName?: string; // Scheduled workout name if matched
   compliancePercent?: number; // Workout compliance if calculated
   grades?: GradeSummary; // Running dynamics grades
