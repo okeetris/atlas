@@ -4,8 +4,10 @@ Activities router.
 Endpoints for syncing and retrieving running activities.
 """
 
+import json
 import os
 from pathlib import Path
+from typing import Optional
 from fastapi import APIRouter, HTTPException
 
 from models.activity import (
@@ -18,9 +20,12 @@ from models.activity import (
     Lap,
     CoachingInsights,
     FatigueComparison,
+    WorkoutCompliance,
+    StepCompliance,
 )
 from services.garmin_sync import get_garmin_service, MFARequiredError
 from services.fit_parser import parse_fit_file
+from services.workout_compliance import calculate_workout_compliance
 
 router = APIRouter(prefix="/activities", tags=["activities"])
 
@@ -46,16 +51,79 @@ class MFASubmitResponse(BaseModel):
     message: str
 
 
+def get_compliance_cache_path(fit_path: Path) -> Path:
+    """Get path for cached compliance data."""
+    return fit_path.with_suffix(".compliance.json")
+
+
+def load_cached_compliance(fit_path: Path) -> Optional[dict]:
+    """Load cached compliance data if available."""
+    cache_path = get_compliance_cache_path(fit_path)
+    if cache_path.exists():
+        try:
+            with open(cache_path) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return None
+
+
+def save_compliance_cache(fit_path: Path, compliance: dict):
+    """Save compliance data to cache."""
+    cache_path = get_compliance_cache_path(fit_path)
+    try:
+        with open(cache_path, "w") as f:
+            json.dump(compliance, f)
+    except Exception as e:
+        print(f"Failed to cache compliance: {e}")
+
+
+def extract_garmin_id(filename: str) -> str:
+    """Extract the Garmin activity ID from a filename.
+
+    Handles both formats:
+    - Descriptive: 2026-01-08_New_York_-_Quality_Session_21487950438
+    - ID only: 21487950438
+    """
+    # If it's all digits, it's the ID
+    if filename.isdigit():
+        return filename
+    # Otherwise, the ID is the last underscore-separated segment
+    parts = filename.split("_")
+    if parts and parts[-1].isdigit():
+        return parts[-1]
+    return filename
+
+
 def get_cached_activities() -> list[ActivitySummary]:
-    """Get list of activities from cached FIT files with parsed summary data."""
+    """Get list of activities from cached FIT files with parsed summary data.
+
+    Prefers descriptive filenames over ID-only ones for better workout matching.
+    Dedupes by Garmin activity ID.
+    """
     fit_path = Path(os.environ.get("FIT_FILES_PATH", "/data/fit-files"))
 
     if not fit_path.exists():
         return []
 
+    # Group files by Garmin activity ID, preferring descriptive names
+    files_by_id: dict[str, Path] = {}
+    for fit_file in fit_path.glob("*.fit"):
+        garmin_id = extract_garmin_id(fit_file.stem)
+        existing = files_by_id.get(garmin_id)
+
+        # Prefer descriptive filename (longer) over ID-only
+        if existing is None or len(fit_file.stem) > len(existing.stem):
+            files_by_id[garmin_id] = fit_file
+
     activities = []
-    for fit_file in sorted(fit_path.glob("*.fit"), reverse=True):
+    for fit_file in files_by_id.values():
         activity_id = fit_file.stem
+
+        # Load cached compliance if available
+        cached = load_cached_compliance(fit_file)
+        workout_name = cached.get("workoutName") if cached else None
+        compliance_pct = cached.get("compliancePercent") if cached else None
 
         try:
             # Parse FIT file for summary data
@@ -71,6 +139,8 @@ def get_cached_activities() -> list[ActivitySummary]:
                     durationSeconds=int(summary.get("totalDuration", 0)),
                     fitFilePath=str(fit_file),
                     hasBeenAnalyzed=True,
+                    workoutName=workout_name,
+                    compliancePercent=compliance_pct,
                 )
             )
         except Exception:
@@ -87,6 +157,8 @@ def get_cached_activities() -> list[ActivitySummary]:
                 )
             )
 
+    # Sort by startTime descending (most recent first)
+    activities.sort(key=lambda a: a.startTime or "", reverse=True)
     return activities[:20]
 
 
@@ -211,6 +283,57 @@ async def get_activity(activity_id: str):
     # Convert fatigue comparison
     fatigue_models = [FatigueComparison(**f) for f in fatigue]
 
+    # Fetch scheduled workout and calculate compliance
+    workout_compliance = None
+    start_time = summary.get("startTime", "")
+    # Use activity_id (filename) for matching - it contains descriptive name like "Quality_Session"
+    # The FIT file's activityName is often just "Run"
+    activity_name_for_matching = activity_id.replace("_", " ").replace("-", " ")
+    distance_m = summary.get("totalDistance", 0)
+
+    # Extract Garmin activity ID for API lookup
+    garmin_id = extract_garmin_id(activity_id)
+    garmin_activity_id = int(garmin_id) if garmin_id.isdigit() else None
+
+    if start_time:
+        try:
+            garmin_service = get_garmin_service()
+            scheduled_workout = garmin_service.get_scheduled_workout(
+                start_time,
+                activity_name=activity_name_for_matching,
+                activity_distance_m=distance_m,
+                garmin_activity_id=garmin_activity_id,
+            )
+            if scheduled_workout:
+                distance_km = summary.get("totalDistance", 0) / 1000
+                duration_sec = summary.get("totalDuration", 0)
+                compliance_data = calculate_workout_compliance(
+                    scheduled_workout, laps, distance_km, duration_sec
+                )
+                if compliance_data:
+                    workout_compliance = WorkoutCompliance(
+                        workoutName=compliance_data["workoutName"],
+                        workoutDescription=compliance_data.get("workoutDescription"),
+                        compliancePercent=compliance_data["compliancePercent"],
+                        stepsHit=compliance_data["stepsHit"],
+                        stepsPartial=compliance_data["stepsPartial"],
+                        stepsMissed=compliance_data["stepsMissed"],
+                        totalSteps=compliance_data["totalSteps"],
+                        distanceStatus=compliance_data.get("distanceStatus"),
+                        targetDistanceM=compliance_data.get("targetDistanceM"),
+                        actualDistanceM=compliance_data.get("actualDistanceM"),
+                        stepBreakdown=[
+                            StepCompliance(**s) for s in compliance_data.get("stepBreakdown", [])
+                        ],
+                    )
+                    # Cache compliance for list view
+                    save_compliance_cache(fit_file, {
+                        "workoutName": compliance_data["workoutName"],
+                        "compliancePercent": compliance_data["compliancePercent"],
+                    })
+        except Exception as e:
+            print(f"Could not fetch workout compliance: {e}")
+
     return ActivityDetails(
         id=activity_id,
         activityName=summary.get("activityName", f"Run {activity_id}"),
@@ -224,6 +347,8 @@ async def get_activity(activity_id: str):
         laps=lap_models,
         coaching=coaching,
         fatigueComparison=fatigue_models,
+        workoutCompliance=workout_compliance,
+        hasRunningDynamics=parsed.get("hasRunningDynamics", False),
     )
 
 

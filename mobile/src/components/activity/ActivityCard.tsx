@@ -34,8 +34,15 @@ function formatDate(dateString: string): string {
   });
 }
 
+function getComplianceColor(percent: number): string {
+  if (percent >= 80) return "#4CAF50";
+  if (percent >= 50) return "#FFC107";
+  return "#F44336";
+}
+
 export function ActivityCard({ activity, onPress }: ActivityCardProps) {
   const pace = formatPace(activity.distanceKm, activity.durationSeconds);
+  const hasCompliance = activity.compliancePercent != null;
 
   return (
     <Pressable
@@ -43,8 +50,26 @@ export function ActivityCard({ activity, onPress }: ActivityCardProps) {
       onPress={onPress}
     >
       <View style={styles.header}>
-        <Text style={styles.date}>{formatDate(activity.startTime)}</Text>
+        <View style={styles.headerTop}>
+          <Text style={styles.date}>{formatDate(activity.startTime)}</Text>
+          {hasCompliance && (
+            <View style={[
+              styles.complianceBadge,
+              { backgroundColor: getComplianceColor(activity.compliancePercent!) + "20" }
+            ]}>
+              <Text style={[
+                styles.complianceText,
+                { color: getComplianceColor(activity.compliancePercent!) }
+              ]}>
+                {activity.compliancePercent}%
+              </Text>
+            </View>
+          )}
+        </View>
         <Text style={styles.name}>{activity.activityName}</Text>
+        {activity.workoutName && (
+          <Text style={styles.workoutName}>{activity.workoutName}</Text>
+        )}
       </View>
 
       <View style={styles.stats}>
@@ -86,15 +111,34 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 12,
   },
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
   date: {
     fontSize: 12,
     color: "#49454F",
-    marginBottom: 4,
+  },
+  complianceBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+  },
+  complianceText: {
+    fontSize: 12,
+    fontWeight: "600",
   },
   name: {
     fontSize: 18,
     fontWeight: "600",
     color: "#1C1B1F",
+  },
+  workoutName: {
+    fontSize: 13,
+    color: "#1976D2",
+    marginTop: 2,
   },
   stats: {
     flexDirection: "row",
