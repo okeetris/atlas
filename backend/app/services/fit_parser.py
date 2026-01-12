@@ -79,12 +79,19 @@ def parse_fit_file(fit_path: str) -> dict:
     # Compute fatigue comparison
     fatigue = compute_fatigue_comparison(records)
 
+    # Detect running dynamics pod (HRM-600 or similar)
+    # Require GCT balance data - watches without pods don't have this
+    # Also require sufficient data points (not just a few readings)
+    gct_balance_count = sum(1 for r in records if r.get("gctBalance") is not None)
+    has_running_dynamics = gct_balance_count > len(records) * 0.5  # >50% of records have balance data
+
     return {
         "summary": summary,
         "metrics": metrics,
         "timeSeries": records,
         "laps": laps,
         "fatigue": fatigue,
+        "hasRunningDynamics": has_running_dynamics,
     }
 
 

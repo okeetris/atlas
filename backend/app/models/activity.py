@@ -19,6 +19,8 @@ class ActivitySummary(BaseModel):
     durationSeconds: int
     fitFilePath: Optional[str] = None
     hasBeenAnalyzed: bool = False
+    workoutName: Optional[str] = None  # Scheduled workout name if matched
+    compliancePercent: Optional[int] = None  # Workout compliance if calculated
 
 
 class SyncResponse(BaseModel):
@@ -91,6 +93,39 @@ class FatigueComparison(BaseModel):
     changeDirection: str  # improved, degraded, stable
 
 
+class StepCompliance(BaseModel):
+    """Compliance metrics for a single workout step."""
+
+    stepType: str
+    rawStepType: Optional[str] = None
+    actualPace: Optional[str] = None
+    actualPaceSecKm: Optional[int] = None
+    actualDistanceM: Optional[int] = None
+    actualDurationSec: Optional[int] = None
+    targetPaceRange: Optional[dict] = None
+    targetDistanceM: Optional[float] = None
+    targetDurationSec: Optional[int] = None
+    paceCompliance: Optional[str] = None  # hit, slow, fast, close
+    lapsUsed: list[int] = []  # Lap numbers used for this step
+    status: str  # hit, partial, missed, fast, no_target
+
+
+class WorkoutCompliance(BaseModel):
+    """Workout compliance summary."""
+
+    workoutName: str
+    workoutDescription: Optional[str] = None
+    compliancePercent: int
+    stepsHit: int
+    stepsPartial: int
+    stepsMissed: int = 0
+    totalSteps: int
+    distanceStatus: Optional[str] = None
+    targetDistanceM: Optional[float] = None
+    actualDistanceM: Optional[int] = None
+    stepBreakdown: list[StepCompliance] = []
+
+
 class ActivityDetails(ActivitySummary):
     """Full activity details with analysis."""
 
@@ -99,3 +134,5 @@ class ActivityDetails(ActivitySummary):
     laps: list[Lap]
     coaching: CoachingInsights
     fatigueComparison: list[FatigueComparison] = []
+    workoutCompliance: Optional[WorkoutCompliance] = None
+    hasRunningDynamics: bool = False  # True if HRM-600 or similar pod detected

@@ -29,6 +29,8 @@ export interface ActivitySummary {
   activityName: string;
   distanceKm: number;
   durationSeconds: number;
+  workoutName?: string; // Scheduled workout name if matched
+  compliancePercent?: number; // Workout compliance if calculated
   // Optional grade summary for list view
   grades?: {
     cadence: Grade;
@@ -69,12 +71,38 @@ export interface Lap {
   intensity?: "Easy" | "Moderate" | "Tempo" | "Threshold" | "VO2max" | "Sprint";
 }
 
-// Workout step for compliance tracking
-export interface WorkoutStep {
-  stepName: string;
-  targetPace?: number; // seconds per km
-  actualPace?: number;
-  status?: "hit" | "missed" | "close"; // ✓, ✗, ~
+// Step compliance for workout tracking
+export interface StepCompliance {
+  stepType: string;
+  rawStepType?: string; // Original step type before formatting
+  actualPace?: string;
+  actualPaceSecKm?: number;
+  actualDistanceM?: number;
+  actualDurationSec?: number;
+  targetPaceRange?: {
+    slow: string;
+    fast: string;
+  };
+  targetDistanceM?: number;
+  targetDurationSec?: number;
+  paceCompliance?: "hit" | "slow" | "fast" | "close";
+  lapsUsed: number[]; // Lap numbers used for this step
+  status: "hit" | "partial" | "missed" | "fast" | "no_target";
+}
+
+// Workout compliance summary
+export interface WorkoutCompliance {
+  workoutName: string;
+  workoutDescription?: string;
+  compliancePercent: number;
+  stepsHit: number;
+  stepsPartial: number;
+  stepsMissed: number;
+  totalSteps: number;
+  distanceStatus?: "hit" | "short" | "long";
+  targetDistanceM?: number;
+  actualDistanceM?: number;
+  stepBreakdown: StepCompliance[];
 }
 
 // Metric value with grade
@@ -115,9 +143,10 @@ export interface ActivityDetails extends ActivitySummary {
   summaryMetrics: SummaryMetrics;
   timeSeries: TimeSeriesDataPoint[];
   laps: Lap[];
-  workoutCompliance?: WorkoutStep[];
+  workoutCompliance?: WorkoutCompliance;
   fatigueComparison: FatigueComparison[];
   coaching: CoachingInsights;
+  hasRunningDynamics: boolean; // True if HRM-600 or similar pod detected
   // Correlation data
   cadenceGctCorrelation?: number; // r-squared value
   hrPaceDecoupling?: number; // percentage

@@ -4,11 +4,13 @@ Garmin Connect sync service.
 Handles authentication and activity fetching from Garmin Connect API.
 Reuses credentials from the mounted .garmin directory.
 Supports MFA (Multi-Factor Authentication) flow.
+Fetches scheduled workouts for compliance tracking.
 """
 
 import json
 import os
 import zipfile
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
@@ -167,6 +169,190 @@ class GarminSyncService:
         zip_path.unlink(missing_ok=True)
 
         return fit_path
+
+    def _parse_workout_details(self, workout_id: int) -> dict:
+        """Parse a workout into structured format with steps and targets."""
+        client = self._get_client()
+        workout = client.connectapi(f"/workout-service/workout/{workout_id}")
+
+        steps = []
+        for segment in workout.get("workoutSegments", []):
+            for step in segment.get("workoutSteps", []):
+                step_info = {
+                    "type": step.get("stepType", {}).get("stepTypeKey", "unknown"),
+                    "order": step.get("stepOrder", 0),
+                }
+
+                # Parse end condition (distance or time)
+                end_condition = step.get("endCondition", {}).get("conditionTypeKey")
+                end_value = step.get("endConditionValue")
+                if end_condition == "distance" and end_value:
+                    step_info["targetDistanceM"] = end_value
+                elif end_condition == "time" and end_value:
+                    step_info["targetDurationSec"] = end_value
+
+                # Parse target pace (speed values are in m/s)
+                target_one = step.get("targetValueOne")
+                target_two = step.get("targetValueTwo")
+                if target_one and target_two:
+                    # Convert m/s to sec/km for pace
+                    slow_pace_sec = 1000 / target_one if target_one > 0 else None
+                    fast_pace_sec = 1000 / target_two if target_two > 0 else None
+                    if slow_pace_sec and fast_pace_sec:
+                        step_info["targetPaceRange"] = {
+                            "slowSecPerKm": round(slow_pace_sec),
+                            "fastSecPerKm": round(fast_pace_sec),
+                        }
+
+                steps.append(step_info)
+
+        return {
+            "workoutId": workout_id,
+            "name": workout.get("workoutName", "Unknown"),
+            "description": workout.get("description", ""),
+            "estimatedDistanceM": workout.get("estimatedDistanceInMeters"),
+            "steps": steps,
+        }
+
+    def _match_workout_by_name(self, activity_name: str, activity_distance_m: float) -> Optional[dict]:
+        """
+        Fallback: match workout by name similarity and distance.
+        Searches recent workouts and finds best match.
+        Prioritizes specific workout types (Quality Session, Tempo, etc.) over generic (Easy Run).
+        """
+        try:
+            client = self._get_client()
+            workouts = client.connectapi("/workout-service/workouts?start=0&limit=30")
+
+            best_match = None
+            best_score = 0
+            activity_lower = activity_name.lower()
+
+            # Check for specific workout type keywords in activity name
+            specific_keywords = ["quality", "tempo", "interval", "threshold", "fartlek", "long run", "race"]
+            activity_is_specific = any(kw in activity_lower for kw in specific_keywords)
+
+            for w in workouts:
+                workout_name = w.get("workoutName", "").lower()
+                workout_distance = w.get("estimatedDistanceInMeters")
+
+                score = 0
+
+                # Strong preference for exact type match
+                if "quality" in activity_lower and "quality" in workout_name:
+                    score += 100
+                elif "tempo" in activity_lower and "tempo" in workout_name:
+                    score += 100
+                elif "interval" in activity_lower and "interval" in workout_name:
+                    score += 100
+                elif "easy" in activity_lower and "easy" in workout_name:
+                    score += 100
+                elif "long" in activity_lower and "long" in workout_name:
+                    score += 100
+
+                # Penalize generic workouts when activity is specific
+                if activity_is_specific and "easy" in workout_name and "easy" not in activity_lower:
+                    score -= 50  # Penalize Easy Run matching to Quality Session
+
+                # General name matching
+                if workout_name in activity_lower or activity_lower in workout_name:
+                    score += 30
+
+                # Distance matching (within 15% tolerance)
+                if workout_distance and activity_distance_m:
+                    distance_diff = abs(workout_distance - activity_distance_m)
+                    tolerance = activity_distance_m * 0.15
+                    if distance_diff <= tolerance:
+                        score += 30 * (1 - distance_diff / tolerance)
+
+                if score > best_score and score >= 30:
+                    best_score = score
+                    best_match = w
+
+            if best_match:
+                workout_id = best_match.get("workoutId")
+                print(f"Matched workout by name: {best_match.get('workoutName')} (score: {best_score:.0f})")
+                return self._parse_workout_details(workout_id)
+
+            return None
+        except Exception as e:
+            print(f"Could not match workout by name: {e}")
+            return None
+
+    def _get_workout_from_activity(self, garmin_activity_id: int) -> Optional[dict]:
+        """
+        Get the associated workout for an activity from Garmin API.
+        Activities store a reference to the workout they were executed from.
+        """
+        try:
+            client = self._get_client()
+            activity = client.connectapi(f"/activity-service/activity/{garmin_activity_id}")
+
+            # Check metadata for associated workout
+            metadata = activity.get("metadataDTO", {})
+            workout_id = metadata.get("associatedWorkoutId")
+
+            if workout_id:
+                print(f"Found associated workout {workout_id} for activity {garmin_activity_id}")
+                workout = self._parse_workout_details(workout_id)
+                workout["matchedBy"] = "activity_link"
+                return workout
+
+            return None
+        except Exception as e:
+            print(f"Could not fetch workout from activity: {e}")
+            return None
+
+    def get_scheduled_workout(
+        self, activity_date: str, activity_name: str = None, activity_distance_m: float = None,
+        garmin_activity_id: int = None
+    ) -> Optional[dict]:
+        """
+        Fetch the workout for an activity.
+
+        Tries in order:
+        1. Activity's associated workout (from Garmin API) - most reliable for past activities
+        2. Calendar lookup by date (only works for same-day)
+        3. Name/distance matching fallback
+
+        Returns workout details including steps and target paces.
+        """
+        try:
+            client = self._get_client()
+
+            # Method 1: Get workout directly from activity (most reliable for past activities)
+            if garmin_activity_id:
+                workout = self._get_workout_from_activity(garmin_activity_id)
+                if workout:
+                    return workout
+
+            # Method 2: Calendar lookup (works for same-day activities)
+            date_obj = datetime.strptime(activity_date[:10], "%Y-%m-%d")
+            year = date_obj.year
+            month = date_obj.month
+
+            calendar = client.connectapi(f"/calendar-service/year/{year}/month/{month}")
+
+            target_date = activity_date[:10]
+            for item in calendar.get("calendarItems", []):
+                if item.get("itemType") == "workout" and item.get("date") == target_date:
+                    workout_id = item.get("workoutId")
+                    if workout_id:
+                        workout = self._parse_workout_details(workout_id)
+                        workout["matchedBy"] = "calendar"
+                        return workout
+
+            # Method 3: Fallback to name/distance matching
+            if activity_name and activity_distance_m:
+                matched = self._match_workout_by_name(activity_name, activity_distance_m)
+                if matched:
+                    matched["matchedBy"] = "name"
+                    return matched
+
+            return None
+        except Exception as e:
+            print(f"Could not fetch scheduled workout: {e}")
+            return None
 
     def sync_latest(self, count: int = 5) -> list[dict]:
         """
