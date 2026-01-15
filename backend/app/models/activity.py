@@ -146,4 +146,5 @@ class ActivityDetails(ActivitySummary):
     coaching: CoachingInsights
     fatigueComparison: list[FatigueComparison] = []
     workoutCompliance: Optional[WorkoutCompliance] = None
+    complianceError: Optional[str] = None  # Why compliance couldn't be fetched (auth expired, no workout, etc.)
     hasRunningDynamics: bool = False  # True if HRM-600 or similar pod detected

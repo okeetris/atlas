@@ -69,7 +69,7 @@ export default function SummaryTab() {
 
   if (!activity) return null;
 
-  const { summaryMetrics, coaching, workoutCompliance } = activity;
+  const { summaryMetrics, coaching, workoutCompliance, complianceError } = activity;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -133,6 +133,16 @@ export default function SummaryTab() {
           <Text style={styles.sectionTitle}>Workout Compliance</Text>
           <WorkoutComplianceCard compliance={workoutCompliance} defaultExpanded />
         </>
+      )}
+      {!workoutCompliance && complianceError && (
+        <View style={styles.complianceError}>
+          <Text style={styles.complianceErrorTitle}>Workout Compliance Unavailable</Text>
+          <Text style={styles.complianceErrorText}>
+            {complianceError === "No authorization header"
+              ? "Sign in to Garmin to view workout compliance"
+              : complianceError}
+          </Text>
+        </View>
       )}
     </ScrollView>
   );
@@ -239,5 +249,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     color: "#FFFFFF",
+  },
+  complianceError: {
+    backgroundColor: "#FFF3E0",
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: "#FF9800",
+  },
+  complianceErrorTitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#E65100",
+    marginBottom: 4,
+  },
+  complianceErrorText: {
+    fontSize: 13,
+    color: "#BF360C",
   },
 });
