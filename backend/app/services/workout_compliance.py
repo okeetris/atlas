@@ -89,10 +89,23 @@ def calculate_step_compliance(
                 result["status"] = "missed"
 
     # Add target distance/duration info
-    if step.get("targetDistanceM"):
-        result["targetDistanceM"] = step["targetDistanceM"]
-    if step.get("targetDurationSec"):
-        result["targetDurationSec"] = step["targetDurationSec"]
+    target_distance = step.get("targetDistanceM")
+    target_duration = step.get("targetDurationSec")
+
+    if target_distance:
+        result["targetDistanceM"] = target_distance
+    if target_duration:
+        result["targetDurationSec"] = target_duration
+
+    # If no pace target, check distance compliance instead
+    # Steps like warmup/cooldown often just have distance targets
+    if result["status"] == "no_target" and target_distance and actual_distance_m:
+        if actual_distance_m >= target_distance:  # Completed the distance
+            result["status"] = "hit"
+        elif actual_distance_m >= target_distance * 0.9:  # At least 90%
+            result["status"] = "partial"
+        else:
+            result["status"] = "missed"
 
     return result
 
@@ -250,11 +263,16 @@ def calculate_workout_compliance(
     missed_count = sum(1 for s in step_compliance if s["status"] == "missed")
     total_steps = len(step_compliance)
 
+    # Only count steps that have pace targets for compliance percentage
+    # Steps without targets (warmup, cooldown) shouldn't affect the score
+    steps_with_targets = hit_count + partial_count + missed_count
+
     # Compliance percentage: hit = 100%, partial/fast = 50%, missed = 0%
-    if total_steps > 0:
-        compliance_pct = round((hit_count * 100 + partial_count * 50) / total_steps)
+    if steps_with_targets > 0:
+        compliance_pct = round((hit_count * 100 + partial_count * 50) / steps_with_targets)
     else:
-        compliance_pct = 0
+        # No steps have targets, consider it 100% compliant
+        compliance_pct = 100
 
     # Check total distance
     target_distance = workout.get("estimatedDistanceM")
