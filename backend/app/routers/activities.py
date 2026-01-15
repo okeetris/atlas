@@ -285,13 +285,17 @@ async def get_activity(
     Optionally fetches workout compliance if tokens provided.
     """
     token_dir = None
+    auth_error = None
     try:
         # Decode tokens to temp directory if provided
         if authorization:
             try:
                 token_dir = decode_tokens_to_dir(authorization)
-            except Exception:
-                pass  # Continue without tokens, won't fetch compliance
+            except Exception as e:
+                auth_error = f"Token decode failed: {e}"
+                print(f"Failed to decode auth tokens: {e}")
+        else:
+            auth_error = "No authorization header"
 
         fit_path = Path(os.environ.get("FIT_FILES_PATH", "/data/fit-files"))
         fit_file = fit_path / f"{activity_id}.fit"
@@ -357,6 +361,8 @@ async def get_activity(
         garmin_activity_id = int(garmin_id) if garmin_id.isdigit() else None
 
         garmin_service = None
+        compliance_error = auth_error  # Start with auth error if any
+
         if start_time and token_dir:
             try:
                 garmin_service = get_garmin_service(client_tokens=token_dir)
@@ -367,6 +373,7 @@ async def get_activity(
                     garmin_activity_id=garmin_activity_id,
                 )
                 if scheduled_workout:
+                    compliance_error = None  # Clear error, we found a workout
                     distance_km = summary.get("totalDistance", 0) / 1000
                     duration_sec = summary.get("totalDuration", 0)
                     compliance_data = calculate_workout_compliance(
@@ -393,7 +400,10 @@ async def get_activity(
                             "workoutName": compliance_data["workoutName"],
                             "compliancePercent": compliance_data["compliancePercent"],
                         })
+                else:
+                    compliance_error = "No scheduled workout found for this activity"
             except Exception as e:
+                compliance_error = f"Failed to fetch workout: {e}"
                 print(f"Could not fetch workout compliance: {e}")
 
         # Check if tokens were refreshed (returns encoded string now)
@@ -417,6 +427,7 @@ async def get_activity(
             coaching=coaching,
             fatigueComparison=fatigue_models,
             workoutCompliance=workout_compliance,
+            complianceError=compliance_error if not workout_compliance else None,
             hasRunningDynamics=parsed.get("hasRunningDynamics", False),
         )
     finally:

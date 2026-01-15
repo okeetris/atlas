@@ -150,6 +150,7 @@ export interface ActivityDetails extends ActivitySummary {
   timeSeries: TimeSeriesDataPoint[];
   laps: Lap[];
   workoutCompliance?: WorkoutCompliance;
+  complianceError?: string; // Why compliance couldn't be fetched (auth expired, no workout, etc.)
   fatigueComparison: FatigueComparison[];
   coaching: CoachingInsights;
   hasRunningDynamics: boolean; // True if HRM-600 or similar pod detected
