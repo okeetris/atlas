@@ -6,7 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel
 
-from app.services.garmin_sync import GarminSync
+from services.garmin_sync import GarminSync
 from dependencies.auth import decode_tokens_to_dir
 
 
