@@ -4,7 +4,7 @@
  * Shows key metrics, grades, at-a-glance, and workout compliance.
  */
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -19,9 +19,8 @@ import { useActivity } from "../../../src/contexts/ActivityContext";
 import { WorkoutComplianceCard } from "../../../src/components/activity/WorkoutComplianceCard";
 import { HRZonesCard } from "../../../src/components/activity/HRZonesCard";
 import { METRIC_INFO } from "../../../src/constants/metricInfo";
-import { calculateHRZones, calculateHRZonesWithGarmin } from "../../../src/utils/hrZones";
-import { fetchHRZones } from "../../../src/services/api";
-import type { Grade, GradeValue, HRZonesResponse } from "../../../src/types";
+import { calculateHRZones, type HRZone } from "../../../src/utils/hrZones";
+import type { Grade, GradeValue } from "../../../src/types";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -149,26 +148,30 @@ function MetricCard({
 export default function SummaryTab() {
   const { activity } = useActivity();
   const [expandedMetric, setExpandedMetric] = useState<string | null>(null);
-  const [garminZones, setGarminZones] = useState<HRZonesResponse | null>(null);
 
   const toggleMetric = (metricKey: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedMetric(expandedMetric === metricKey ? null : metricKey);
   };
 
-  // Fetch Garmin HR zones on mount
-  useEffect(() => {
-    fetchHRZones().then(setGarminZones);
-  }, []);
-
-  // Calculate HR zones from time series data using Garmin zones if available
-  const hrZones = useMemo(() => {
-    if (!activity?.timeSeries) return null;
-    if (garminZones?.zones) {
-      return calculateHRZonesWithGarmin(activity.timeSeries, garminZones.zones);
+  // Use Garmin's pre-calculated HR zones if available, otherwise calculate locally
+  const hrZones = useMemo((): HRZone[] | null => {
+    // Prefer Garmin's activity-specific zones (from API)
+    if (activity?.hrZones && activity.hrZones.length > 0) {
+      return activity.hrZones.map((z) => ({
+        zone: z.zone,
+        name: z.name || `Zone ${z.zone}`,
+        color: z.color || "#9E9E9E",
+        minHR: z.minHR || 0,
+        maxHR: z.maxHR || 0,
+        seconds: z.seconds,
+        percentage: z.percentage || 0,
+      }));
     }
+    // Fallback to local calculation from time series
+    if (!activity?.timeSeries) return null;
     return calculateHRZones(activity.timeSeries);
-  }, [activity?.timeSeries, garminZones]);
+  }, [activity?.hrZones, activity?.timeSeries]);
 
   if (!activity) return null;
 

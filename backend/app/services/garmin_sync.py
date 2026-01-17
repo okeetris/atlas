@@ -278,6 +278,50 @@ class GarminSyncService:
 
         return None
 
+    def get_activity_hr_zones(self, activity_id: int) -> Optional[dict]:
+        """
+        Fetch HR zone data for a specific activity from Garmin.
+
+        Returns Garmin's pre-calculated time in each zone for the activity.
+        This is more accurate than user profile zones since it's activity-specific.
+        """
+        client = self._get_client()
+        try:
+            # get_activity_hr_in_timezones returns zone breakdown for the activity
+            hr_zones = client.get_activity_hr_in_timezones(activity_id)
+            if hr_zones:
+                # Sort by zone number first
+                hr_zones = sorted(hr_zones, key=lambda z: z.get("zoneNumber", 0))
+
+                # Transform Garmin format to our standard format
+                # API only returns zoneLowBoundary, maxHR = next zone's low - 1
+                zones = []
+                for i, zone_data in enumerate(hr_zones):
+                    zone_num = zone_data.get("zoneNumber")
+                    min_hr = zone_data.get("zoneLowBoundary")
+
+                    # Calculate max HR from next zone's low boundary - 1
+                    if i < len(hr_zones) - 1:
+                        max_hr = hr_zones[i + 1].get("zoneLowBoundary", 0) - 1
+                    else:
+                        # Last zone (Zone 5) - no upper limit
+                        max_hr = None
+
+                    zones.append({
+                        "zone": zone_num,
+                        "minHR": min_hr,
+                        "maxHR": max_hr,
+                        "seconds": int(zone_data.get("secsInZone", 0)),
+                    })
+
+                # Filter out zones with missing data
+                zones = [z for z in zones if z.get("zone") is not None]
+                return {"zones": zones} if zones else None
+        except Exception as e:
+            print(f"Failed to get activity HR zones: {e}")
+
+        return None
+
     def download_activity_fit(self, activity_id: int) -> Path:
         """Download FIT file for an activity if not already cached."""
         fit_path = self.fit_files_path / f"{activity_id}.fit"
