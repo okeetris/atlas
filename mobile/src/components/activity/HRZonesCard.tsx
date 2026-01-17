@@ -55,7 +55,7 @@ export function HRZonesCard({ zones, avgHR }: HRZonesCardProps) {
                   Z{zone.zone} {zone.name}
                 </Text>
                 <Text style={styles.zoneRange}>
-                  {zone.minHR}-{zone.maxHR} bpm
+                  {zone.maxHR ? `${zone.minHR}-${zone.maxHR}` : `>${zone.minHR}`} bpm
                 </Text>
               </View>
             </View>

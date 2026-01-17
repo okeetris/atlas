@@ -137,6 +137,18 @@ class WorkoutCompliance(BaseModel):
     stepBreakdown: list[StepCompliance] = []
 
 
+class ActivityHRZone(BaseModel):
+    """Heart rate zone data for an activity from Garmin."""
+
+    zone: int
+    minHR: Optional[int] = None
+    maxHR: Optional[int] = None
+    seconds: int = 0
+    percentage: Optional[int] = None  # Calculated from total time
+    name: Optional[str] = None  # Zone name (Recovery, Easy, Aerobic, etc.)
+    color: Optional[str] = None  # Display color
+
+
 class ActivityDetails(ActivitySummary):
     """Full activity details with analysis."""
 
@@ -148,3 +160,4 @@ class ActivityDetails(ActivitySummary):
     workoutCompliance: Optional[WorkoutCompliance] = None
     complianceError: Optional[str] = None  # Why compliance couldn't be fetched (auth expired, no workout, etc.)
     hasRunningDynamics: bool = False  # True if HRM-600 or similar pod detected
+    hrZones: Optional[list[ActivityHRZone]] = None  # HR zones from Garmin for this activity

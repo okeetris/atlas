@@ -154,20 +154,32 @@ export interface ActivityDetails extends ActivitySummary {
   fatigueComparison: FatigueComparison[];
   coaching: CoachingInsights;
   hasRunningDynamics: boolean; // True if HRM-600 or similar pod detected
+  hrZones?: ActivityHRZone[]; // Pre-calculated HR zones from Garmin for this activity
   // Correlation data
   cadenceGctCorrelation?: number; // r-squared value
   hrPaceDecoupling?: number; // percentage
 }
 
-// Heart rate zone from Garmin
+// Heart rate zone from Garmin (user profile)
 export interface GarminHRZone {
   zone: number;
   minHR: number;
   maxHR: number;
 }
 
-// Heart rate zones response from API
+// Heart rate zones response from API (user profile)
 export interface HRZonesResponse {
   maxHR: number;
   zones: GarminHRZone[];
+}
+
+// Activity-specific HR zone from Garmin (pre-calculated per activity)
+export interface ActivityHRZone {
+  zone: number;
+  minHR?: number;
+  maxHR?: number;
+  seconds: number;
+  percentage?: number;
+  name?: string;
+  color?: string;
 }

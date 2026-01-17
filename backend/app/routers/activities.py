@@ -25,6 +25,7 @@ from models.activity import (
     FatigueComparison,
     WorkoutCompliance,
     StepCompliance,
+    ActivityHRZone,
 )
 from services.garmin_sync import get_garmin_service, MFARequiredError
 from services.fit_parser import parse_fit_file
@@ -406,6 +407,34 @@ async def get_activity(
                 compliance_error = f"Failed to fetch workout: {e}"
                 print(f"Could not fetch workout compliance: {e}")
 
+        # Fetch HR zones for this activity from Garmin
+        hr_zones = None
+        if garmin_activity_id and garmin_service:
+            try:
+                hr_zones_data = garmin_service.get_activity_hr_zones(garmin_activity_id)
+                if hr_zones_data and hr_zones_data.get("zones"):
+                    # Calculate percentages and add display names/colors
+                    zone_names = ["Recovery", "Easy", "Aerobic", "Threshold", "VO2max"]
+                    zone_colors = ["#90CAF9", "#81C784", "#FFF176", "#FFB74D", "#E57373"]
+                    total_seconds = sum(z.get("seconds", 0) for z in hr_zones_data["zones"])
+
+                    hr_zones = []
+                    for z in hr_zones_data["zones"]:
+                        zone_num = z.get("zone", 0)
+                        seconds = z.get("seconds", 0)
+                        pct = round(seconds / total_seconds * 100) if total_seconds > 0 else 0
+                        hr_zones.append(ActivityHRZone(
+                            zone=zone_num,
+                            minHR=z.get("minHR"),
+                            maxHR=z.get("maxHR"),
+                            seconds=seconds,
+                            percentage=pct,
+                            name=zone_names[zone_num - 1] if zone_num <= len(zone_names) else f"Zone {zone_num}",
+                            color=zone_colors[zone_num - 1] if zone_num <= len(zone_colors) else "#9E9E9E",
+                        ))
+            except Exception as e:
+                print(f"Could not fetch HR zones: {e}")
+
         # Check if tokens were refreshed (returns encoded string now)
         if garmin_service:
             refreshed_b64 = garmin_service.get_refreshed_tokens()
@@ -429,6 +458,7 @@ async def get_activity(
             workoutCompliance=workout_compliance,
             complianceError=compliance_error if not workout_compliance else None,
             hasRunningDynamics=parsed.get("hasRunningDynamics", False),
+            hrZones=hr_zones,
         )
     finally:
         # Clean up temp directory
