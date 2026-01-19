@@ -6,8 +6,9 @@
  */
 
 import { useMemo } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Text, Dimensions } from "react-native";
 import { Canvas, Circle, Line, vec } from "@shopify/react-native-skia";
+import { styles } from "./CadenceGCTScatter.styles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -235,72 +236,3 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 8,
-    marginBottom: 16,
-  },
-  emptyText: {
-    textAlign: "center",
-    color: "#9E9E9E",
-    marginTop: 60,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-    paddingHorizontal: 4,
-  },
-  headerText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#1C1B1F",
-  },
-  r2Badge: {
-    backgroundColor: "#F5F5F5",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  r2Text: {
-    fontSize: 11,
-    color: "#49454F",
-  },
-  yAxisLabel: {
-    position: "absolute",
-    left: 2,
-    top: "50%",
-    transform: [{ rotate: "-90deg" }, { translateX: -20 }],
-  },
-  axisLabelRotated: {
-    fontSize: 10,
-    color: "#9E9E9E",
-  },
-  yAxis: {
-    position: "absolute",
-    left: 8,
-    top: PADDING.top,
-    bottom: 0,
-    justifyContent: "space-between",
-    alignItems: "flex-end",
-    width: 35,
-  },
-  xAxis: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingRight: PADDING.right,
-  },
-  axisValue: {
-    fontSize: 10,
-    color: "#9E9E9E",
-  },
-  xAxisLabel: {
-    textAlign: "center",
-    fontSize: 10,
-    color: "#9E9E9E",
-    marginTop: 4,
-  },
-});

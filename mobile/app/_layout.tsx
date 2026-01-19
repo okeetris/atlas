@@ -9,8 +9,8 @@ import { StatusBar } from "expo-status-bar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
 import { AuthProvider } from "../src/contexts/AuthContext";
+import { styles } from "./_layout.styles";
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -60,8 +60,3 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

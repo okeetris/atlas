@@ -5,8 +5,9 @@
  */
 
 import { useMemo } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import { useActivity } from "../../../src/contexts/ActivityContext";
+import { styles } from "./charts.styles";
 import { InteractiveRunChart } from "../../../src/components/charts/InteractiveRunChart";
 import { GCTBalanceChart } from "../../../src/components/charts/GCTBalanceChart";
 import { CadenceGCTScatter } from "../../../src/components/charts/CadenceGCTScatter";
@@ -144,37 +145,3 @@ export default function ChartsTab() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  emptyText: {
-    fontSize: 16,
-    color: "#757575",
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#1C1B1F",
-    marginBottom: 12,
-    marginTop: 8,
-  },
-  chartHint: {
-    fontSize: 12,
-    color: "#9E9E9E",
-    marginBottom: 8,
-    marginTop: -8,
-  },
-});
