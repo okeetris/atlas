@@ -42,6 +42,7 @@ def calculate_step_compliance(
     actual_pace_sec: float,
     actual_distance_m: float,
     actual_duration_sec: float,
+    actual_elapsed_sec: float,
     laps_used: list,
 ) -> dict:
     """
@@ -50,6 +51,9 @@ def calculate_step_compliance(
     """
     step_type = step.get("type", "unknown")
 
+    # Only include elapsed if different from duration (i.e., there was rest/pause)
+    elapsed_diff = actual_elapsed_sec - actual_duration_sec if actual_elapsed_sec else 0
+
     result = {
         "stepType": format_step_type(step_type),
         "rawStepType": step_type,
@@ -57,6 +61,7 @@ def calculate_step_compliance(
         "actualPace": format_pace(actual_pace_sec) if actual_pace_sec else None,
         "actualDistanceM": round(actual_distance_m),
         "actualDurationSec": round(actual_duration_sec),
+        "actualElapsedSec": round(actual_elapsed_sec) if elapsed_diff > 1 else None,
         "lapsUsed": [lap.get("lapNumber", i + 1) for i, lap in enumerate(laps_used)],
         "paceCompliance": None,
         "status": "no_target",
@@ -151,7 +156,8 @@ def map_laps_to_steps(
         # Accumulate laps for this step
         matched_laps = []
         accumulated_dist = 0
-        accumulated_time = 0
+        accumulated_time = 0  # Active running time
+        accumulated_elapsed = 0  # Total elapsed time (includes rest/pause)
 
         # Distance-based matching (primary)
         if target_distance > 0:
@@ -162,10 +168,12 @@ def map_laps_to_steps(
                 lap = laps[lap_idx]
                 lap_distance = lap.get("distance") or (lap.get("distanceKm", 0) * 1000)
                 lap_duration = lap.get("duration") or lap.get("durationSeconds") or 0
+                lap_elapsed = lap.get("elapsedDuration") or lap_duration
 
                 matched_laps.append(lap)
                 accumulated_dist += lap_distance
                 accumulated_time += lap_duration
+                accumulated_elapsed += lap_elapsed
                 lap_idx += 1
 
                 # For last step or single-step workout, use all laps
@@ -179,10 +187,12 @@ def map_laps_to_steps(
                 lap = laps[lap_idx]
                 lap_distance = lap.get("distance") or (lap.get("distanceKm", 0) * 1000)
                 lap_duration = lap.get("duration") or lap.get("durationSeconds") or 0
+                lap_elapsed = lap.get("elapsedDuration") or lap_duration
 
                 matched_laps.append(lap)
                 accumulated_dist += lap_distance
                 accumulated_time += lap_duration
+                accumulated_elapsed += lap_elapsed
                 lap_idx += 1
 
                 if accumulated_time >= target_duration * 0.8:
@@ -193,10 +203,12 @@ def map_laps_to_steps(
             lap = laps[lap_idx]
             lap_distance = lap.get("distance") or (lap.get("distanceKm", 0) * 1000)
             lap_duration = lap.get("duration") or lap.get("durationSeconds") or 0
+            lap_elapsed = lap.get("elapsedDuration") or lap_duration
 
             matched_laps.append(lap)
             accumulated_dist = lap_distance
             accumulated_time = lap_duration
+            accumulated_elapsed = lap_elapsed
             lap_idx += 1
 
         if not matched_laps:
@@ -223,6 +235,7 @@ def map_laps_to_steps(
             actual_pace_sec,
             accumulated_dist,
             accumulated_time,
+            accumulated_elapsed,
             matched_laps,
         )
         results.append(compliance)

@@ -78,7 +78,8 @@ class Lap(BaseModel):
 
     lapNumber: int
     distance: float  # meters
-    duration: float  # seconds
+    duration: float  # seconds (active running time)
+    elapsedDuration: Optional[float] = None  # seconds (total including rest/pause)
     avgPace: float  # seconds per km
     avgCadence: Optional[float] = None
     avgGct: Optional[float] = None
@@ -112,7 +113,8 @@ class StepCompliance(BaseModel):
     actualPace: Optional[str] = None
     actualPaceSecKm: Optional[int] = None
     actualDistanceM: Optional[int] = None
-    actualDurationSec: Optional[int] = None
+    actualDurationSec: Optional[int] = None  # active running time
+    actualElapsedSec: Optional[int] = None  # total time including rest/pause
     targetPaceRange: Optional[dict] = None
     targetDistanceM: Optional[float] = None
     targetDurationSec: Optional[int] = None

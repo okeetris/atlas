@@ -156,6 +156,11 @@ function StepCard({ step, index }: { step: StepCompliance; index: number }) {
             {step.targetDurationSec && (
               <Text style={styles.stepDetailTarget}>/ {formatDuration(step.targetDurationSec)}</Text>
             )}
+            {step.actualElapsedSec && (
+              <Text style={styles.stepDetailElapsed}>
+                ({formatDuration(step.actualElapsedSec)} elapsed)
+              </Text>
+            )}
           </View>
         )}
         {step.targetPaceRange && (
@@ -449,5 +454,11 @@ const styles = StyleSheet.create({
   stepDetailTarget: {
     fontSize: 11,
     color: "#BDBDBD",
+  },
+  stepDetailElapsed: {
+    fontSize: 10,
+    color: "#9E9E9E",
+    fontStyle: "italic",
+    marginLeft: 4,
   },
 });

@@ -205,11 +205,16 @@ def extract_laps(fitfile: FitFile) -> list[dict]:
         lap_num += 1
         data = {field.name: field.value for field in record.fields}
 
+        timer_time = data.get("total_timer_time", 0)
+        elapsed_time = data.get("total_elapsed_time", 0)
+
         lap = {
             "lapNumber": lap_num,
             "distance": data.get("total_distance", 0),
-            # Use timer_time (active duration) not elapsed_time (includes rest/pause)
-            "duration": data.get("total_timer_time") or data.get("total_elapsed_time", 0),
+            # duration = active running time (for pace/compliance)
+            "duration": timer_time or elapsed_time,
+            # elapsedDuration = total time including rest/pause (for context)
+            "elapsedDuration": elapsed_time if elapsed_time != timer_time else None,
             "avgHeartRate": data.get("avg_heart_rate"),
             "avgCadence": data.get("avg_running_cadence") or data.get("avg_cadence"),
             "avgGct": data.get("avg_stance_time"),

@@ -69,7 +69,8 @@ export interface Lap {
   lapNumber: number;
   startTime: number; // seconds from activity start
   distance: number; // meters
-  duration: number; // seconds
+  duration: number; // seconds (active running time)
+  elapsedDuration?: number; // seconds (total including rest/pause)
   avgPace: number; // seconds per km
   avgCadence?: number;
   avgGct?: number;
@@ -84,7 +85,8 @@ export interface StepCompliance {
   actualPace?: string;
   actualPaceSecKm?: number;
   actualDistanceM?: number;
-  actualDurationSec?: number;
+  actualDurationSec?: number; // Active running time
+  actualElapsedSec?: number; // Total time including rest/pause (only if different)
   targetPaceRange?: {
     slow: string;
     fast: string;
