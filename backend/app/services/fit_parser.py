@@ -119,7 +119,11 @@ def extract_session_summary(fitfile: FitFile) -> dict:
                 summary["startTime"] = str(start)
 
         summary["totalDistance"] = data.get("total_distance", 0)
-        summary["totalDuration"] = data.get("total_elapsed_time", 0)
+        # Use timer_time (active running) not elapsed_time (includes pauses)
+        timer_time = data.get("total_timer_time", 0)
+        elapsed_time = data.get("total_elapsed_time", 0)
+        summary["totalDuration"] = timer_time or elapsed_time
+        summary["totalElapsedDuration"] = elapsed_time if elapsed_time != timer_time else None
         summary["avgHeartRate"] = data.get("avg_heart_rate")
 
         # Extract sub_sport to determine activity type
