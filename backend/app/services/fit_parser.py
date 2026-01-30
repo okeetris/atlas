@@ -305,7 +305,6 @@ def compute_fatigue_comparison(records: list[dict]) -> list[dict]:
         ("cadence", "Cadence", True),  # Higher cadence is better
         ("gct", "Ground Contact Time", False),  # Lower GCT is better
         ("verticalRatio", "Vertical Ratio", False),  # Lower VR is better
-        ("heartRate", "Heart Rate", False),  # Lower HR (less drift) is better
     ]
 
     for field, label, higher_is_better in metrics_config:
