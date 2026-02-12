@@ -10,6 +10,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@garmin/fitsdk": "^21.194.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@shopify/flash-list": "2.0.2",
     "@shopify/react-native-skia": "^2.2.12",
@@ -24,6 +25,7 @@
     "expo-sqlite": "~16.0.10",
     "expo-status-bar": "~3.0.9",
     "expo-system-ui": "~6.0.9",
+    "fit-file-parser": "^2.3.3",
     "react": "19.1.0",
     "react-native": "0.81.5",
     "react-native-gesture-handler": "~2.28.0",
