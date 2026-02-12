@@ -20,11 +20,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  checkHealth,
   syncActivities,
   isMFARequired,
 } from "../../src/services/api";
 import { useAuth } from "../../src/contexts/AuthContext";
+import { useBackendStatus } from "../../src/hooks/useBackendStatus";
 
 // Storage keys
 const STORAGE_KEYS = {
@@ -40,19 +40,15 @@ export default function SettingsScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { isLoggedIn, logout, isLoading: authLoading } = useAuth();
+  const { status: backendStatus, isOnline: isBackendConnected } = useBackendStatus();
   const [units, setUnits] = useState<Units>("metric");
   const [darkMode, setDarkMode] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
-  const [isBackendConnected, setIsBackendConnected] = useState<boolean | null>(
-    null,
-  );
   const [isSyncing, setIsSyncing] = useState(false);
-  const [isCheckingConnection, setIsCheckingConnection] = useState(true);
 
   // Load settings on mount
   useEffect(() => {
     loadSettings();
-    checkConnection();
   }, []);
 
   const loadSettings = async () => {
@@ -68,18 +64,6 @@ export default function SettingsScreen() {
       if (savedLastSync) setLastSync(savedLastSync);
     } catch (error) {
       console.error("Failed to load settings:", error);
-    }
-  };
-
-  const checkConnection = async () => {
-    setIsCheckingConnection(true);
-    try {
-      await checkHealth();
-      setIsBackendConnected(true);
-    } catch {
-      setIsBackendConnected(false);
-    } finally {
-      setIsCheckingConnection(false);
     }
   };
 
@@ -250,7 +234,7 @@ export default function SettingsScreen() {
         <View style={styles.row}>
           <Text style={styles.rowLabel}>Backend Status</Text>
           <View style={styles.statusRow}>
-            {isCheckingConnection ? (
+            {backendStatus === "connecting" ? (
               <ActivityIndicator size="small" color="#1976D2" />
             ) : (
               <>
