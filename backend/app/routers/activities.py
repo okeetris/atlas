@@ -388,6 +388,7 @@ async def get_activity(
                             stepsHit=compliance_data["stepsHit"],
                             stepsPartial=compliance_data["stepsPartial"],
                             stepsMissed=compliance_data["stepsMissed"],
+                            stepsSkipped=compliance_data.get("stepsSkipped", 0),
                             totalSteps=compliance_data["totalSteps"],
                             distanceStatus=compliance_data.get("distanceStatus"),
                             targetDistanceM=compliance_data.get("targetDistanceM"),
