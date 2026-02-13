@@ -71,6 +71,7 @@ class TimeSeriesDataPoint(BaseModel):
     gctBalance: Optional[float] = None
     verticalRatio: Optional[float] = None
     power: Optional[int] = None
+    glucoseLevel: Optional[int] = None  # mg/dL from CGM
 
 
 class Lap(BaseModel):

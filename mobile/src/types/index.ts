@@ -62,6 +62,7 @@ export interface TimeSeriesDataPoint {
   strideLength?: number; // meters
   power?: number; // watts
   ssl?: number; // step speed loss (HRM-600 only)
+  glucoseLevel?: number; // mg/dL from CGM
 }
 
 // Lap data

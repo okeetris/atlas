@@ -77,6 +77,29 @@ export default function ChartsTab() {
     ];
   }, [timeSeries]);
 
+  // Glucose chart
+  const glucoseChartConfigs = useMemo(() => {
+    if (!timeSeries || timeSeries.length === 0) return [];
+
+    const glucoseData = timeSeries
+      .filter((p: TimeSeriesDataPoint) => p.glucoseLevel != null)
+      .map((p: TimeSeriesDataPoint) => ({ timestamp: p.timestamp, value: p.glucoseLevel! }));
+
+    if (glucoseData.length === 0) return [];
+
+    return [
+      {
+        key: "glucose",
+        label: "Glucose",
+        color: "#AB47BC",
+        unit: "mg/dL",
+        data: glucoseData,
+        minValue: 60,
+        maxValue: 160,
+      },
+    ];
+  }, [timeSeries]);
+
   // GCT Balance data
   const gctBalanceData = useMemo(() => {
     if (!timeSeries || timeSeries.length === 0) return [];
@@ -96,6 +119,7 @@ export default function ChartsTab() {
   if (!activity) return null;
 
   const hasCharts = chartConfigs.length > 0 || hrChartConfigs.length > 0 ||
+                    glucoseChartConfigs.length > 0 ||
                     gctBalanceData.length > 10 || cadenceGctData.length > 10;
 
   if (!hasCharts) {
@@ -122,6 +146,14 @@ export default function ChartsTab() {
         <>
           <Text style={styles.sectionTitle}>Heart Rate</Text>
           <InteractiveRunChart configs={hrChartConfigs} height={180} />
+        </>
+      )}
+
+      {/* Glucose */}
+      {glucoseChartConfigs.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>Glucose</Text>
+          <InteractiveRunChart configs={glucoseChartConfigs} height={180} />
         </>
       )}
 

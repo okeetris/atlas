@@ -193,6 +193,8 @@ def extract_records(fitfile: FitFile) -> list[dict]:
                 data["strideLength"] = value / 100  # cm to m
             elif name == "power":
                 data["power"] = value
+            elif name == "glucose_level":
+                data["glucoseLevel"] = value
 
         if data and "timestamp" in data:
             records.append(data)
