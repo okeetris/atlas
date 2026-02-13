@@ -118,9 +118,9 @@ class StepCompliance(BaseModel):
     targetPaceRange: Optional[dict] = None
     targetDistanceM: Optional[float] = None
     targetDurationSec: Optional[int] = None
-    paceCompliance: Optional[str] = None  # hit, slow, fast, close
+    paceCompliance: Optional[str] = None  # hit, slow, fast, close, skipped
     lapsUsed: list[int] = []  # Lap numbers used for this step
-    status: str  # hit, partial, missed, fast, no_target
+    status: str  # hit, partial, missed, fast, skipped, no_target
 
 
 class WorkoutCompliance(BaseModel):
@@ -132,6 +132,7 @@ class WorkoutCompliance(BaseModel):
     stepsHit: int
     stepsPartial: int
     stepsMissed: int = 0
+    stepsSkipped: int = 0
     totalSteps: int
     distanceStatus: Optional[str] = None
     targetDistanceM: Optional[float] = None
