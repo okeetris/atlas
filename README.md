@@ -31,25 +31,35 @@ Atlas combines running analysis with practical training tools:
   - GCT Balance (left/right distribution)
   - Vertical Ratio
 - **Performance Grading** - Each metric graded A/B/C/D against optimal ranges
-- **Workout Compliance** - Compares completed runs against scheduled Garmin workouts
+- **Workout Compliance** - Compares completed runs against scheduled Garmin workouts with per-step breakdown
+- **Skipped Step Detection** - Detects when workout steps (recovery, warmup, cooldown) were skipped using FIT lap trigger and duration analysis
 - **Fatigue Analysis** - First half vs second half comparison to detect degradation
 - **Heart Rate Zones** - Displays Garmin's per-activity time-in-zone breakdown
 - **Coaching Insights** - Tailored feedback based on your metrics
+- **Interactive Charts** - GPU-accelerated time-series charts (cadence, GCT, heart rate, glucose) with touch scrubbing
+- **Connection Banner** - Animated status banner showing backend connectivity (connecting/connected/disconnected) without blocking offline features
+
+### Glucose Tracking
+
+- **CGM Integration** - Extracts glucose data from FIT files recorded by Garmin watches paired with a CGM (e.g., Dexcom G7)
+- **Glucose Chart** - Interactive time-series chart showing glucose levels throughout the run
+- **Glucose Summary** - Start, end, delta (color-coded), and min-max range displayed on the activity overview
 
 ### Toolkit
 
-- **Glucose Tracking** - Log and visualize blood glucose readings for metabolic health and race-day fueling strategies
 - **Pace Calculator** - Calculate target paces for races, convert between pace units, and generate split tables
 
 ## Tech Stack
 
 ### Mobile
 
-| Tech                | Purpose                        |
-| ------------------- | ------------------------------ |
-| React Native + Expo | Cross-platform mobile app      |
-| TanStack Query      | Data fetching and caching      |
-| expo-secure-store   | Secure token storage on device |
+| Tech                        | Purpose                        |
+| --------------------------- | ------------------------------ |
+| React Native + Expo SDK 54  | Cross-platform mobile app      |
+| Expo Router                 | File-based navigation          |
+| TanStack Query              | Data fetching and caching      |
+| @shopify/react-native-skia  | GPU-accelerated charts         |
+| expo-secure-store            | Secure token storage on device |
 
 ### Backend
 
@@ -57,20 +67,44 @@ Atlas combines running analysis with practical training tools:
 | --------------------- | ------------------------------ |
 | Python 3.11           | Backend language               |
 | FastAPI               | REST API framework             |
+| fitparse              | FIT file parsing               |
 | garminconnect / garth | Garmin Connect API integration |
 | Docker                | Containerized deployment       |
 
 ## Architecture
 
-```
-┌─────────────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
-│   Mobile App        │────▶│   FastAPI Backend   │────▶│  Garmin Connect API │
-│   (React Native)    │◀────│   (Render)          │◀────│                     │
-└─────────────────────┘     └─────────────────────┘     └─────────────────────┘
-         │                           │
-         │                           │
-    Stores tokens              Stateless
-    locally (secure)           (no persistence)
+```mermaid
+flowchart LR
+    subgraph Mobile["Mobile App (React Native + Expo)"]
+        UI["Activity Views\nCharts · Compliance · Coaching"]
+        Banner["Connection Banner"]
+        SecureStore[("Secure Store\nGarmin Tokens")]
+    end
+
+    subgraph Backend["FastAPI Backend (Render)"]
+        API["REST API"]
+        FIT["FIT Parser\nRunning Dynamics · Glucose"]
+        Compliance["Workout Compliance\nSkip Detection"]
+        Coach["Coaching Engine"]
+    end
+
+    subgraph Garmin["Garmin Connect"]
+        GarminAPI["OAuth1+2 API"]
+        Workouts["Scheduled Workouts"]
+        FITFiles["FIT Files\nHRM-600 · CGM"]
+    end
+
+    UI --> API
+    API --> UI
+    Banner -.->|"health poll"| API
+    SecureStore -->|"tokens per request"| API
+    API --> GarminAPI
+    GarminAPI --> FITFiles
+    FITFiles --> FIT
+    GarminAPI --> Workouts
+    Workouts --> Compliance
+    FIT --> Coach
+    FIT --> Compliance
 ```
 
 **Key Design Decisions:**
@@ -113,8 +147,7 @@ cd mobile
 # Install dependencies
 npm install
 
-# Configure API URL (edit src/services/apiConfig.ts)
-# Set USE_PRODUCTION = false for local development
+# API URL auto-detects: localhost in dev (expo start), Render in production (eas build)
 
 # Start Expo
 npx expo start
@@ -138,16 +171,19 @@ docker run -p 8000:8000 atlas-backend
 4. Docker deployment auto-detected from Dockerfile
 5. No environment variables required (stateless auth)
 
-### Mobile (Expo)
+### Mobile (EAS Build)
+
+Builds are triggered via GitHub PR labels with EAS GitHub integration:
+
+1. Create a PR to the `release` branch
+2. Add the label `eas-build-android:preview` for APK builds
+3. EAS builds automatically on label detection
+
+Manual builds:
 
 ```bash
-# Build for production
-eas build --platform ios
-eas build --platform android
-
-# Submit to stores
-eas submit --platform ios
-eas submit --platform android
+eas build --platform android --profile preview  # APK
+eas build --platform android --profile production  # AAB for Play Store
 ```
 
 ## API Endpoints
@@ -196,8 +232,9 @@ atlas/
 │   │   └── login.tsx            # Auth screen
 │   ├── src/
 │   │   ├── services/            # API client, auth service
-│   │   ├── hooks/               # TanStack Query hooks
-│   │   ├── contexts/            # Auth context
+│   │   ├── hooks/               # TanStack Query hooks, backend status
+│   │   ├── contexts/            # Auth, activity contexts
+│   │   ├── components/          # Charts, compliance, connection banner
 │   │   └── types/               # TypeScript types
 │   └── package.json
 │
@@ -216,12 +253,7 @@ No environment variables required for stateless operation. Optional for local de
 
 ### Mobile
 
-Configure in `src/services/apiConfig.ts`:
-
-| Setting          | Description                                      |
-| ---------------- | ------------------------------------------------ |
-| `USE_PRODUCTION` | `true` for Render backend, `false` for localhost |
-| `PRODUCTION_URL` | Your Render deployment URL                       |
+API URL is auto-detected via `__DEV__` — uses localhost during Expo development and the Render URL in production builds. Configure the production URL in `src/services/apiConfig.ts`.
 
 ## License
 
