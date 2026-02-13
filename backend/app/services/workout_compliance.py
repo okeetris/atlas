@@ -195,6 +195,12 @@ def map_laps_to_steps(
                 accumulated_elapsed += lap_elapsed
                 lap_idx += 1
 
+                # If this lap was very short with manual trigger, user skipped this step
+                # Don't accumulate more laps into it
+                is_manual = str(lap.get("lapTrigger", "")).lower() == "manual"
+                if is_manual and lap_duration < 30:
+                    break
+
                 if accumulated_time >= target_duration * 0.8:
                     break
 
