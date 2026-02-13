@@ -74,37 +74,37 @@ Atlas combines running analysis with practical training tools:
 ## Architecture
 
 ```mermaid
-flowchart LR
-    subgraph Mobile["Mobile App (React Native + Expo)"]
-        UI["Activity Views\nCharts · Compliance · Coaching"]
-        Banner["Connection Banner"]
-        SecureStore[("Secure Store\nGarmin Tokens")]
+flowchart TB
+    subgraph Garmin["Garmin Connect"]
+        GarminAPI["OAuth1+2 API"]
+        FITFiles["FIT Files<br/>HRM-600 · CGM"]
+        Workouts["Scheduled Workouts"]
     end
 
     subgraph Backend["FastAPI Backend (Render)"]
         API["REST API"]
-        FIT["FIT Parser\nRunning Dynamics · Glucose"]
-        Compliance["Workout Compliance\nSkip Detection"]
+        FIT["FIT Parser<br/>Running Dynamics · Glucose"]
+        Compliance["Workout Compliance<br/>Skip Detection"]
         Coach["Coaching Engine"]
     end
 
-    subgraph Garmin["Garmin Connect"]
-        GarminAPI["OAuth1+2 API"]
-        Workouts["Scheduled Workouts"]
-        FITFiles["FIT Files\nHRM-600 · CGM"]
+    subgraph Mobile["Mobile App (React Native + Expo)"]
+        SecureStore[("Secure Store<br/>Garmin Tokens")]
+        UI["Activity Views<br/>Charts · Compliance · Coaching"]
+        Banner["Connection Banner"]
     end
 
-    UI --> API
+    GarminAPI --> FITFiles
+    GarminAPI --> Workouts
+    FITFiles --> FIT
+    Workouts --> Compliance
+    FIT --> Compliance
+    FIT --> Coach
+
+    SecureStore -->|"tokens per request"| API
+    API <--> GarminAPI
     API --> UI
     Banner -.->|"health poll"| API
-    SecureStore -->|"tokens per request"| API
-    API --> GarminAPI
-    GarminAPI --> FITFiles
-    FITFiles --> FIT
-    GarminAPI --> Workouts
-    Workouts --> Compliance
-    FIT --> Coach
-    FIT --> Compliance
 ```
 
 **Key Design Decisions:**
