@@ -20,7 +20,7 @@ import { WorkoutComplianceCard } from "../../../src/components/activity/WorkoutC
 import { HRZonesCard } from "../../../src/components/activity/HRZonesCard";
 import { METRIC_INFO } from "../../../src/constants/metricInfo";
 import { calculateHRZones, type HRZone } from "../../../src/utils/hrZones";
-import type { Grade, GradeValue } from "../../../src/types";
+import type { Grade, GradeValue, TimeSeriesDataPoint } from "../../../src/types";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -154,6 +154,23 @@ export default function SummaryTab() {
     setExpandedMetric(expandedMetric === metricKey ? null : metricKey);
   };
 
+  // Glucose summary from time series
+  const glucoseSummary = useMemo(() => {
+    if (!activity?.timeSeries) return null;
+    const points = activity.timeSeries.filter((p: TimeSeriesDataPoint) => p.glucoseLevel != null);
+    if (points.length === 0) return null;
+    const start = points[0].glucoseLevel!;
+    const end = points[points.length - 1].glucoseLevel!;
+    const values = points.map((p: TimeSeriesDataPoint) => p.glucoseLevel!);
+    return {
+      start,
+      end,
+      min: Math.min(...values),
+      max: Math.max(...values),
+      delta: end - start,
+    };
+  }, [activity?.timeSeries]);
+
   // Use Garmin's pre-calculated HR zones if available, otherwise calculate locally
   const hrZones = useMemo((): HRZone[] | null => {
     // Prefer Garmin's activity-specific zones (from API)
@@ -251,6 +268,33 @@ export default function SummaryTab() {
           <Text style={styles.sectionTitle}>Heart Rate Zones</Text>
           <View style={styles.hrZonesContainer}>
             <HRZonesCard zones={hrZones} avgHR={summaryMetrics.avgHeartRate} />
+          </View>
+        </>
+      )}
+
+      {/* Glucose */}
+      {glucoseSummary && (
+        <>
+          <Text style={styles.sectionTitle}>Glucose</Text>
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryStat}>
+              <Text style={styles.summaryValue}>{glucoseSummary.start}</Text>
+              <Text style={styles.summaryLabel}>start mg/dL</Text>
+            </View>
+            <View style={styles.summaryStat}>
+              <Text style={styles.summaryValue}>{glucoseSummary.end}</Text>
+              <Text style={styles.summaryLabel}>end mg/dL</Text>
+            </View>
+            <View style={styles.summaryStat}>
+              <Text style={[styles.summaryValue, { color: glucoseSummary.delta < 0 ? "#F44336" : "#4CAF50" }]}>
+                {glucoseSummary.delta > 0 ? "+" : ""}{glucoseSummary.delta}
+              </Text>
+              <Text style={styles.summaryLabel}>change</Text>
+            </View>
+            <View style={styles.summaryStat}>
+              <Text style={styles.summaryValue}>{glucoseSummary.min}-{glucoseSummary.max}</Text>
+              <Text style={styles.summaryLabel}>range</Text>
+            </View>
           </View>
         </>
       )}
