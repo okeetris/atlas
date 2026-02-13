@@ -74,37 +74,15 @@ Atlas combines running analysis with practical training tools:
 ## Architecture
 
 ```mermaid
-flowchart TB
-    subgraph Garmin["Garmin Connect"]
-        GarminAPI["OAuth1+2 API"]
-        FITFiles["FIT Files<br/>HRM-600 · CGM"]
-        Workouts["Scheduled Workouts"]
-    end
+flowchart LR
+    A["Garmin Connect<br/><sub>OAuth1+2 · FIT Files · Workouts</sub>"]
+    B["FastAPI Backend<br/><sub>FIT Parser · Compliance · Coaching</sub>"]
+    C["React Native App<br/><sub>Charts · Glucose · Pace Tools</sub>"]
 
-    subgraph Backend["FastAPI Backend (Render)"]
-        API["REST API"]
-        FIT["FIT Parser<br/>Running Dynamics · Glucose"]
-        Compliance["Workout Compliance<br/>Skip Detection"]
-        Coach["Coaching Engine"]
-    end
-
-    subgraph Mobile["Mobile App (React Native + Expo)"]
-        SecureStore[("Secure Store<br/>Garmin Tokens")]
-        UI["Activity Views<br/>Charts · Compliance · Coaching"]
-        Banner["Connection Banner"]
-    end
-
-    GarminAPI --> FITFiles
-    GarminAPI --> Workouts
-    FITFiles --> FIT
-    Workouts --> Compliance
-    FIT --> Compliance
-    FIT --> Coach
-
-    SecureStore -->|"tokens per request"| API
-    API <--> GarminAPI
-    API --> UI
-    Banner -.->|"health poll"| API
+    A -- "FIT files<br/>workouts" --> B
+    B -- "analysis<br/>insights" --> C
+    C -. "tokens per request" .-> B
+    B -. "OAuth" .-> A
 ```
 
 **Key Design Decisions:**
