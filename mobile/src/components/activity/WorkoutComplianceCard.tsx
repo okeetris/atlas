@@ -33,11 +33,12 @@ function formatDuration(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
-const statusConfig = {
+const statusConfig: Record<string, { icon: string; color: string; label: string }> = {
   hit: { icon: "✓", color: "#4CAF50", label: "Hit" },
   partial: { icon: "~", color: "#FFC107", label: "Close" },
   fast: { icon: "↑", color: "#2196F3", label: "Fast" },
   missed: { icon: "✗", color: "#F44336", label: "Missed" },
+  skipped: { icon: "⏭", color: "#9C27B0", label: "Skipped" },
   no_target: { icon: "-", color: "#9E9E9E", label: "No Target" },
 };
 
@@ -105,26 +106,42 @@ function PaceComplianceBar({ step }: { step: StepCompliance }) {
 
 function StepCard({ step, index }: { step: StepCompliance; index: number }) {
   const config = statusConfig[step.status] || statusConfig.no_target;
+  const isSkipped = step.status === "skipped";
 
   return (
-    <View style={styles.stepCard}>
+    <View style={[styles.stepCard, isSkipped && { opacity: 0.7, borderLeftColor: config.color }]}>
       {/* Step header */}
       <View style={styles.stepHeader}>
         <View style={[styles.stepStatusBadge, { backgroundColor: config.color + "20" }]}>
           <Text style={[styles.stepStatusIcon, { color: config.color }]}>{config.icon}</Text>
         </View>
         <View style={styles.stepTitleContainer}>
-          <Text style={styles.stepType}>{step.stepType}</Text>
-          {step.lapsUsed && step.lapsUsed.length > 0 && (
+          <Text style={[styles.stepType, isSkipped && { textDecorationLine: "line-through", color: "#9E9E9E" }]}>
+            {step.stepType}
+          </Text>
+          {isSkipped && step.actualDurationSec != null && step.targetDurationSec ? (
+            <Text style={[styles.stepLapsLabel, { color: config.color }]}>
+              Skipped — {formatDuration(step.actualDurationSec)} of {formatDuration(step.targetDurationSec)} target
+            </Text>
+          ) : isSkipped && step.actualDistanceM != null && step.targetDistanceM ? (
+            <Text style={[styles.stepLapsLabel, { color: config.color }]}>
+              Skipped — {formatDistance(step.actualDistanceM)} of {formatDistance(step.targetDistanceM)} target
+            </Text>
+          ) : step.lapsUsed && step.lapsUsed.length > 0 ? (
             <Text style={styles.stepLapsLabel}>
               {step.lapsUsed.length === 1 ? `Lap ${step.lapsUsed[0]}` : `Laps ${step.lapsUsed.join("-")}`}
             </Text>
-          )}
+          ) : null}
         </View>
         <View style={styles.stepPaceContainer}>
-          {step.actualPace && (
+          {!isSkipped && step.actualPace && (
             <Text style={[styles.stepActualPace, { color: config.color }]}>
               {step.actualPace}/km
+            </Text>
+          )}
+          {isSkipped && (
+            <Text style={[styles.stepActualPace, { color: config.color, fontSize: 12 }]}>
+              SKIPPED
             </Text>
           )}
         </View>
@@ -232,6 +249,12 @@ export function WorkoutComplianceCard({ compliance, defaultExpanded }: Props) {
           <Text style={[styles.summaryValue, { color: "#F44336" }]}>{compliance.stepsMissed}</Text>
           <Text style={styles.summaryLabel}>Missed</Text>
         </View>
+        {(compliance.stepsSkipped ?? 0) > 0 && (
+          <View style={styles.summaryItem}>
+            <Text style={[styles.summaryValue, { color: "#9C27B0" }]}>{compliance.stepsSkipped}</Text>
+            <Text style={styles.summaryLabel}>Skipped</Text>
+          </View>
+        )}
         {distanceStatusText && (
           <View style={styles.summaryItem}>
             <Text style={styles.summaryValue}>{distanceStatusText}</Text>

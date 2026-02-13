@@ -93,9 +93,9 @@ export interface StepCompliance {
   };
   targetDistanceM?: number;
   targetDurationSec?: number;
-  paceCompliance?: "hit" | "slow" | "fast" | "close";
+  paceCompliance?: "hit" | "slow" | "fast" | "close" | "skipped";
   lapsUsed: number[]; // Lap numbers used for this step
-  status: "hit" | "partial" | "missed" | "fast" | "no_target";
+  status: "hit" | "partial" | "missed" | "fast" | "skipped" | "no_target";
 }
 
 // Workout compliance summary
@@ -106,6 +106,7 @@ export interface WorkoutCompliance {
   stepsHit: number;
   stepsPartial: number;
   stepsMissed: number;
+  stepsSkipped: number;
   totalSteps: number;
   distanceStatus?: "hit" | "short" | "long";
   targetDistanceM?: number;

@@ -243,6 +243,66 @@ def map_laps_to_steps(
     return results
 
 
+def detect_skipped_steps(step_breakdown: list, laps: list) -> list:
+    """
+    Post-process mapped steps to detect skips using duration thresholds
+    and FIT intensity/trigger fields.
+
+    Checks recovery, rest, warmup, and cooldown steps for:
+    - Abnormally short duration vs target (< 25%)
+    - Under 30s absolute (any non-interval step this short was skipped)
+    - Manual lap trigger on a timed step with very short duration
+    """
+    SKIP_DURATION_RATIO = 0.25
+    SKIP_DISTANCE_RATIO = 0.25
+    MIN_MEANINGFUL_DURATION_SEC = 30
+
+    # Step types that can be skipped (not intervals/active work)
+    skippable_types = {"recovery", "rest", "cooldown", "cool_down", "warmup", "warm_up"}
+
+    for step in step_breakdown:
+        raw_type = (step.get("rawStepType") or "").lower()
+        if raw_type not in skippable_types:
+            continue
+
+        actual_duration = step.get("actualDurationSec") or 0
+        target_duration = step.get("targetDurationSec")
+        actual_distance = step.get("actualDistanceM") or 0
+        target_distance = step.get("targetDistanceM")
+
+        is_skipped = False
+
+        # Check 1: Abnormally short duration vs target
+        if target_duration and target_duration > 0:
+            if actual_duration < target_duration * SKIP_DURATION_RATIO:
+                is_skipped = True
+
+        # Check 2: Abnormally short distance vs target
+        if target_distance and target_distance > 0:
+            if actual_distance < target_distance * SKIP_DISTANCE_RATIO:
+                is_skipped = True
+
+        # Check 3: Under minimum meaningful duration
+        if actual_duration < MIN_MEANINGFUL_DURATION_SEC:
+            is_skipped = True
+
+        # Check 4: Manual trigger on a very short step
+        # (user manually lapped past a timed/distance step)
+        if step.get("lapsUsed"):
+            matched_laps = [l for l in laps if l.get("lapNumber") in step["lapsUsed"]]
+            has_manual = any(
+                str(l.get("lapTrigger", "")).lower() == "manual" for l in matched_laps
+            )
+            if has_manual and actual_duration < MIN_MEANINGFUL_DURATION_SEC:
+                is_skipped = True
+
+        if is_skipped:
+            step["status"] = "skipped"
+            step["paceCompliance"] = "skipped"
+
+    return step_breakdown
+
+
 def calculate_workout_compliance(
     workout: Optional[dict],
     laps: list,
@@ -270,17 +330,20 @@ def calculate_workout_compliance(
     if not step_compliance:
         return None
 
+    # Post-process: detect skipped steps using duration + FIT fields
+    step_compliance = detect_skipped_steps(step_compliance, laps)
+
     # Calculate overall stats
     hit_count = sum(1 for s in step_compliance if s["status"] == "hit")
     partial_count = sum(1 for s in step_compliance if s["status"] in ["partial", "fast"])
     missed_count = sum(1 for s in step_compliance if s["status"] == "missed")
+    skipped_count = sum(1 for s in step_compliance if s["status"] == "skipped")
     total_steps = len(step_compliance)
 
-    # Only count steps that have pace targets for compliance percentage
-    # Steps without targets (warmup, cooldown) shouldn't affect the score
-    steps_with_targets = hit_count + partial_count + missed_count
+    # Only count steps that have pace targets or were skipped for compliance percentage
+    steps_with_targets = hit_count + partial_count + missed_count + skipped_count
 
-    # Compliance percentage: hit = 100%, partial/fast = 50%, missed = 0%
+    # Compliance percentage: hit = 100%, partial/fast = 50%, missed/skipped = 0%
     if steps_with_targets > 0:
         compliance_pct = round((hit_count * 100 + partial_count * 50) / steps_with_targets)
     else:
@@ -307,6 +370,7 @@ def calculate_workout_compliance(
         "stepsHit": hit_count,
         "stepsPartial": partial_count,
         "stepsMissed": missed_count,
+        "stepsSkipped": skipped_count,
         "totalSteps": total_steps,
         "distanceStatus": distance_status,
         "targetDistanceM": target_distance,

@@ -222,6 +222,9 @@ def extract_laps(fitfile: FitFile) -> list[dict]:
             "avgHeartRate": data.get("avg_heart_rate"),
             "avgCadence": data.get("avg_running_cadence") or data.get("avg_cadence"),
             "avgGct": data.get("avg_stance_time"),
+            # FIT-tagged step classification (for skip detection)
+            "intensity": data.get("intensity"),        # warmup, active, recovery, cooldown
+            "lapTrigger": data.get("lap_trigger"),     # distance, time, manual, session_end
         }
 
         # Calculate pace
