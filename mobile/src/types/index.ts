@@ -148,6 +148,14 @@ export interface CoachingInsights {
   focusCue: string;
 }
 
+// Best effort at a race distance milestone
+export interface BestEffort {
+  name: string;
+  distanceMeters: number;
+  elapsedTimeSec: number;
+  avgPaceSecKm: number;
+}
+
 // Full activity details
 export interface ActivityDetails extends ActivitySummary {
   summaryMetrics: SummaryMetrics;
@@ -159,6 +167,7 @@ export interface ActivityDetails extends ActivitySummary {
   coaching: CoachingInsights;
   hasRunningDynamics: boolean; // True if HRM-600 or similar pod detected
   hrZones?: ActivityHRZone[]; // Pre-calculated HR zones from Garmin for this activity
+  bestEfforts?: BestEffort[]; // Best efforts at race distance milestones
   // Correlation data
   cadenceGctCorrelation?: number; // r-squared value
   hrPaceDecoupling?: number; // percentage

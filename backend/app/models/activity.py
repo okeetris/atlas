@@ -153,6 +153,14 @@ class ActivityHRZone(BaseModel):
     color: Optional[str] = None  # Display color
 
 
+class BestEffort(BaseModel):
+    """Best effort time at a race distance milestone."""
+    name: str              # "5 km", "Half Marathon"
+    distanceMeters: float  # 5000, 21097.5
+    elapsedTimeSec: float  # moving time in seconds from start
+    avgPaceSecKm: float    # avg pace (sec/km) from start to this distance
+
+
 class ActivityDetails(ActivitySummary):
     """Full activity details with analysis."""
 
@@ -165,3 +173,4 @@ class ActivityDetails(ActivitySummary):
     complianceError: Optional[str] = None  # Why compliance couldn't be fetched (auth expired, no workout, etc.)
     hasRunningDynamics: bool = False  # True if HRM-600 or similar pod detected
     hrZones: Optional[list[ActivityHRZone]] = None  # HR zones from Garmin for this activity
+    bestEfforts: list[BestEffort] = []
