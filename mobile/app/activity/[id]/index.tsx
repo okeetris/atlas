@@ -263,22 +263,22 @@ export default function SummaryTab() {
         />
       </View>
 
-      {/* Best Efforts */}
-      {activity.bestEfforts && activity.bestEfforts.length > 0 && (
-        <>
-          <Text style={styles.sectionTitle}>Best Efforts</Text>
-          <View style={{ marginBottom: 24 }}>
-            <BestEffortsCard efforts={activity.bestEfforts} />
-          </View>
-        </>
-      )}
-
       {/* Heart Rate Zones */}
       {hrZones && (
         <>
           <Text style={styles.sectionTitle}>Heart Rate Zones</Text>
           <View style={styles.hrZonesContainer}>
             <HRZonesCard zones={hrZones} avgHR={summaryMetrics.avgHeartRate} />
+          </View>
+        </>
+      )}
+
+      {/* Best Efforts */}
+      {activity.bestEfforts && activity.bestEfforts.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>Best Efforts</Text>
+          <View style={{ marginBottom: 24 }}>
+            <BestEffortsCard efforts={activity.bestEfforts} />
           </View>
         </>
       )}
