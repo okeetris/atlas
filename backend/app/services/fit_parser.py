@@ -21,6 +21,17 @@ GRADES = {
     "vertical_ratio": {"A": 8, "B": 9, "C": 10},  # % (lower is better)
 }
 
+RACE_DISTANCES = [
+    ("1 km", 1000),
+    ("1 mile", 1609.34),
+    ("5 km", 5000),
+    ("10 km", 10000),
+    ("15 km", 15000),
+    ("Half Marathon", 21097.5),
+    ("30 km", 30000),
+    ("Marathon", 42195),
+]
+
 
 def grade_metric(metric: str, value: float) -> str:
     """Assign A/B/C/D grade to a metric value."""
@@ -79,6 +90,14 @@ def parse_fit_file(fit_path: str) -> dict:
     # Compute fatigue comparison
     fatigue = compute_fatigue_comparison(records)
 
+    # Compute best efforts at race distance milestones
+    best_efforts = compute_best_efforts(
+        records,
+        summary.get("totalDistance", 0),
+        timer_time=summary.get("totalDuration", 0),
+        elapsed_time=summary.get("totalElapsedDuration") or summary.get("totalDuration", 0),
+    )
+
     # Detect running dynamics pod (HRM-600 or similar)
     # Require GCT balance data - watches without pods don't have this
     # Also require sufficient data points (not just a few readings)
@@ -92,6 +111,7 @@ def parse_fit_file(fit_path: str) -> dict:
         "laps": laps,
         "fatigue": fatigue,
         "hasRunningDynamics": has_running_dynamics,
+        "bestEfforts": best_efforts,
     }
 
 
@@ -195,6 +215,8 @@ def extract_records(fitfile: FitFile) -> list[dict]:
                 data["power"] = value
             elif name == "glucose_level":
                 data["glucoseLevel"] = value
+            elif name == "distance":
+                data["distance"] = value  # cumulative meters from start
 
         if data and "timestamp" in data:
             records.append(data)
@@ -288,6 +310,67 @@ def compute_metrics(records: list[dict]) -> dict:
         metrics["avgHeartRate"] = {"value": round(heart_rate, 1), "grade": "B"}
 
     return metrics
+
+
+def _interpolate_elapsed_at_distance(records: list[dict], target_m: float) -> Optional[float]:
+    """Find wall-clock elapsed time at a target cumulative distance via linear interpolation.
+
+    Returns elapsed seconds from start, or None if target not reached.
+    """
+    prev_ts = None
+    prev_dist = None
+
+    for rec in records:
+        ts = rec.get("timestamp")
+        dist = rec.get("distance")
+        if ts is None or dist is None:
+            continue
+
+        if prev_ts is not None and dist >= target_m and dist > prev_dist:
+            frac = (target_m - prev_dist) / (dist - prev_dist)
+            return prev_ts + frac * (ts - prev_ts)
+
+        if dist is not None and ts is not None:
+            prev_ts = ts
+            prev_dist = dist
+
+    return None
+
+
+def compute_best_efforts(
+    records: list[dict],
+    total_distance_m: float,
+    timer_time: float = 0,
+    elapsed_time: float = 0,
+) -> list[dict]:
+    """Compute moving time at common race distance milestones.
+
+    Interpolates wall-clock time at each distance from records, then scales
+    by timer_time/elapsed_time to convert to moving time. This uses Garmin's
+    session-level timer_time as ground truth for pause subtraction.
+    """
+    if not records or total_distance_m <= 0:
+        return []
+
+    # Scale factor: convert elapsed (wall clock) to moving time
+    scale = timer_time / elapsed_time if elapsed_time > 0 and timer_time > 0 else 1.0
+
+    efforts = []
+    for name, distance in RACE_DISTANCES:
+        if distance > total_distance_m:
+            continue
+        elapsed = _interpolate_elapsed_at_distance(records, distance)
+        if elapsed is not None:
+            moving_time = elapsed * scale
+            avg_pace_sec_km = moving_time / (distance / 1000)
+            efforts.append({
+                "name": name,
+                "distanceMeters": distance,
+                "elapsedTimeSec": round(moving_time, 1),
+                "avgPaceSecKm": round(avg_pace_sec_km, 1),
+            })
+
+    return efforts
 
 
 def compute_fatigue_comparison(records: list[dict]) -> list[dict]:

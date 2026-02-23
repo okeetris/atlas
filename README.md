@@ -34,6 +34,7 @@ Atlas combines running analysis with practical training tools:
 - **Workout Compliance** - Compares completed runs against scheduled Garmin workouts with per-step breakdown
 - **Skipped Step Detection** - Detects when workout steps (recovery, warmup, cooldown) were skipped using FIT lap trigger and duration analysis
 - **Fatigue Analysis** - First half vs second half comparison to detect degradation
+- **Best Efforts** - Elapsed moving time at race distance milestones (1km, 1mi, 5K, 10K, 15K, Half Marathon, 30K, Marathon) with average pace
 - **Heart Rate Zones** - Displays Garmin's per-activity time-in-zone breakdown
 - **Coaching Insights** - Tailored feedback based on your metrics
 - **Interactive Charts** - GPU-accelerated time-series charts (cadence, GCT, heart rate, glucose) with touch scrubbing

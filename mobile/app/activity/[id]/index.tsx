@@ -18,6 +18,7 @@ import { useActivity } from "../../../src/contexts/ActivityContext";
 import { styles } from "../../../src/styles/app/activity-detail/index.styles";
 import { WorkoutComplianceCard } from "../../../src/components/activity/WorkoutComplianceCard";
 import { HRZonesCard } from "../../../src/components/activity/HRZonesCard";
+import { BestEffortsCard } from "../../../src/components/activity/BestEffortsCard";
 import { METRIC_INFO } from "../../../src/constants/metricInfo";
 import { calculateHRZones, type HRZone } from "../../../src/utils/hrZones";
 import type { Grade, GradeValue, TimeSeriesDataPoint } from "../../../src/types";
@@ -261,6 +262,16 @@ export default function SummaryTab() {
           onPress={() => toggleMetric("verticalRatio")}
         />
       </View>
+
+      {/* Best Efforts */}
+      {activity.bestEfforts && activity.bestEfforts.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>Best Efforts</Text>
+          <View style={{ marginBottom: 24 }}>
+            <BestEffortsCard efforts={activity.bestEfforts} />
+          </View>
+        </>
+      )}
 
       {/* Heart Rate Zones */}
       {hrZones && (

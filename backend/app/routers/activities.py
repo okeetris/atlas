@@ -26,6 +26,7 @@ from models.activity import (
     WorkoutCompliance,
     StepCompliance,
     ActivityHRZone,
+    BestEffort,
 )
 from services.garmin_sync import get_garmin_service, MFARequiredError
 from services.fit_parser import parse_fit_file
@@ -314,6 +315,7 @@ async def get_activity(
         time_series = parsed.get("timeSeries", [])
         laps = parsed.get("laps", [])
         fatigue = parsed.get("fatigue", [])
+        best_effort_models = [BestEffort(**be) for be in parsed.get("bestEfforts", [])]
 
         # Build summary metrics from parsed data
         summary_metrics = SummaryMetrics(
@@ -460,6 +462,7 @@ async def get_activity(
             complianceError=compliance_error if not workout_compliance else None,
             hasRunningDynamics=parsed.get("hasRunningDynamics", False),
             hrZones=hr_zones,
+            bestEfforts=best_effort_models,
         )
     finally:
         # Clean up temp directory
