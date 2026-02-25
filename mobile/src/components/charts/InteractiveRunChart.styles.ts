@@ -4,7 +4,8 @@ export const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
-    padding: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 2,
     marginBottom: 16,
   },
   legend: {
@@ -62,5 +63,13 @@ export const styles = StyleSheet.create({
   axisLabel: {
     fontSize: 10,
     color: "#9E9E9E",
+  },
+  yAxisLabel: {
+    position: "absolute" as const,
+    left: 2,
+    fontSize: 10,
+    color: "#9E9E9E",
+    textAlign: "right" as const,
+    width: 20,
   },
 });

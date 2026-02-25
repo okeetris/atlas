@@ -94,8 +94,8 @@ export default function ChartsTab() {
         color: "#AB47BC",
         unit: "mg/dL",
         data: glucoseData,
-        minValue: 60,
-        maxValue: 160,
+        minValue: 50,
+        maxValue: 200,
       },
     ];
   }, [timeSeries]);
@@ -153,7 +153,11 @@ export default function ChartsTab() {
       {glucoseChartConfigs.length > 0 && (
         <>
           <Text style={styles.sectionTitle}>Glucose</Text>
-          <InteractiveRunChart configs={glucoseChartConfigs} height={180} />
+          <InteractiveRunChart
+            configs={glucoseChartConfigs}
+            height={180}
+            referenceZone={{ min: 72, max: 180, color: "rgba(76, 175, 80, 0.15)" }}
+          />
         </>
       )}
 

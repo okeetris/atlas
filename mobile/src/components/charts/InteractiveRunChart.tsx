@@ -8,7 +8,15 @@
 
 import { useMemo, useState, useCallback } from "react";
 import { View, Text, Dimensions, PanResponder } from "react-native";
-import { Canvas, Path, Skia, Line, vec, Circle } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  Path,
+  Skia,
+  Line,
+  vec,
+  Circle,
+  Rect,
+} from "@shopify/react-native-skia";
 import { styles } from "./InteractiveRunChart.styles";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -28,13 +36,20 @@ interface ChartConfig {
   maxValue?: number;
 }
 
+interface ReferenceZone {
+  min: number;
+  max: number;
+  color: string;
+}
+
 interface InteractiveRunChartProps {
   configs: ChartConfig[];
   height?: number;
   padding?: { top: number; right: number; bottom: number; left: number };
+  referenceZone?: ReferenceZone;
 }
 
-const DEFAULT_PADDING = { top: 20, right: 16, bottom: 30, left: 16 };
+const DEFAULT_PADDING = { top: 20, right: 16, bottom: 30, left: 28 };
 
 // Filter out artifact data points (stops, pauses)
 function filterArtifacts(data: DataPoint[], key: string): DataPoint[] {
@@ -64,6 +79,7 @@ export function InteractiveRunChart({
   configs,
   height = 200,
   padding = DEFAULT_PADDING,
+  referenceZone,
 }: InteractiveRunChartProps) {
   const width = SCREEN_WIDTH - 32;
   const chartWidth = width - padding.left - padding.right;
@@ -114,10 +130,13 @@ export function InteractiveRunChart({
       data.forEach((point) => {
         const x =
           padding.left +
-          ((point.timestamp - timeRange.min) / (timeRange.max - timeRange.min)) *
+          ((point.timestamp - timeRange.min) /
+            (timeRange.max - timeRange.min)) *
             chartWidth;
         const y =
-          padding.top + chartHeight - ((point.value - min) / (max - min)) * chartHeight;
+          padding.top +
+          chartHeight -
+          ((point.value - min) / (max - min)) * chartHeight;
 
         if (!started) {
           path.moveTo(x, y);
@@ -130,6 +149,38 @@ export function InteractiveRunChart({
       return { path, color: config.color, min, max };
     });
   }, [configs, timeRange, chartWidth, chartHeight, padding]);
+
+  // Reference zone band (e.g. glucose good zone)
+  const zoneRect = useMemo(() => {
+    if (!referenceZone || paths.length === 0 || !paths[0]) return null;
+    const { min, max } = paths[0];
+    const yTop =
+      padding.top +
+      chartHeight -
+      ((referenceZone.max - min) / (max - min)) * chartHeight;
+    const yBottom =
+      padding.top +
+      chartHeight -
+      ((referenceZone.min - min) / (max - min)) * chartHeight;
+    const clampedTop = Math.max(yTop, padding.top);
+    const clampedBottom = Math.min(yBottom, padding.top + chartHeight);
+    return {
+      x: padding.left,
+      y: clampedTop,
+      width: chartWidth,
+      height: clampedBottom - clampedTop,
+    };
+  }, [referenceZone, paths, padding, chartHeight, chartWidth]);
+
+  // Y-axis tick labels from first config's scale
+  const yAxisLabels = useMemo(() => {
+    if (paths.length === 0 || !paths[0]) return [];
+    const { min, max } = paths[0];
+    return [0, 0.25, 0.5, 0.75, 1].map((ratio) => ({
+      value: Math.round(min + (1 - ratio) * (max - min)),
+      y: padding.top + chartHeight * ratio,
+    }));
+  }, [paths, padding.top, chartHeight]);
 
   // Find values at a given x position
   const getValuesAtX = useCallback(
@@ -158,7 +209,7 @@ export function InteractiveRunChart({
 
       return { timestamp, values };
     },
-    [configs, timeRange, chartWidth, padding.left]
+    [configs, timeRange, chartWidth, padding.left],
   );
 
   // Simple pan responder for touch handling
@@ -188,7 +239,7 @@ export function InteractiveRunChart({
           setTooltipData(null);
         },
       }),
-    [getValuesAtX, padding.left, chartWidth]
+    [getValuesAtX, padding.left, chartWidth],
   );
 
   const formatTime = (seconds: number) => {
@@ -203,20 +254,39 @@ export function InteractiveRunChart({
       <View style={styles.legend}>
         {configs.map((config) => (
           <View key={config.key} style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: config.color }]} />
+            <View
+              style={[styles.legendDot, { backgroundColor: config.color }]}
+            />
             <Text style={styles.legendText}>{config.label}</Text>
           </View>
         ))}
       </View>
 
-      <View style={{ width, height: height - 24 }} {...panResponder.panHandlers}>
+      <View
+        style={{ width, height: height - 24 }}
+        {...panResponder.panHandlers}
+      >
         <Canvas style={{ flex: 1 }}>
+          {/* Reference zone band */}
+          {zoneRect && (
+            <Rect
+              x={zoneRect.x}
+              y={zoneRect.y}
+              width={zoneRect.width}
+              height={zoneRect.height}
+              color={referenceZone!.color}
+            />
+          )}
+
           {/* Grid lines */}
           {[0.25, 0.5, 0.75].map((ratio) => (
             <Line
               key={ratio}
               p1={vec(padding.left, padding.top + chartHeight * ratio)}
-              p2={vec(padding.left + chartWidth, padding.top + chartHeight * ratio)}
+              p2={vec(
+                padding.left + chartWidth,
+                padding.top + chartHeight * ratio,
+              )}
               color="#E0E0E0"
               strokeWidth={1}
             />
@@ -233,7 +303,7 @@ export function InteractiveRunChart({
                   style="stroke"
                   strokeWidth={2}
                 />
-              )
+              ),
           )}
 
           {/* Touch indicator line */}
@@ -267,6 +337,16 @@ export function InteractiveRunChart({
           )}
         </Canvas>
 
+        {/* Y-axis labels */}
+        {yAxisLabels.map((tick) => (
+          <Text
+            key={tick.value}
+            style={[styles.yAxisLabel, { top: tick.y - 6 }]}
+          >
+            {tick.value}
+          </Text>
+        ))}
+
         {/* Tooltip overlay */}
         {tooltipData && (
           <View
@@ -278,10 +358,14 @@ export function InteractiveRunChart({
               },
             ]}
           >
-            <Text style={styles.tooltipTime}>{formatTime(tooltipData.timestamp)}</Text>
+            <Text style={styles.tooltipTime}>
+              {formatTime(tooltipData.timestamp)}
+            </Text>
             {tooltipData.values.map((v) => (
               <View key={v.label} style={styles.tooltipRow}>
-                <View style={[styles.tooltipDot, { backgroundColor: v.color }]} />
+                <View
+                  style={[styles.tooltipDot, { backgroundColor: v.color }]}
+                />
                 <Text style={styles.tooltipValue}>
                   {v.value.toFixed(0)} {v.unit}
                 </Text>
@@ -302,4 +386,3 @@ export function InteractiveRunChart({
     </View>
   );
 }
-
