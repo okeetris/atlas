@@ -5,6 +5,7 @@
 import { View, Text, Pressable } from "react-native";
 import type { ActivitySummary, Grade } from "../../types";
 import { styles } from "./ActivityCard.styles";
+import { colors } from "../../theme/colors";
 
 interface ActivityCardProps {
   activity: ActivitySummary;
@@ -12,10 +13,10 @@ interface ActivityCardProps {
 }
 
 const gradeColors: Record<Grade, string> = {
-  A: "#4CAF50",
-  B: "#8BC34A",
-  C: "#FFC107",
-  D: "#F44336",
+  A: colors.gradeA,
+  B: colors.gradeB,
+  C: colors.gradeC,
+  D: colors.gradeD,
 };
 
 function GradeBadge({ grade, label }: { grade: Grade; label: string }) {
@@ -54,9 +55,9 @@ function formatDate(dateString: string): string {
 }
 
 function getComplianceColor(percent: number): string {
-  if (percent >= 80) return "#4CAF50";
-  if (percent >= 50) return "#FFC107";
-  return "#F44336";
+  if (percent >= 80) return colors.gradeA;
+  if (percent >= 50) return colors.gradeC;
+  return colors.gradeD;
 }
 
 const gradeRank: Record<Grade, number> = { A: 0, B: 1, C: 2, D: 3 };

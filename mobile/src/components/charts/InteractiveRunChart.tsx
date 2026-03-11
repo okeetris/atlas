@@ -18,6 +18,7 @@ import {
   Rect,
 } from "@shopify/react-native-skia";
 import { styles } from "./InteractiveRunChart.styles";
+import { colors } from "../../theme/colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -287,7 +288,7 @@ export function InteractiveRunChart({
                 padding.left + chartWidth,
                 padding.top + chartHeight * ratio,
               )}
-              color="#DBD9D6"
+              color={colors.borderDark}
               strokeWidth={1}
             />
           ))}
@@ -312,7 +313,7 @@ export function InteractiveRunChart({
               <Line
                 p1={vec(tooltipData.x, padding.top)}
                 p2={vec(tooltipData.x, padding.top + chartHeight)}
-                color="#1976D2"
+                color={colors.primary}
                 strokeWidth={1}
               />
               {tooltipData.values.map((v, i) => {

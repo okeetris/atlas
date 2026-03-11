@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useActivity } from "../../../src/contexts/ActivityContext";
 import { styles } from "../../../src/styles/app/activity-detail/index.styles";
+import { colors } from "../../../src/theme/colors";
 import { WorkoutComplianceCard } from "../../../src/components/activity/WorkoutComplianceCard";
 import { HRZonesCard } from "../../../src/components/activity/HRZonesCard";
 import { BestEffortsCard } from "../../../src/components/activity/BestEffortsCard";
@@ -48,10 +49,10 @@ function formatPace(secPerKm: number): string {
 }
 
 const gradeColors: Record<Grade, string> = {
-  A: "#4CAF50",
-  B: "#8BC34A",
-  C: "#FFC107",
-  D: "#F44336",
+  A: colors.gradeA,
+  B: colors.gradeB,
+  C: colors.gradeC,
+  D: colors.gradeD,
 };
 
 function GradeBadge({ grade }: { grade: Grade }) {
@@ -95,7 +96,7 @@ function MetricCard({
         <Ionicons
           name={isExpanded ? "chevron-up" : "chevron-down"}
           size={20}
-          color="#49454F"
+          color={colors.textSecondary}
         />
       </View>
       <View style={styles.metricRow}>
@@ -235,7 +236,7 @@ export default function SummaryTab() {
           <Text style={styles.glanceText}>{coaching.atAGlance}</Text>
           <Text style={styles.glanceCTA}>See coaching recommendations</Text>
         </View>
-        <Ionicons name="chevron-forward" size={20} color="#1976D2" />
+        <Ionicons name="chevron-forward" size={20} color={colors.primary} />
       </Pressable>
 
       {/* Running Dynamics */}
@@ -313,7 +314,7 @@ export default function SummaryTab() {
               <Text style={styles.summaryLabel}>end mg/dL</Text>
             </View>
             <View style={styles.summaryStat}>
-              <Text style={[styles.summaryValue, { color: glucoseSummary.delta < 0 ? "#F44336" : "#4CAF50" }]}>
+              <Text style={[styles.summaryValue, { color: glucoseSummary.delta < 0 ? colors.gradeD : colors.gradeA }]}>
                 {glucoseSummary.delta > 0 ? "+" : ""}{glucoseSummary.delta}
               </Text>
               <Text style={styles.summaryLabel}>change</Text>

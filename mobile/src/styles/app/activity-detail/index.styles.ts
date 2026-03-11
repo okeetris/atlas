@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   content: {
     padding: 16,
@@ -12,12 +13,12 @@ export const styles = StyleSheet.create({
   summaryRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -28,26 +29,26 @@ export const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 32,
     fontWeight: "800",
-    color: "#1976D2",
+    color: colors.primary,
     letterSpacing: -0.5,
   },
   summaryLabel: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginTop: 4,
     textTransform: "uppercase" as const,
     letterSpacing: 0.5,
     fontWeight: "500",
   },
   glanceCard: {
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     flexDirection: "row" as const,
     alignItems: "center" as const,
     borderLeftWidth: 3,
-    borderLeftColor: "#90CAF9",
+    borderLeftColor: colors.primaryLightBorder,
   },
   glanceTextContainer: {
     flex: 1,
@@ -55,24 +56,24 @@ export const styles = StyleSheet.create({
   glanceText: {
     fontSize: 15,
     fontWeight: "500",
-    color: "#1565C0",
+    color: colors.primaryDark,
     lineHeight: 22,
   },
   glanceCTA: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#1976D2",
+    color: colors.primary,
     marginTop: 6,
   },
   glanceChevron: {
     marginLeft: 8,
     fontSize: 20,
-    color: "#1976D2",
+    color: colors.primary,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   metricsGrid: {
@@ -86,11 +87,11 @@ export const styles = StyleSheet.create({
   },
   metricCard: {
     width: "47%",
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 10,
     padding: 12,
     elevation: 1,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -107,12 +108,12 @@ export const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: 12,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   expandIndicator: {
     fontSize: 18,
-    color: "#49454F",
+    color: colors.textSecondary,
     fontWeight: "500",
   },
   metricRow: {
@@ -123,11 +124,11 @@ export const styles = StyleSheet.create({
   metricValue: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   metricUnit: {
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   gradeBadge: {
     marginLeft: "auto",
@@ -140,13 +141,13 @@ export const styles = StyleSheet.create({
   gradeText: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
   },
   expandedContent: {
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "#DBD9D6",
+    borderTopColor: colors.borderDark,
   },
   thresholdsContainer: {
     marginBottom: 12,
@@ -154,7 +155,7 @@ export const styles = StyleSheet.create({
   expandedLabel: {
     fontSize: 11,
     fontWeight: "600",
-    color: "#49454F",
+    color: colors.textSecondary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 8,
@@ -174,7 +175,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#F3F2EF",
   },
   thresholdItemActive: {
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
   },
   thresholdBadge: {
     width: 20,
@@ -186,22 +187,22 @@ export const styles = StyleSheet.create({
   thresholdBadgeText: {
     fontSize: 11,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
   },
   thresholdValue: {
     fontSize: 12,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   thresholdValueActive: {
     fontWeight: "600",
-    color: "#1565C0",
+    color: colors.primaryDark,
   },
   whyContainer: {
     marginBottom: 12,
   },
   whyText: {
     fontSize: 13,
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     lineHeight: 18,
   },
   coachingContainer: {
@@ -209,7 +210,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     borderLeftWidth: 3,
-    borderLeftColor: "#FFB300",
+    borderLeftColor: colors.warningDark,
   },
   coachingLabel: {
     fontSize: 11,
@@ -225,7 +226,7 @@ export const styles = StyleSheet.create({
     lineHeight: 18,
   },
   complianceError: {
-    backgroundColor: "#FFF3E0",
+    backgroundColor: colors.warningLight,
     borderRadius: 12,
     padding: 16,
     marginTop: 16,

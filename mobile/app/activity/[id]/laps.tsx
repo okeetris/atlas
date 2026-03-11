@@ -8,6 +8,7 @@ import { View, Text, ScrollView } from "react-native";
 import { useActivity } from "../../../src/contexts/ActivityContext";
 import type { Lap } from "../../../src/types";
 import { styles } from "../../../src/styles/app/activity-detail/laps.styles";
+import { colors } from "../../../src/theme/colors";
 
 function formatPace(secPerKm: number): string {
   if (!secPerKm || secPerKm === 0) return "--:--";
@@ -30,16 +31,16 @@ function formatDistance(meters: number): string {
 }
 
 const intensityColors: Record<string, string> = {
-  Easy: "#4CAF50",
-  Moderate: "#8BC34A",
-  Tempo: "#FFC107",
+  Easy: colors.gradeA,
+  Moderate: colors.gradeB,
+  Tempo: colors.gradeC,
   Threshold: "#FF9800",
-  VO2max: "#F44336",
+  VO2max: colors.gradeD,
   Sprint: "#9C27B0",
 };
 
 function LapRow({ lap }: { lap: Lap }) {
-  const intensityColor = lap.intensity ? intensityColors[lap.intensity] || "#736F6C" : "#736F6C";
+  const intensityColor = lap.intensity ? intensityColors[lap.intensity] || colors.textTertiary : colors.textTertiary;
 
   return (
     <View style={styles.lapRow}>

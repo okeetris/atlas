@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -12,21 +13,21 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   backButton: {
     padding: 8,
   },
   backArrow: {
     fontSize: 24,
-    color: "#1976D2",
+    color: colors.primary,
   },
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   placeholder: {
     width: 40,
@@ -38,18 +39,18 @@ export const styles = StyleSheet.create({
     padding: 24,
   },
   infoCard: {
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
     padding: 16,
     marginBottom: 32,
     borderLeftWidth: 3,
-    borderLeftColor: "#90CAF9",
+    borderLeftColor: colors.primaryLightBorder,
   },
   infoText: {
     fontSize: 14,
-    color: "#1565C0",
+    color: colors.primaryDark,
     textAlign: "center",
   },
   converterRow: {
@@ -64,25 +65,25 @@ export const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 8,
     textAlign: "center",
   },
   input: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#DBD9D6",
+    borderColor: colors.borderDark,
     paddingHorizontal: 12,
     paddingVertical: 16,
     fontSize: 24,
     fontWeight: "600",
-    color: "#1976D2",
+    color: colors.primary,
     textAlign: "center",
   },
   equalsSign: {
     fontSize: 28,
-    color: "#9A9693",
+    color: colors.textHint,
     fontWeight: "300",
     marginTop: 20,
   },
@@ -95,7 +96,7 @@ export const styles = StyleSheet.create({
   clearButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#49454F",
+    color: colors.textSecondary,
     textAlign: "center",
   },
 });

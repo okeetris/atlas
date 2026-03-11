@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   content: {
     paddingBottom: 32,
@@ -14,9 +15,9 @@ export const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
     paddingHorizontal: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
     gap: 12,
   },
   backButton: {
@@ -24,17 +25,17 @@ export const styles = StyleSheet.create({
   },
   backArrow: {
     fontSize: 24,
-    color: "#1976D2",
+    color: colors.primary,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#49454F",
+    color: colors.textSecondary,
     marginTop: 24,
     marginBottom: 8,
     marginHorizontal: 16,
@@ -42,11 +43,11 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   card: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     marginHorizontal: 16,
     borderRadius: 12,
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -61,11 +62,11 @@ export const styles = StyleSheet.create({
   },
   rowLabel: {
     fontSize: 16,
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   rowValue: {
     fontSize: 16,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   statusRow: {
     flexDirection: "row",
@@ -79,15 +80,15 @@ export const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 16,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   divider: {
     height: 1,
-    backgroundColor: "#EDECE9",
+    backgroundColor: colors.border,
     marginHorizontal: 16,
   },
   button: {
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
     marginHorizontal: 16,
     marginVertical: 12,
     paddingVertical: 12,
@@ -95,16 +96,16 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonDisabled: {
-    backgroundColor: "#90CAF9",
+    backgroundColor: colors.primaryLightBorder,
   },
   buttonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "600",
   },
   segmentedControl: {
     flexDirection: "row",
-    backgroundColor: "#EDECE9",
+    backgroundColor: colors.border,
     borderRadius: 8,
     padding: 2,
   },
@@ -114,8 +115,8 @@ export const styles = StyleSheet.create({
     borderRadius: 6,
   },
   segmentActive: {
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
+    backgroundColor: colors.white,
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 1,
@@ -123,11 +124,11 @@ export const styles = StyleSheet.create({
   },
   segmentText: {
     fontSize: 14,
-    color: "#736F6C",
+    color: colors.textTertiary,
     fontWeight: "500",
   },
   segmentTextActive: {
-    color: "#1976D2",
+    color: colors.primary,
     fontWeight: "600",
   },
   destructiveRow: {
@@ -137,7 +138,7 @@ export const styles = StyleSheet.create({
   },
   destructiveText: {
     fontSize: 16,
-    color: "#F44336",
+    color: colors.errorLight,
     fontWeight: "500",
   },
   disconnectButton: {
@@ -147,10 +148,10 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#F44336",
+    borderColor: colors.errorLight,
   },
   disconnectText: {
-    color: "#F44336",
+    color: colors.errorLight,
     fontSize: 16,
     fontWeight: "500",
   },

@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   content: {
     padding: 16,
@@ -17,22 +18,22 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
     marginTop: 8,
   },
   card: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -45,7 +46,7 @@ export const styles = StyleSheet.create({
   checkIcon: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#4CAF50",
+    color: colors.success,
     marginRight: 12,
     width: 20,
   },
@@ -60,17 +61,17 @@ export const styles = StyleSheet.create({
   coachingText: {
     flex: 1,
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
     lineHeight: 20,
   },
   focusCard: {
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     borderRadius: 12,
     padding: 20,
     flexDirection: "row",
     alignItems: "center",
     borderLeftWidth: 3,
-    borderLeftColor: "#90CAF9",
+    borderLeftColor: colors.primaryLightBorder,
   },
   focusIcon: {
     fontSize: 24,
@@ -80,18 +81,18 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: "600",
-    color: "#1565C0",
+    color: colors.primaryDark,
     lineHeight: 24,
   },
   fatigueCard: {
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   fatigueMetric: {
     fontSize: 12,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   fatigueRow: {
@@ -102,11 +103,11 @@ export const styles = StyleSheet.create({
   fatigueValue: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   fatigueArrow: {
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   fatigueChange: {
     marginLeft: "auto",

@@ -1,35 +1,36 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   centered: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 24,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   errorText: {
     fontSize: 16,
-    color: "#D32F2F",
+    color: colors.error,
     marginBottom: 16,
   },
   backButton: {
     paddingHorizontal: 24,
     paddingVertical: 12,
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
     borderRadius: 24,
   },
   backButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontWeight: "600",
   },
   header: {
@@ -38,7 +39,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 12,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
   },
   backPressable: {
     padding: 8,
@@ -46,7 +47,7 @@ export const styles = StyleSheet.create({
   },
   backArrow: {
     fontSize: 24,
-    color: "#1976D2",
+    color: colors.primary,
   },
   headerText: {
     flex: 1,
@@ -59,7 +60,7 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     flexShrink: 1,
   },
   typeBadge: {
@@ -74,29 +75,29 @@ export const styles = StyleSheet.create({
     color: "#616161",
   },
   rdBadge: {
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: "#1976D2",
+    borderColor: colors.primary,
   },
   rdBadgeText: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#1976D2",
+    color: colors.primary,
   },
   date: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginTop: 2,
   },
   tabBar: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   tabLabel: {
     fontSize: 12,

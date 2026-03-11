@@ -1,15 +1,16 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 8,
     marginBottom: 16,
   },
   emptyText: {
     textAlign: "center",
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 40,
   },
   yAxis: {
@@ -22,14 +23,14 @@ export const styles = StyleSheet.create({
   },
   yLabel: {
     fontSize: 9,
-    color: "#9A9693",
+    color: colors.textHint,
     textAlign: "right",
   },
   yLabelIdeal: {
     color: "#BDBDBD",
   },
   yLabelCenter: {
-    color: "#4CAF50",
+    color: colors.success,
     fontWeight: "600",
   },
   sideIndicator: {
@@ -52,18 +53,18 @@ export const styles = StyleSheet.create({
   },
   tooltipTime: {
     fontSize: 11,
-    color: "#FFFFFF",
+    color: colors.white,
     fontWeight: "600",
   },
   tooltipValue: {
     fontSize: 14,
-    color: "#FFFFFF",
+    color: colors.white,
     fontWeight: "bold",
     marginTop: 2,
   },
   tooltipSide: {
     fontSize: 10,
-    color: "#90CAF9",
+    color: colors.primaryLightBorder,
     marginTop: 2,
   },
   xAxis: {
@@ -73,6 +74,6 @@ export const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
   },
 });

@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 2,
@@ -26,7 +27,7 @@ export const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 12,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   tooltip: {
     position: "absolute",
@@ -37,7 +38,7 @@ export const styles = StyleSheet.create({
   },
   tooltipTime: {
     fontSize: 12,
-    color: "#FFFFFF",
+    color: colors.white,
     fontWeight: "600",
     marginBottom: 4,
   },
@@ -53,7 +54,7 @@ export const styles = StyleSheet.create({
   },
   tooltipValue: {
     fontSize: 12,
-    color: "#FFFFFF",
+    color: colors.white,
   },
   xAxis: {
     flexDirection: "row",
@@ -62,13 +63,13 @@ export const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
   },
   yAxisLabel: {
     position: "absolute" as const,
     left: 2,
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
     textAlign: "right" as const,
     width: 20,
   },

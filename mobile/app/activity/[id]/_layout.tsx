@@ -10,6 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useActivityDetails } from "../../../src/hooks/useActivities";
 import { ActivityProvider } from "../../../src/contexts/ActivityContext";
 import { styles } from "../../../src/styles/app/activity-detail/layout.styles";
+import { colors } from "../../../src/theme/colors";
 
 function formatDate(dateString: string): string {
   if (!dateString) return "Unknown date";
@@ -42,7 +43,7 @@ export default function ActivityDetailLayout() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#1976D2" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>Loading analysis...</Text>
       </View>
     );
@@ -65,7 +66,7 @@ export default function ActivityDetailLayout() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backPressable}>
-            <Ionicons name="arrow-back" size={24} color="#1976D2" />
+            <Ionicons name="arrow-back" size={24} color={colors.primary} />
           </Pressable>
           <View style={styles.headerText}>
             <View style={styles.titleRow}>
@@ -98,8 +99,8 @@ export default function ActivityDetailLayout() {
           screenOptions={{
             headerShown: false,
             tabBarStyle: styles.tabBar,
-            tabBarActiveTintColor: "#1976D2",
-            tabBarInactiveTintColor: "#736F6C",
+            tabBarActiveTintColor: colors.primary,
+            tabBarInactiveTintColor: colors.textTertiary,
             tabBarLabelStyle: styles.tabLabel,
             tabBarIconStyle: styles.tabIcon,
           }}

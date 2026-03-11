@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -12,28 +13,28 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   backButton: {
     padding: 8,
   },
   backArrow: {
     fontSize: 24,
-    color: "#1976D2",
+    color: colors.primary,
   },
   title: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   clearBtn: {
     padding: 8,
   },
   clearBtnText: {
     fontSize: 14,
-    color: "#1976D2",
+    color: colors.primary,
     fontWeight: "600",
   },
   content: {
@@ -45,10 +46,10 @@ export const styles = StyleSheet.create({
     gap: 16,
   },
   card: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -57,7 +58,7 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#736F6C",
+    color: colors.textTertiary,
     textAlign: "left",
     marginBottom: 12,
   },
@@ -71,19 +72,19 @@ export const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    color: "#736F6C",
+    color: colors.textTertiary,
     marginBottom: 8,
   },
   smallInput: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: "#DBD9D6",
+    borderColor: colors.borderDark,
     width: "100%",
     height: 50,
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     textAlign: "center",
   },
   paceRow: {
@@ -97,7 +98,7 @@ export const styles = StyleSheet.create({
   paceLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#736F6C",
+    color: colors.textTertiary,
     marginBottom: 8,
   },
   paceFields: {
@@ -109,7 +110,7 @@ export const styles = StyleSheet.create({
   },
   fieldLabel: {
     fontSize: 11,
-    color: "#9A9693",
+    color: colors.textHint,
     marginBottom: 4,
   },
   distanceGrid: {
@@ -124,7 +125,7 @@ export const styles = StyleSheet.create({
   distanceLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#736F6C",
+    color: colors.textTertiary,
     marginBottom: 8,
   },
   timeFields: {
@@ -135,15 +136,15 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   timeFieldInput: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: "#DBD9D6",
+    borderColor: colors.borderDark,
     width: "100%",
     height: 50,
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     textAlign: "center",
   },
 });

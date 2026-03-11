@@ -9,6 +9,7 @@ import { View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "../../src/styles/app/tabs/layout.styles";
+import { colors } from "../../src/theme/colors";
 
 interface TabIconProps {
   name: string;
@@ -22,7 +23,7 @@ function TabIcon({ name, iconName, focused }: TabIconProps) {
       <Ionicons
         name={iconName}
         size={24}
-        color={focused ? "#1976D2" : "#736F6C"}
+        color={focused ? colors.primary : colors.textTertiary}
       />
       <Text
         style={[styles.tabLabel, focused && styles.tabLabelFocused]}
@@ -49,8 +50,8 @@ export default function TabLayout() {
           },
         ],
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#1976D2",
-        tabBarInactiveTintColor: "#736F6C",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
       }}
     >
       <Tabs.Screen

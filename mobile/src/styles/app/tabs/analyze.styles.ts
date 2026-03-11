@@ -1,22 +1,23 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   header: {
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   scroll: {
     flex: 1,
@@ -30,11 +31,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
     borderRadius: 16,
     padding: 20,
     elevation: 4,
-    shadowColor: "#1976D2",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -48,7 +49,7 @@ export const styles = StyleSheet.create({
   fetchButtonText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
   },
   errorBanner: {
     backgroundColor: "#FFEBEE",
@@ -57,7 +58,7 @@ export const styles = StyleSheet.create({
     marginTop: 12,
   },
   errorText: {
-    color: "#D32F2F",
+    color: colors.error,
     fontSize: 14,
     textAlign: "center",
   },
@@ -69,12 +70,12 @@ export const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#DBD9D6",
+    backgroundColor: colors.borderDark,
   },
   dividerText: {
     paddingHorizontal: 16,
     fontSize: 12,
-    color: "#9A9693",
+    color: colors.textHint,
     fontWeight: "500",
   },
   section: {
@@ -83,15 +84,15 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   recentList: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     overflow: "hidden",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -102,38 +103,38 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#EDECE9",
+    borderBottomColor: colors.border,
   },
   recentInfo: {
     flex: 1,
   },
   recentDate: {
     fontSize: 12,
-    color: "#9A9693",
+    color: colors.textHint,
     marginBottom: 2,
   },
   recentName: {
     fontSize: 15,
     fontWeight: "500",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   recentStats: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginTop: 2,
   },
   recentArrow: {
     fontSize: 18,
-    color: "#1976D2",
+    color: colors.primary,
     marginLeft: 12,
   },
   emptyState: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 32,
     alignItems: "center",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -141,11 +142,11 @@ export const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   emptyHint: {
     fontSize: 14,
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 4,
     textAlign: "center",
   },

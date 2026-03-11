@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { styles } from "../../src/styles/app/tools/glucose.styles";
+import { colors } from "../../src/theme/colors";
 
 const CONVERSION_FACTOR = 18.0182;
 
@@ -83,7 +84,7 @@ export default function GlucoseConverterScreen() {
                 onChangeText={handleMmolChange}
                 keyboardType="decimal-pad"
                 placeholder="0.0"
-                placeholderTextColor="#9A9693"
+                placeholderTextColor={colors.textHint}
                 selectTextOnFocus
               />
             </View>
@@ -100,7 +101,7 @@ export default function GlucoseConverterScreen() {
                 onChangeText={handleMgdlChange}
                 keyboardType="decimal-pad"
                 placeholder="0"
-                placeholderTextColor="#9A9693"
+                placeholderTextColor={colors.textHint}
                 selectTextOnFocus
               />
             </View>

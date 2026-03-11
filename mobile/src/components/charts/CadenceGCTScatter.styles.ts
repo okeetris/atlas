@@ -1,17 +1,18 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 const PADDING = { top: 20, right: 20, bottom: 40, left: 50 };
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 8,
     marginBottom: 16,
   },
   emptyText: {
     textAlign: "center",
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 60,
   },
   header: {
@@ -24,7 +25,7 @@ export const styles = StyleSheet.create({
   headerText: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   r2Badge: {
     backgroundColor: "#F3F2EF",
@@ -34,7 +35,7 @@ export const styles = StyleSheet.create({
   },
   r2Text: {
     fontSize: 11,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   yAxisLabel: {
     position: "absolute",
@@ -44,7 +45,7 @@ export const styles = StyleSheet.create({
   },
   axisLabelRotated: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
   },
   yAxis: {
     position: "absolute",
@@ -62,12 +63,12 @@ export const styles = StyleSheet.create({
   },
   axisValue: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
   },
   xAxisLabel: {
     textAlign: "center",
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 4,
   },
 });

@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -32,7 +33,7 @@ export const styles = StyleSheet.create({
   },
   date: {
     fontSize: 12,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   activityTypeBadge: {
     backgroundColor: "#E8E8E8",
@@ -57,11 +58,11 @@ export const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   workoutName: {
     fontSize: 13,
-    color: "#1976D2",
+    color: colors.primary,
     marginTop: 2,
   },
   stats: {
@@ -74,11 +75,11 @@ export const styles = StyleSheet.create({
   statValue: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#1976D2",
+    color: colors.primary,
   },
   statLabel: {
     fontSize: 12,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginTop: 2,
   },
   gradesRow: {
@@ -87,7 +88,7 @@ export const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#EDECE9",
+    borderTopColor: colors.border,
   },
   gradeItem: {
     alignItems: "center",
@@ -95,7 +96,7 @@ export const styles = StyleSheet.create({
   },
   gradeLabel: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
     fontWeight: "500",
   },
   gradeBadge: {
@@ -108,6 +109,6 @@ export const styles = StyleSheet.create({
   gradeText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
   },
 });

@@ -5,6 +5,7 @@
  */
 
 import type { TimeSeriesDataPoint, GarminHRZone } from "../types";
+import { colors } from "../theme/colors";
 
 export interface HRZone {
   zone: number;
@@ -16,7 +17,7 @@ export interface HRZone {
   percentage: number;
 }
 
-const ZONE_COLORS = ["#90CAF9", "#81C784", "#FFF176", "#FFB74D", "#E57373"];
+const ZONE_COLORS = [colors.zone1, colors.zone2, colors.zone3, colors.zone4, colors.zone5];
 const ZONE_NAMES = ["Recovery", "Easy", "Aerobic", "Threshold", "VO2max"];
 
 // Default zones as percentage of max HR (fallback if Garmin zones unavailable)

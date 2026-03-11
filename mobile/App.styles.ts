@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "./src/theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -12,25 +13,25 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   syncButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     borderRadius: 20,
     minWidth: 60,
     alignItems: "center",
   },
   syncButtonText: {
-    color: "#1976D2",
+    color: colors.primary,
     fontWeight: "600",
   },
   syncStatus: {
@@ -38,25 +39,25 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 12,
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     gap: 8,
   },
   syncStatusText: {
-    color: "#1976D2",
+    color: colors.primary,
     fontSize: 14,
   },
   syncError: {
     backgroundColor: "#FFEBEE",
   },
   syncSuccess: {
-    backgroundColor: "#E8F5E9",
+    backgroundColor: colors.successLight,
   },
   errorText: {
-    color: "#D32F2F",
+    color: colors.error,
     fontSize: 14,
   },
   successText: {
-    color: "#388E3C",
+    color: colors.successDark,
     fontSize: 14,
   },
   centered: {
@@ -68,23 +69,23 @@ export const styles = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   errorDetail: {
     marginTop: 8,
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
     textAlign: "center",
   },
   retryButton: {
     marginTop: 16,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
     borderRadius: 24,
   },
   retryButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontWeight: "600",
   },
   listContent: {
@@ -99,11 +100,11 @@ export const styles = StyleSheet.create({
   emptyText: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   emptyHint: {
     marginTop: 8,
     fontSize: 14,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
 });

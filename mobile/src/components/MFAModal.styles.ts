@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../theme/colors";
 
 export const styles = StyleSheet.create({
   overlay: {
@@ -12,13 +13,13 @@ export const styles = StyleSheet.create({
     padding: 24,
   },
   modal: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderRadius: 16,
     padding: 24,
     width: "100%",
     maxWidth: 400,
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -26,31 +27,31 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
     textAlign: "center",
   },
   description: {
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginBottom: 20,
     textAlign: "center",
     lineHeight: 20,
   },
   input: {
     borderWidth: 2,
-    borderColor: "#DBD9D6",
+    borderColor: colors.borderDark,
     borderRadius: 12,
     padding: 16,
     fontSize: 24,
     textAlign: "center",
     letterSpacing: 8,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   error: {
-    color: "#D32F2F",
+    color: colors.error,
     fontSize: 14,
     textAlign: "center",
     marginBottom: 16,
@@ -70,15 +71,15 @@ export const styles = StyleSheet.create({
     backgroundColor: "#F3F2EF",
   },
   cancelButtonText: {
-    color: "#49454F",
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: "600",
   },
   submitButton: {
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
   },
   submitButtonText: {
-    color: "#FFFFFF",
+    color: colors.white,
     fontSize: 16,
     fontWeight: "600",
   },

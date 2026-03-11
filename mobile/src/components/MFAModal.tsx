@@ -16,6 +16,7 @@ import {
   Platform,
 } from "react-native";
 import { styles } from "./MFAModal.styles";
+import { colors } from "../theme/colors";
 
 interface MFAModalProps {
   visible: boolean;
@@ -69,7 +70,7 @@ export function MFAModal({
               value={code}
               onChangeText={setCode}
               placeholder="Enter code"
-              placeholderTextColor="#9A9693"
+              placeholderTextColor={colors.textHint}
               keyboardType="number-pad"
               maxLength={10}
               autoFocus
@@ -97,7 +98,7 @@ export function MFAModal({
                 disabled={code.length < 4 || isSubmitting}
               >
                 {isSubmitting ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color={colors.white} />
                 ) : (
                   <Text style={styles.submitButtonText}>Verify</Text>
                 )}

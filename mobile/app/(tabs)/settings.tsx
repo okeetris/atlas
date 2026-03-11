@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { styles } from "../../src/styles/app/tabs/settings.styles";
+import { colors } from "../../src/theme/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useQueryClient } from "@tanstack/react-query";
@@ -212,13 +213,13 @@ export default function SettingsScreen() {
           <Text style={styles.rowLabel}>Garmin Account</Text>
           <View style={styles.statusRow}>
             {authLoading ? (
-              <ActivityIndicator size="small" color="#1976D2" />
+              <ActivityIndicator size="small" color={colors.primary} />
             ) : (
               <>
                 <View
                   style={[
                     styles.statusDot,
-                    { backgroundColor: isLoggedIn ? "#4CAF50" : "#9A9693" },
+                    { backgroundColor: isLoggedIn ? colors.success : colors.textHint },
                   ]}
                 />
                 <Text style={styles.statusText}>
@@ -235,7 +236,7 @@ export default function SettingsScreen() {
           <Text style={styles.rowLabel}>Backend Status</Text>
           <View style={styles.statusRow}>
             {backendStatus === "connecting" ? (
-              <ActivityIndicator size="small" color="#1976D2" />
+              <ActivityIndicator size="small" color={colors.primary} />
             ) : (
               <>
                 <View
@@ -243,8 +244,8 @@ export default function SettingsScreen() {
                     styles.statusDot,
                     {
                       backgroundColor: isBackendConnected
-                        ? "#4CAF50"
-                        : "#F44336",
+                        ? colors.success
+                        : colors.errorLight,
                     },
                   ]}
                 />
@@ -273,7 +274,7 @@ export default function SettingsScreen() {
               disabled={isSyncing}
             >
               {isSyncing ? (
-                <ActivityIndicator size="small" color="#FFFFFF" />
+                <ActivityIndicator size="small" color={colors.white} />
               ) : (
                 <Text style={styles.buttonText}>Sync Now</Text>
               )}
@@ -340,8 +341,8 @@ export default function SettingsScreen() {
           <Switch
             value={darkMode}
             onValueChange={handleDarkModeChange}
-            trackColor={{ false: "#DBD9D6", true: "#90CAF9" }}
-            thumbColor={darkMode ? "#1976D2" : "#F8F7F4"}
+            trackColor={{ false: colors.borderDark, true: colors.primaryLightBorder }}
+            thumbColor={darkMode ? colors.primary : colors.background}
           />
         </View>
       </View>

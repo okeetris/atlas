@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -16,7 +17,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 8,
     marginBottom: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
   },
   headerCell: {
     fontSize: 12,
@@ -42,19 +43,19 @@ export const styles = StyleSheet.create({
   },
   dataRowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#EDECE9",
+    borderBottomColor: colors.border,
   },
   distanceName: {
     fontSize: 14,
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   timeValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1976D2",
+    color: colors.primary,
   },
   paceValue: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
 });

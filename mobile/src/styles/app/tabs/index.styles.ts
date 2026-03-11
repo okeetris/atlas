@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: "row",
@@ -12,16 +13,16 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
   },
   greeting: {
     fontSize: 14,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   settingsButton: {
     padding: 8,
@@ -37,12 +38,12 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
     borderRadius: 12,
     padding: 20,
     marginBottom: 24,
     elevation: 4,
-    shadowColor: "#1976D2",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -58,7 +59,7 @@ export const styles = StyleSheet.create({
   analyzeCtaTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
   },
   analyzeCtaSubtitle: {
     fontSize: 13,
@@ -70,15 +71,15 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
   },
   latestCard: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -91,10 +92,10 @@ export const styles = StyleSheet.create({
   },
   latestDate: {
     fontSize: 13,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   complianceBadge: {
-    backgroundColor: "#E8F5E9",
+    backgroundColor: colors.successLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -102,17 +103,17 @@ export const styles = StyleSheet.create({
   complianceText: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#4CAF50",
+    color: colors.success,
   },
   latestTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   latestStats: {
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginBottom: 12,
   },
   gradesRow: {
@@ -120,9 +121,9 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: "#EDECE9",
+    borderTopColor: colors.border,
     borderBottomWidth: 1,
-    borderBottomColor: "#EDECE9",
+    borderBottomColor: colors.border,
     marginBottom: 12,
   },
   gradeItem: {
@@ -131,7 +132,7 @@ export const styles = StyleSheet.create({
   },
   gradeLabel: {
     fontSize: 11,
-    color: "#9A9693",
+    color: colors.textHint,
     fontWeight: "500",
   },
   gradeBadge: {
@@ -144,7 +145,7 @@ export const styles = StyleSheet.create({
   gradeText: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#FFFFFF",
+    color: colors.white,
   },
   viewDetailsRow: {
     flexDirection: "row",
@@ -154,16 +155,16 @@ export const styles = StyleSheet.create({
   },
   viewDetailsText: {
     fontSize: 14,
-    color: "#1976D2",
+    color: colors.primary,
     fontWeight: "500",
   },
   emptyCard: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 32,
     alignItems: "center",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -171,11 +172,11 @@ export const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   emptyHint: {
     fontSize: 14,
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 4,
   },
   quickActionsRow: {
@@ -184,19 +185,19 @@ export const styles = StyleSheet.create({
   },
   quickAction: {
     flex: 1,
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
   },
   quickActionLabel: {
     fontSize: 11,
-    color: "#49454F",
+    color: colors.textSecondary,
     fontWeight: "500",
     marginTop: 4,
   },
@@ -206,12 +207,12 @@ export const styles = StyleSheet.create({
   },
   toolCard: {
     flex: 1,
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 20,
     alignItems: "center",
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -219,22 +220,22 @@ export const styles = StyleSheet.create({
   toolTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginTop: 8,
     marginBottom: 2,
   },
   toolSubtitle: {
     fontSize: 12,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   onboardingCta: {
     alignItems: "center",
-    backgroundColor: "#1976D2",
+    backgroundColor: colors.primary,
     borderRadius: 16,
     padding: 32,
     marginBottom: 24,
     elevation: 4,
-    shadowColor: "#1976D2",
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -243,14 +244,14 @@ export const styles = StyleSheet.create({
   onboardingCtaTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: colors.white,
     textAlign: "center",
     lineHeight: 26,
   },
   onboardingCtaButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 24,
     paddingHorizontal: 24,
     paddingVertical: 12,
@@ -260,22 +261,22 @@ export const styles = StyleSheet.create({
   onboardingCtaButtonLabel: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#1976D2",
+    color: colors.primary,
   },
   valuePropCard: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 20,
     marginBottom: 24,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
   },
   valuePropText: {
     fontSize: 14,
-    color: "#49454F",
+    color: colors.textSecondary,
     lineHeight: 22,
     textAlign: "center",
   },

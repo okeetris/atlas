@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { useActivity } from "../../../src/contexts/ActivityContext";
 import { styles } from "../../../src/styles/app/activity-detail/charts.styles";
+import { colors } from "../../../src/theme/colors";
 import { InteractiveRunChart } from "../../../src/components/charts/InteractiveRunChart";
 import { GCTBalanceChart } from "../../../src/components/charts/GCTBalanceChart";
 import { CadenceGCTScatter } from "../../../src/components/charts/CadenceGCTScatter";
@@ -30,7 +31,7 @@ export default function ChartsTab() {
       configs.push({
         key: "cadence",
         label: "Cadence",
-        color: "#1976D2",
+        color: colors.cadence,
         unit: "spm",
         data: cadenceData,
         minValue: 150,
@@ -45,7 +46,7 @@ export default function ChartsTab() {
       configs.push({
         key: "gct",
         label: "GCT",
-        color: "#F57C00",
+        color: colors.gct,
         unit: "ms",
         data: gctData,
         minValue: 180,
@@ -70,7 +71,7 @@ export default function ChartsTab() {
       {
         key: "hr",
         label: "Heart Rate",
-        color: "#E53935",
+        color: colors.heartRate,
         unit: "bpm",
         data: hrData,
       },
@@ -91,7 +92,7 @@ export default function ChartsTab() {
       {
         key: "glucose",
         label: "Glucose",
-        color: "#AB47BC",
+        color: colors.glucose,
         unit: "mg/dL",
         data: glucoseData,
         minValue: 50,
@@ -140,7 +141,7 @@ export default function ChartsTab() {
           <InteractiveRunChart
             configs={chartConfigs}
             height={220}
-            referenceZone={{ min: 170, max: 180, color: "rgba(25, 118, 210, 0.10)" }}
+            referenceZone={{ min: 170, max: 180, color: "rgba(25, 118, 210, 0.10)" /* colors.primary @ 10% */ }}
           />
           <Text style={styles.zoneLabel}>Shaded zone: 170–180 spm target cadence</Text>
         </>
@@ -161,7 +162,7 @@ export default function ChartsTab() {
           <InteractiveRunChart
             configs={glucoseChartConfigs}
             height={180}
-            referenceZone={{ min: 72, max: 180, color: "rgba(76, 175, 80, 0.15)" }}
+            referenceZone={{ min: 72, max: 180, color: "rgba(76, 175, 80, 0.15)" /* colors.success @ 15% */ }}
           />
         </>
       )}

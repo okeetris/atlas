@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -20,11 +21,11 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   avgHR: {
     fontSize: 13,
-    color: "#E57373",
+    color: colors.zone5,
     fontWeight: "500",
   },
   barContainer: {
@@ -42,7 +43,7 @@ export const styles = StyleSheet.create({
   barLabel: {
     fontSize: 11,
     fontWeight: "bold",
-    color: "#000000",
+    color: colors.shadow,
     opacity: 0.7,
   },
   breakdown: {
@@ -65,7 +66,7 @@ export const styles = StyleSheet.create({
   },
   zoneName: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
   },
   zoneRange: {
     fontSize: 11,
@@ -79,14 +80,14 @@ export const styles = StyleSheet.create({
   },
   zoneTime: {
     fontSize: 13,
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     fontWeight: "500",
     minWidth: 50,
     textAlign: "right",
   },
   zonePct: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     minWidth: 35,
     textAlign: "right",
   },

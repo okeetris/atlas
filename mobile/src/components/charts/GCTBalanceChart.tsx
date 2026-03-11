@@ -17,6 +17,7 @@ import {
   Rect,
 } from "@shopify/react-native-skia";
 import { styles } from "./GCTBalanceChart.styles";
+import { colors } from "../../theme/colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -187,27 +188,27 @@ export function GCTBalanceChart({ data, height = 180 }: GCTBalanceChartProps) {
             y={idealZoneY}
             width={chartWidth}
             height={idealZoneHeight}
-            color="rgba(76, 175, 80, 0.15)"
+            color="rgba(76, 175, 80, 0.15)" /* colors.success @ 15% */
           />
 
           {/* Reference lines */}
           <Line
             p1={vec(PADDING.left, getY(50))}
             p2={vec(PADDING.left + chartWidth, getY(50))}
-            color="#4CAF50"
+            color={colors.success}
             strokeWidth={1}
             style="stroke"
           />
           <Line
             p1={vec(PADDING.left, getY(49))}
             p2={vec(PADDING.left + chartWidth, getY(49))}
-            color="#DBD9D6"
+            color={colors.borderDark}
             strokeWidth={1}
           />
           <Line
             p1={vec(PADDING.left, getY(51))}
             p2={vec(PADDING.left + chartWidth, getY(51))}
-            color="#DBD9D6"
+            color={colors.borderDark}
             strokeWidth={1}
           />
 
@@ -215,7 +216,7 @@ export function GCTBalanceChart({ data, height = 180 }: GCTBalanceChartProps) {
           {pathData && (
             <Path
               path={pathData}
-              color="#1976D2"
+              color={colors.primary}
               style="stroke"
               strokeWidth={2}
             />
@@ -227,14 +228,14 @@ export function GCTBalanceChart({ data, height = 180 }: GCTBalanceChartProps) {
               <Line
                 p1={vec(tooltipData.x, PADDING.top)}
                 p2={vec(tooltipData.x, PADDING.top + chartHeight)}
-                color="#1976D2"
+                color={colors.primary}
                 strokeWidth={1}
               />
               <Circle
                 cx={tooltipData.x}
                 cy={getY(tooltipData.value)}
                 r={5}
-                color="#1976D2"
+                color={colors.primary}
               />
             </>
           )}

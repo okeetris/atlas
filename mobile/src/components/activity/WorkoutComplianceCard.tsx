@@ -9,6 +9,7 @@ import { useState } from "react";
 import { View, Text, Pressable, LayoutAnimation } from "react-native";
 import type { WorkoutCompliance, StepCompliance } from "../../types";
 import { styles } from "./WorkoutComplianceCard.styles";
+import { colors } from "../../theme/colors";
 
 interface Props {
   compliance: WorkoutCompliance;
@@ -34,12 +35,12 @@ function formatDuration(seconds: number): string {
 }
 
 const statusConfig: Record<string, { icon: string; color: string; label: string }> = {
-  hit: { icon: "✓", color: "#4CAF50", label: "Hit" },
-  partial: { icon: "~", color: "#FFC107", label: "Close" },
+  hit: { icon: "✓", color: colors.gradeA, label: "Hit" },
+  partial: { icon: "~", color: colors.gradeC, label: "Close" },
   fast: { icon: "↑", color: "#2196F3", label: "Fast" },
-  missed: { icon: "✗", color: "#F44336", label: "Missed" },
+  missed: { icon: "✗", color: colors.gradeD, label: "Missed" },
   skipped: { icon: "⏭", color: "#9C27B0", label: "Skipped" },
-  no_target: { icon: "-", color: "#9A9693", label: "No Target" },
+  no_target: { icon: "-", color: colors.textHint, label: "No Target" },
 };
 
 function PaceComplianceBar({ step }: { step: StepCompliance }) {
@@ -70,7 +71,7 @@ function PaceComplianceBar({ step }: { step: StepCompliance }) {
 
   const isInRange = actual >= fastTarget && actual <= slowTarget;
   const isFast = actual < fastTarget;
-  const markerColor = isInRange ? "#4CAF50" : isFast ? "#2196F3" : "#F44336";
+  const markerColor = isInRange ? colors.gradeA : isFast ? "#2196F3" : colors.gradeD;
 
   return (
     <View style={styles.paceBarContainer}>
@@ -116,7 +117,7 @@ function StepCard({ step, index }: { step: StepCompliance; index: number }) {
           <Text style={[styles.stepStatusIcon, { color: config.color }]}>{config.icon}</Text>
         </View>
         <View style={styles.stepTitleContainer}>
-          <Text style={[styles.stepType, isSkipped && { textDecorationLine: "line-through", color: "#9A9693" }]}>
+          <Text style={[styles.stepType, isSkipped && { textDecorationLine: "line-through", color: colors.textHint }]}>
             {step.stepType}
           </Text>
           {isSkipped && step.actualDurationSec != null && step.targetDurationSec ? (
@@ -202,10 +203,10 @@ export function WorkoutComplianceCard({ compliance, defaultExpanded }: Props) {
   // Compliance percent color based on value
   const complianceColor =
     compliance.compliancePercent >= 80
-      ? "#4CAF50"
+      ? colors.gradeA
       : compliance.compliancePercent >= 50
-        ? "#FFC107"
-        : "#F44336";
+        ? colors.gradeC
+        : colors.gradeD;
 
   // Distance status
   const distanceStatusText = compliance.distanceStatus === "short"
@@ -238,15 +239,15 @@ export function WorkoutComplianceCard({ compliance, defaultExpanded }: Props) {
       {/* Summary stats */}
       <View style={styles.summaryRow}>
         <View style={styles.summaryItem}>
-          <Text style={[styles.summaryValue, { color: "#4CAF50" }]}>{compliance.stepsHit}</Text>
+          <Text style={[styles.summaryValue, { color: colors.gradeA }]}>{compliance.stepsHit}</Text>
           <Text style={styles.summaryLabel}>Hit</Text>
         </View>
         <View style={styles.summaryItem}>
-          <Text style={[styles.summaryValue, { color: "#FFC107" }]}>{compliance.stepsPartial}</Text>
+          <Text style={[styles.summaryValue, { color: colors.gradeC }]}>{compliance.stepsPartial}</Text>
           <Text style={styles.summaryLabel}>Partial</Text>
         </View>
         <View style={styles.summaryItem}>
-          <Text style={[styles.summaryValue, { color: "#F44336" }]}>{compliance.stepsMissed}</Text>
+          <Text style={[styles.summaryValue, { color: colors.gradeD }]}>{compliance.stepsMissed}</Text>
           <Text style={styles.summaryLabel}>Missed</Text>
         </View>
         {(compliance.stepsSkipped ?? 0) > 0 && (

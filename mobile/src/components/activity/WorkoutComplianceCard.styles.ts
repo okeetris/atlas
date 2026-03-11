@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../theme/colors";
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -25,11 +26,11 @@ export const styles = StyleSheet.create({
   workoutName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   workoutDescription: {
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     marginTop: 4,
   },
   complianceBadge: {
@@ -46,9 +47,9 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: "#EDECE9",
+    borderTopColor: colors.border,
     borderBottomWidth: 1,
-    borderBottomColor: "#EDECE9",
+    borderBottomColor: colors.border,
   },
   summaryItem: {
     alignItems: "center",
@@ -56,11 +57,11 @@ export const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   summaryLabel: {
     fontSize: 11,
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 2,
   },
   expandButton: {
@@ -72,22 +73,22 @@ export const styles = StyleSheet.create({
   },
   expandButtonText: {
     fontSize: 13,
-    color: "#1976D2",
+    color: colors.primary,
     fontWeight: "500",
   },
   expandChevron: {
     fontSize: 10,
-    color: "#1976D2",
+    color: colors.primary,
   },
   stepsContainer: {
     gap: 12,
   },
   stepCard: {
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 12,
     borderLeftWidth: 3,
-    borderLeftColor: "#DBD9D6",
+    borderLeftColor: colors.borderDark,
   },
   stepHeader: {
     flexDirection: "row",
@@ -111,11 +112,11 @@ export const styles = StyleSheet.create({
   stepType: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   stepLapsLabel: {
     fontSize: 11,
-    color: "#9A9693",
+    color: colors.textHint,
     marginTop: 1,
   },
   stepPaceContainer: {
@@ -131,7 +132,7 @@ export const styles = StyleSheet.create({
   },
   paceBarTrack: {
     height: 8,
-    backgroundColor: "#DBD9D6",
+    backgroundColor: colors.borderDark,
     borderRadius: 4,
     position: "relative",
     overflow: "hidden",
@@ -158,7 +159,7 @@ export const styles = StyleSheet.create({
   },
   paceBarLabel: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
   },
   stepDetails: {
     flexDirection: "row",
@@ -176,12 +177,12 @@ export const styles = StyleSheet.create({
   },
   stepDetailLabel: {
     fontSize: 11,
-    color: "#9A9693",
+    color: colors.textHint,
   },
   stepDetailValue: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   stepDetailTarget: {
     fontSize: 11,
@@ -189,7 +190,7 @@ export const styles = StyleSheet.create({
   },
   stepDetailElapsed: {
     fontSize: 10,
-    color: "#9A9693",
+    color: colors.textHint,
     fontStyle: "italic",
     marginLeft: 4,
   },

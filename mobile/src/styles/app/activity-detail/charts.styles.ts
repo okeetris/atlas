@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   content: {
     padding: 16,
@@ -17,24 +18,24 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
     marginTop: 8,
   },
   chartHint: {
     fontSize: 12,
-    color: "#9A9693",
+    color: colors.textHint,
     marginBottom: 8,
     marginTop: -8,
   },
   zoneLabel: {
     fontSize: 11,
-    color: "#9A9693",
+    color: colors.textHint,
     textAlign: "center",
     marginTop: 8,
     marginBottom: 12,

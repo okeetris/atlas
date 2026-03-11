@@ -1,13 +1,14 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   tabBar: {
     paddingTop: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: "#DBD9D6",
+    borderTopColor: colors.borderDark,
     elevation: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -22,11 +23,11 @@ export const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 11,
-    color: "#736F6C",
+    color: colors.textTertiary,
     fontWeight: "500",
   },
   tabLabelFocused: {
-    color: "#1976D2",
+    color: colors.primary,
     fontWeight: "600",
   },
 });

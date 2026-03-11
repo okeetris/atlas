@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import { View, Text, Dimensions } from "react-native";
 import { Canvas, Circle, Line, vec } from "@shopify/react-native-skia";
 import { styles } from "./CadenceGCTScatter.styles";
+import { colors } from "../../theme/colors";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -148,7 +149,7 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
         ? "Moderate"
         : "Weak";
   const correlationColor =
-    regression.slope < 0 ? "#4CAF50" : "#F44336"; // Negative slope is good
+    regression.slope < 0 ? colors.gradeA : colors.gradeD; // Negative slope is good
 
   return (
     <View style={[styles.container, { height }]}>
@@ -170,7 +171,7 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
               key={`h-${ratio}`}
               p1={vec(PADDING.left, PADDING.top + chartHeight * ratio)}
               p2={vec(PADDING.left + chartWidth, PADDING.top + chartHeight * ratio)}
-              color="#EDECE9"
+              color={colors.border}
               strokeWidth={1}
             />
           ))}
@@ -179,7 +180,7 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
               key={`v-${ratio}`}
               p1={vec(PADDING.left + chartWidth * ratio, PADDING.top)}
               p2={vec(PADDING.left + chartWidth * ratio, PADDING.top + chartHeight)}
-              color="#EDECE9"
+              color={colors.border}
               strokeWidth={1}
             />
           ))}
@@ -202,7 +203,7 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
                 cx={x}
                 cy={y}
                 r={3}
-                color="rgba(25, 118, 210, 0.4)"
+                color="rgba(25, 118, 210, 0.4)" /* colors.primary @ 40% */
               />
             );
           })}

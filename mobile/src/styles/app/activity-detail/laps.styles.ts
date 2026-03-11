@@ -1,9 +1,10 @@
 import { StyleSheet } from "react-native";
+import { colors } from "../../../theme/colors";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F8F7F4",
+    backgroundColor: colors.background,
   },
   content: {
     padding: 16,
@@ -17,21 +18,21 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
     marginBottom: 12,
     marginTop: 8,
   },
   lapsContainer: {
-    backgroundColor: "#FEFEFE",
+    backgroundColor: colors.card,
     borderRadius: 12,
     padding: 12,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.12,
     shadowRadius: 3,
@@ -40,13 +41,13 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#DBD9D6",
+    borderBottomColor: colors.borderDark,
     marginBottom: 8,
   },
   headerLabel: {
     fontSize: 11,
     fontWeight: "600",
-    color: "#736F6C",
+    color: colors.textTertiary,
     textTransform: "uppercase",
   },
   headerPace: {
@@ -65,13 +66,13 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#EDECE9",
+    borderBottomColor: colors.border,
   },
   lapNumber: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#E3F2FD",
+    backgroundColor: colors.primaryLight,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
@@ -79,7 +80,7 @@ export const styles = StyleSheet.create({
   lapNumberText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#1976D2",
+    color: colors.primary,
   },
   lapDetails: {
     flex: 1,
@@ -92,18 +93,18 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: "600",
-    color: "#1C1B1F",
+    color: colors.textPrimary,
   },
   lapDistance: {
     width: 70,
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     textAlign: "right",
   },
   lapDuration: {
     width: 50,
     fontSize: 13,
-    color: "#49454F",
+    color: colors.textSecondary,
     textAlign: "right",
   },
   lapMetrics: {
@@ -114,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   lapMetric: {
     fontSize: 12,
-    color: "#736F6C",
+    color: colors.textTertiary,
   },
   intensityBadge: {
     paddingHorizontal: 8,
