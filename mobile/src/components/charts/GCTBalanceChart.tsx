@@ -201,13 +201,13 @@ export function GCTBalanceChart({ data, height = 180 }: GCTBalanceChartProps) {
           <Line
             p1={vec(PADDING.left, getY(49))}
             p2={vec(PADDING.left + chartWidth, getY(49))}
-            color="#E0E0E0"
+            color="#DBD9D6"
             strokeWidth={1}
           />
           <Line
             p1={vec(PADDING.left, getY(51))}
             p2={vec(PADDING.left + chartWidth, getY(51))}
-            color="#E0E0E0"
+            color="#DBD9D6"
             strokeWidth={1}
           />
 

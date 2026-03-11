@@ -14,6 +14,8 @@ import {
   Platform,
   UIManager,
 } from "react-native";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useActivity } from "../../../src/contexts/ActivityContext";
 import { styles } from "../../../src/styles/app/activity-detail/index.styles";
 import { WorkoutComplianceCard } from "../../../src/components/activity/WorkoutComplianceCard";
@@ -90,7 +92,11 @@ function MetricCard({
     >
       <View style={styles.metricHeader}>
         <Text style={styles.metricLabel}>{label}</Text>
-        <Text style={styles.expandIndicator}>{isExpanded ? "−" : "+"}</Text>
+        <Ionicons
+          name={isExpanded ? "chevron-up" : "chevron-down"}
+          size={20}
+          color="#49454F"
+        />
       </View>
       <View style={styles.metricRow}>
         <Text style={styles.metricValue}>{value}</Text>
@@ -148,6 +154,7 @@ function MetricCard({
 
 export default function SummaryTab() {
   const { activity } = useActivity();
+  const router = useRouter();
   const [expandedMetric, setExpandedMetric] = useState<string | null>(null);
 
   const toggleMetric = (metricKey: string) => {
@@ -179,7 +186,7 @@ export default function SummaryTab() {
       return activity.hrZones.map((z) => ({
         zone: z.zone,
         name: z.name || `Zone ${z.zone}`,
-        color: z.color || "#9E9E9E",
+        color: z.color || "#9A9693",
         minHR: z.minHR || 0,
         maxHR: z.maxHR || 0,
         seconds: z.seconds,
@@ -218,9 +225,18 @@ export default function SummaryTab() {
       </View>
 
       {/* At-a-Glance */}
-      <View style={styles.glanceCard}>
-        <Text style={styles.glanceText}>{coaching.atAGlance}</Text>
-      </View>
+      <Pressable
+        style={styles.glanceCard}
+        onPress={() => router.navigate("./coaching")}
+        accessibilityRole="button"
+        accessibilityHint="Navigate to coaching tab"
+      >
+        <View style={styles.glanceTextContainer}>
+          <Text style={styles.glanceText}>{coaching.atAGlance}</Text>
+          <Text style={styles.glanceCTA}>See coaching recommendations</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={20} color="#1976D2" />
+      </Pressable>
 
       {/* Running Dynamics */}
       <Text style={styles.sectionTitle}>Running Dynamics</Text>

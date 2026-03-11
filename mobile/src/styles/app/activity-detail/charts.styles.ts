@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   content: {
     padding: 16,
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#757575",
+    color: "#736F6C",
   },
   sectionTitle: {
     fontSize: 16,
@@ -28,8 +28,15 @@ export const styles = StyleSheet.create({
   },
   chartHint: {
     fontSize: 12,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginBottom: 8,
     marginTop: -8,
+  },
+  zoneLabel: {
+    fontSize: 11,
+    color: "#9A9693",
+    textAlign: "center",
+    marginTop: 8,
+    marginBottom: 12,
   },
 });

@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 2,
@@ -62,13 +62,13 @@ export const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
   },
   yAxisLabel: {
     position: "absolute" as const,
     left: 2,
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
     textAlign: "right" as const,
     width: 20,
   },

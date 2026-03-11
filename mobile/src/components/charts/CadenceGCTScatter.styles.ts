@@ -4,14 +4,14 @@ const PADDING = { top: 20, right: 20, bottom: 40, left: 50 };
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 8,
     marginBottom: 16,
   },
   emptyText: {
     textAlign: "center",
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 60,
   },
   header: {
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     color: "#1C1B1F",
   },
   r2Badge: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#F3F2EF",
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   },
   axisLabelRotated: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
   },
   yAxis: {
     position: "absolute",
@@ -62,12 +62,12 @@ export const styles = StyleSheet.create({
   },
   axisValue: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
   },
   xAxisLabel: {
     textAlign: "center",
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 4,
   },
 });

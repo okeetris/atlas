@@ -215,50 +215,56 @@ export default function PaceConverterScreen() {
           keyboardShouldPersistTaps="handled"
         >
           {/* Speeds Section */}
-          <Text style={styles.sectionTitle}>SPEEDS</Text>
-          <View style={styles.speedRow}>
-            <SpeedInput label="mph" value={mph} onChange={handleMphChange} />
-            <SpeedInput label="kph" value={kph} onChange={handleKphChange} />
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Speeds</Text>
+            <View style={styles.speedRow}>
+              <SpeedInput label="mph" value={mph} onChange={handleMphChange} />
+              <SpeedInput label="kph" value={kph} onChange={handleKphChange} />
+            </View>
           </View>
 
           {/* Paces Section */}
-          <Text style={styles.sectionTitle}>PACES</Text>
-          <View style={styles.paceRow}>
-            <PaceInput
-              label="mins/mile"
-              pace={pacePerMile}
-              onChange={handlePacePerMileChange}
-            />
-            <PaceInput
-              label="mins/km"
-              pace={pacePerKm}
-              onChange={handlePacePerKmChange}
-            />
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Paces</Text>
+            <View style={styles.paceRow}>
+              <PaceInput
+                label="mins/mile"
+                pace={pacePerMile}
+                onChange={handlePacePerMileChange}
+              />
+              <PaceInput
+                label="mins/km"
+                pace={pacePerKm}
+                onChange={handlePacePerKmChange}
+              />
+            </View>
           </View>
 
           {/* Common Distances Section */}
-          <Text style={styles.sectionTitle}>COMMON DISTANCES</Text>
-          <View style={styles.distanceGrid}>
-            <TimeInput
-              label="5k"
-              time={time5k}
-              onChange={createTimeHandler(DISTANCES["5k"], setTime5k, time5k)}
-            />
-            <TimeInput
-              label="10k"
-              time={time10k}
-              onChange={createTimeHandler(DISTANCES["10k"], setTime10k, time10k)}
-            />
-            <TimeInput
-              label="half mara"
-              time={timeHalf}
-              onChange={createTimeHandler(DISTANCES.half, setTimeHalf, timeHalf)}
-            />
-            <TimeInput
-              label="marathon"
-              time={timeMarathon}
-              onChange={createTimeHandler(DISTANCES.marathon, setTimeMarathon, timeMarathon)}
-            />
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Common Distances</Text>
+            <View style={styles.distanceGrid}>
+              <TimeInput
+                label="5k"
+                time={time5k}
+                onChange={createTimeHandler(DISTANCES["5k"], setTime5k, time5k)}
+              />
+              <TimeInput
+                label="10k"
+                time={time10k}
+                onChange={createTimeHandler(DISTANCES["10k"], setTime10k, time10k)}
+              />
+              <TimeInput
+                label="half mara"
+                time={timeHalf}
+                onChange={createTimeHandler(DISTANCES.half, setTimeHalf, timeHalf)}
+              />
+              <TimeInput
+                label="marathon"
+                time={timeMarathon}
+                onChange={createTimeHandler(DISTANCES.marathon, setTimeMarathon, timeMarathon)}
+              />
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

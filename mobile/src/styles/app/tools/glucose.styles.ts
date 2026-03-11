@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   header: {
     flexDirection: "row",
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 16,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
   },
   backButton: {
     padding: 8,
@@ -40,8 +40,12 @@ export const styles = StyleSheet.create({
   infoCard: {
     backgroundColor: "#E3F2FD",
     borderRadius: 12,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
     padding: 16,
     marginBottom: 32,
+    borderLeftWidth: 3,
+    borderLeftColor: "#90CAF9",
   },
   infoText: {
     fontSize: 14,
@@ -65,10 +69,10 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#E0E0E0",
+    borderColor: "#DBD9D6",
     paddingHorizontal: 12,
     paddingVertical: 16,
     fontSize: 24,
@@ -78,12 +82,12 @@ export const styles = StyleSheet.create({
   },
   equalsSign: {
     fontSize: 28,
-    color: "#9E9E9E",
+    color: "#9A9693",
     fontWeight: "300",
     marginTop: 20,
   },
   clearButton: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#F3F2EF",
     borderRadius: 12,
     paddingVertical: 14,
     marginTop: 32,

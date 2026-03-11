@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   content: {
     padding: 16,
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#757575",
+    color: "#736F6C",
   },
   sectionTitle: {
     fontSize: 16,
@@ -27,26 +27,26 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   lapsContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 12,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
   },
   lapsHeader: {
     flexDirection: "row",
     paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
     marginBottom: 8,
   },
   headerLabel: {
     fontSize: 11,
     fontWeight: "600",
-    color: "#757575",
+    color: "#736F6C",
     textTransform: "uppercase",
   },
   headerPace: {
@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#EDECE9",
   },
   lapNumber: {
     width: 28,
@@ -114,7 +114,7 @@ export const styles = StyleSheet.create({
   },
   lapMetric: {
     fontSize: 12,
-    color: "#757575",
+    color: "#736F6C",
   },
   intensityBadge: {
     paddingHorizontal: 8,

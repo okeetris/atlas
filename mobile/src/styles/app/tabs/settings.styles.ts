@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   content: {
     paddingBottom: 32,
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
     gap: 12,
   },
   backButton: {
@@ -42,14 +42,14 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     marginHorizontal: 16,
     borderRadius: 12,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
     elevation: 2,
   },
   row: {
@@ -83,7 +83,7 @@ export const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#EDECE9",
     marginHorizontal: 16,
   },
   button: {
@@ -104,7 +104,7 @@ export const styles = StyleSheet.create({
   },
   segmentedControl: {
     flexDirection: "row",
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "#EDECE9",
     borderRadius: 8,
     padding: 2,
   },
@@ -117,13 +117,13 @@ export const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.12,
     shadowRadius: 1,
     elevation: 1,
   },
   segmentText: {
     fontSize: 14,
-    color: "#757575",
+    color: "#736F6C",
     fontWeight: "500",
   },
   segmentTextActive: {

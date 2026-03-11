@@ -1,26 +1,29 @@
 /**
  * Tab Navigator Layout
  *
- * Bottom tab navigation with Home, Activities, and Analyze tabs.
+ * Bottom tab navigation with Home, Activities, and Sync tabs.
  */
 
 import { Tabs } from "expo-router";
 import { View, Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles } from "../../src/styles/app/tabs/layout.styles";
 
 interface TabIconProps {
   name: string;
-  icon: string;
+  iconName: keyof typeof Ionicons.glyphMap;
   focused: boolean;
 }
 
-function TabIcon({ name, icon, focused }: TabIconProps) {
+function TabIcon({ name, iconName, focused }: TabIconProps) {
   return (
     <View style={styles.tabIconContainer}>
-      <Text style={[styles.tabIcon, focused && styles.tabIconFocused]}>
-        {icon}
-      </Text>
+      <Ionicons
+        name={iconName}
+        size={24}
+        color={focused ? "#1976D2" : "#736F6C"}
+      />
       <Text
         style={[styles.tabLabel, focused && styles.tabLabelFocused]}
         numberOfLines={1}
@@ -47,7 +50,7 @@ export default function TabLayout() {
         ],
         tabBarShowLabel: false,
         tabBarActiveTintColor: "#1976D2",
-        tabBarInactiveTintColor: "#757575",
+        tabBarInactiveTintColor: "#736F6C",
       }}
     >
       <Tabs.Screen
@@ -55,7 +58,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="Home" icon="🏠" focused={focused} />
+            <TabIcon name="Home" iconName={focused ? "home" : "home-outline"} focused={focused} />
           ),
         }}
       />
@@ -64,16 +67,16 @@ export default function TabLayout() {
         options={{
           title: "Runs",
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="Runs" icon="🏃" focused={focused} />
+            <TabIcon name="Runs" iconName={focused ? "fitness" : "fitness-outline"} focused={focused} />
           ),
         }}
       />
       <Tabs.Screen
         name="analyze"
         options={{
-          title: "Analyze",
+          title: "New",
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="Analyze" icon="📊" focused={focused} />
+            <TabIcon name="New" iconName={focused ? "add-circle" : "add-circle-outline"} focused={focused} />
           ),
         }}
       />

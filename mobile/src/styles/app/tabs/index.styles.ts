@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   header: {
     flexDirection: "row",
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 14,
-    color: "#757575",
+    color: "#736F6C",
   },
   title: {
     fontSize: 28,
@@ -25,9 +25,6 @@ export const styles = StyleSheet.create({
   },
   settingsButton: {
     padding: 8,
-  },
-  settingsIcon: {
-    fontSize: 24,
   },
   scroll: {
     flex: 1,
@@ -41,7 +38,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#1976D2",
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 20,
     marginBottom: 24,
     elevation: 4,
@@ -55,9 +52,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 16,
   },
-  analyzeCtaIcon: {
-    fontSize: 32,
-  },
   analyzeCtaText: {
     gap: 2,
   },
@@ -70,10 +64,6 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: "rgba(255,255,255,0.8)",
   },
-  analyzeCtaArrow: {
-    fontSize: 24,
-    color: "#FFFFFF",
-  },
   section: {
     marginBottom: 24,
   },
@@ -84,14 +74,14 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   latestCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
+    backgroundColor: "#FEFEFE",
+    borderRadius: 12,
     padding: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   latestHeader: {
     flexDirection: "row",
@@ -101,7 +91,7 @@ export const styles = StyleSheet.create({
   },
   latestDate: {
     fontSize: 13,
-    color: "#757575",
+    color: "#736F6C",
   },
   complianceBadge: {
     backgroundColor: "#E8F5E9",
@@ -130,9 +120,9 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
+    borderTopColor: "#EDECE9",
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#EDECE9",
     marginBottom: 12,
   },
   gradeItem: {
@@ -141,7 +131,7 @@ export const styles = StyleSheet.create({
   },
   gradeLabel: {
     fontSize: 11,
-    color: "#9E9E9E",
+    color: "#9A9693",
     fontWeight: "500",
   },
   gradeBadge: {
@@ -167,20 +157,16 @@ export const styles = StyleSheet.create({
     color: "#1976D2",
     fontWeight: "500",
   },
-  viewDetailsArrow: {
-    fontSize: 16,
-    color: "#1976D2",
-  },
   emptyCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
+    backgroundColor: "#FEFEFE",
+    borderRadius: 12,
     padding: 32,
     alignItems: "center",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   emptyText: {
     fontSize: 16,
@@ -189,7 +175,7 @@ export const styles = StyleSheet.create({
   },
   emptyHint: {
     fontSize: 14,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 4,
   },
   quickActionsRow: {
@@ -198,24 +184,21 @@ export const styles = StyleSheet.create({
   },
   quickAction: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  quickActionIcon: {
-    fontSize: 24,
-    marginBottom: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
   },
   quickActionLabel: {
     fontSize: 11,
     color: "#49454F",
     fontWeight: "500",
+    marginTop: 4,
   },
   toolsRow: {
     flexDirection: "row",
@@ -223,28 +206,77 @@ export const styles = StyleSheet.create({
   },
   toolCard: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
+    backgroundColor: "#FEFEFE",
+    borderRadius: 12,
     padding: 20,
     alignItems: "center",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  toolIcon: {
-    fontSize: 32,
-    marginBottom: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   toolTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#1C1B1F",
+    marginTop: 8,
     marginBottom: 2,
   },
   toolSubtitle: {
     fontSize: 12,
-    color: "#757575",
+    color: "#736F6C",
+  },
+  onboardingCta: {
+    alignItems: "center",
+    backgroundColor: "#1976D2",
+    borderRadius: 16,
+    padding: 32,
+    marginBottom: 24,
+    elevation: 4,
+    shadowColor: "#1976D2",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    gap: 16,
+  },
+  onboardingCtaTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    textAlign: "center",
+    lineHeight: 26,
+  },
+  onboardingCtaButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FEFEFE",
+    borderRadius: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    gap: 4,
+    marginTop: 4,
+  },
+  onboardingCtaButtonLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#1976D2",
+  },
+  valuePropCard: {
+    backgroundColor: "#FEFEFE",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+  },
+  valuePropText: {
+    fontSize: 14,
+    color: "#49454F",
+    lineHeight: 22,
+    textAlign: "center",
   },
 });

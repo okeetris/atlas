@@ -6,6 +6,7 @@
 
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import { Tabs, useLocalSearchParams, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useActivityDetails } from "../../../src/hooks/useActivities";
 import { ActivityProvider } from "../../../src/contexts/ActivityContext";
 import { styles } from "../../../src/styles/app/activity-detail/layout.styles";
@@ -64,7 +65,7 @@ export default function ActivityDetailLayout() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backPressable}>
-            <Text style={styles.backArrow}>←</Text>
+            <Ionicons name="arrow-back" size={24} color="#1976D2" />
           </Pressable>
           <View style={styles.headerText}>
             <View style={styles.titleRow}>
@@ -79,7 +80,11 @@ export default function ActivityDetailLayout() {
                 </View>
               )}
               {activity.hasRunningDynamics && (
-                <View style={styles.rdBadge}>
+                <View
+                  style={styles.rdBadge}
+                  accessibilityLabel="Running Dynamics available"
+                  accessibilityRole="text"
+                >
                   <Text style={styles.rdBadgeText}>RD</Text>
                 </View>
               )}
@@ -94,7 +99,7 @@ export default function ActivityDetailLayout() {
             headerShown: false,
             tabBarStyle: styles.tabBar,
             tabBarActiveTintColor: "#1976D2",
-            tabBarInactiveTintColor: "#757575",
+            tabBarInactiveTintColor: "#736F6C",
             tabBarLabelStyle: styles.tabLabel,
             tabBarIconStyle: styles.tabIcon,
           }}
@@ -103,8 +108,8 @@ export default function ActivityDetailLayout() {
             name="index"
             options={{
               title: "Summary",
-              tabBarIcon: ({ focused }) => (
-                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.6 }}>📋</Text>
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? "document-text" : "document-text-outline"} size={20} color={color} />
               ),
             }}
           />
@@ -112,8 +117,8 @@ export default function ActivityDetailLayout() {
             name="charts"
             options={{
               title: "Charts",
-              tabBarIcon: ({ focused }) => (
-                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.6 }}>📈</Text>
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? "stats-chart" : "stats-chart-outline"} size={20} color={color} />
               ),
             }}
           />
@@ -121,8 +126,8 @@ export default function ActivityDetailLayout() {
             name="laps"
             options={{
               title: "Laps",
-              tabBarIcon: ({ focused }) => (
-                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.6 }}>⏱️</Text>
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? "timer" : "timer-outline"} size={20} color={color} />
               ),
             }}
           />
@@ -130,8 +135,8 @@ export default function ActivityDetailLayout() {
             name="coaching"
             options={{
               title: "Coaching",
-              tabBarIcon: ({ focused }) => (
-                <Text style={{ fontSize: 18, opacity: focused ? 1 : 0.6 }}>💡</Text>
+              tabBarIcon: ({ focused, color }) => (
+                <Ionicons name={focused ? "bulb" : "bulb-outline"} size={20} color={color} />
               ),
             }}
           />

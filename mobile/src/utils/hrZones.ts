@@ -79,7 +79,7 @@ export function calculateHRZonesWithGarmin(
   return garminZones.map((gz) => ({
     zone: gz.zone,
     name: ZONE_NAMES[gz.zone - 1] || `Zone ${gz.zone}`,
-    color: ZONE_COLORS[gz.zone - 1] || "#9E9E9E",
+    color: ZONE_COLORS[gz.zone - 1] || "#9A9693",
     minHR: gz.minHR,
     maxHR: gz.maxHR,
     seconds: Math.round(zoneTimes[gz.zone] || 0),

@@ -170,7 +170,7 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
               key={`h-${ratio}`}
               p1={vec(PADDING.left, PADDING.top + chartHeight * ratio)}
               p2={vec(PADDING.left + chartWidth, PADDING.top + chartHeight * ratio)}
-              color="#F0F0F0"
+              color="#EDECE9"
               strokeWidth={1}
             />
           ))}
@@ -179,7 +179,7 @@ export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps
               key={`v-${ratio}`}
               p1={vec(PADDING.left + chartWidth * ratio, PADDING.top)}
               p2={vec(PADDING.left + chartWidth * ratio, PADDING.top + chartHeight)}
-              color="#F0F0F0"
+              color="#EDECE9"
               strokeWidth={1}
             />
           ))}

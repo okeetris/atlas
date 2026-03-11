@@ -287,7 +287,7 @@ export function InteractiveRunChart({
                 padding.left + chartWidth,
                 padding.top + chartHeight * ratio,
               )}
-              color="#E0E0E0"
+              color="#DBD9D6"
               strokeWidth={1}
             />
           ))}

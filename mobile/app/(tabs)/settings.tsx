@@ -218,7 +218,7 @@ export default function SettingsScreen() {
                 <View
                   style={[
                     styles.statusDot,
-                    { backgroundColor: isLoggedIn ? "#4CAF50" : "#9E9E9E" },
+                    { backgroundColor: isLoggedIn ? "#4CAF50" : "#9A9693" },
                   ]}
                 />
                 <Text style={styles.statusText}>
@@ -340,8 +340,8 @@ export default function SettingsScreen() {
           <Switch
             value={darkMode}
             onValueChange={handleDarkModeChange}
-            trackColor={{ false: "#E0E0E0", true: "#90CAF9" }}
-            thumbColor={darkMode ? "#1976D2" : "#FAFAFA"}
+            trackColor={{ false: "#DBD9D6", true: "#90CAF9" }}
+            thumbColor={darkMode ? "#1976D2" : "#F8F7F4"}
           />
         </View>
       </View>

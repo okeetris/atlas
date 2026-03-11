@@ -2,21 +2,21 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
   },
   headerRow: {
     flexDirection: "row",
     paddingBottom: 8,
     marginBottom: 4,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
   },
   headerCell: {
     fontSize: 12,
@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
   },
   dataRowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#EDECE9",
   },
   distanceName: {
     fontSize: 14,

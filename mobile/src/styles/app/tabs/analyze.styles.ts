@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   header: {
     paddingHorizontal: 20,
@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 20,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
   },
   title: {
     fontSize: 28,
@@ -69,12 +69,12 @@ export const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "#DBD9D6",
   },
   dividerText: {
     paddingHorizontal: 16,
     fontSize: 12,
-    color: "#9E9E9E",
+    color: "#9A9693",
     fontWeight: "500",
   },
   section: {
@@ -87,14 +87,14 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   recentList: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     overflow: "hidden",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   recentItem: {
     flexDirection: "row",
@@ -102,14 +102,14 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#EDECE9",
   },
   recentInfo: {
     flex: 1,
   },
   recentDate: {
     fontSize: 12,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginBottom: 2,
   },
   recentName: {
@@ -128,15 +128,15 @@ export const styles = StyleSheet.create({
     marginLeft: 12,
   },
   emptyState: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 32,
     alignItems: "center",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   emptyText: {
     fontSize: 16,
@@ -145,7 +145,7 @@ export const styles = StyleSheet.create({
   },
   emptyHint: {
     fontSize: 14,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 4,
     textAlign: "center",
   },

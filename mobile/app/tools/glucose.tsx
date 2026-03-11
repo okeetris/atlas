@@ -83,7 +83,7 @@ export default function GlucoseConverterScreen() {
                 onChangeText={handleMmolChange}
                 keyboardType="decimal-pad"
                 placeholder="0.0"
-                placeholderTextColor="#9E9E9E"
+                placeholderTextColor="#9A9693"
                 selectTextOnFocus
               />
             </View>
@@ -100,7 +100,7 @@ export default function GlucoseConverterScreen() {
                 onChangeText={handleMgdlChange}
                 keyboardType="decimal-pad"
                 placeholder="0"
-                placeholderTextColor="#9E9E9E"
+                placeholderTextColor="#9A9693"
                 selectTextOnFocus
               />
             </View>

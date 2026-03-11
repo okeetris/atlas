@@ -2,14 +2,14 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 8,
     marginBottom: 16,
   },
   emptyText: {
     textAlign: "center",
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 40,
   },
   yAxis: {
@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
   },
   yLabel: {
     fontSize: 9,
-    color: "#9E9E9E",
+    color: "#9A9693",
     textAlign: "right",
   },
   yLabelIdeal: {
@@ -73,6 +73,6 @@ export const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
   },
 });

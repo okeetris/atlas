@@ -69,7 +69,7 @@ export function MFAModal({
               value={code}
               onChangeText={setCode}
               placeholder="Enter code"
-              placeholderTextColor="#9E9E9E"
+              placeholderTextColor="#9A9693"
               keyboardType="number-pad"
               maxLength={10}
               autoFocus

@@ -6,6 +6,7 @@
 
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useActivities } from "../../src/hooks/useActivities";
 import type { ActivitySummary, Grade } from "../../src/types";
 import { styles } from "../../src/styles/app/tabs/index.styles";
@@ -107,7 +108,7 @@ function LatestAnalysisCard({ activity }: { activity: ActivitySummary }) {
 
       <View style={styles.viewDetailsRow}>
         <Text style={styles.viewDetailsText}>View Details</Text>
-        <Text style={styles.viewDetailsArrow}>→</Text>
+        <Ionicons name="chevron-forward" size={16} color="#1976D2" />
       </View>
     </Pressable>
   );
@@ -117,6 +118,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { data: activities } = useActivities();
 
+  const hasActivities = activities && activities.length > 0;
   const latestActivity = activities?.[0];
 
   const handleAnalyzePress = () => {
@@ -148,52 +150,79 @@ export default function HomeScreen() {
           <Text style={styles.title}>Atlas</Text>
         </View>
         <Pressable style={styles.settingsButton} onPress={handleSettingsPress}>
-          <Text style={styles.settingsIcon}>⚙️</Text>
+          <Ionicons name="settings-outline" size={24} color="#736F6C" />
         </Pressable>
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        {/* Analyze CTA */}
-        <Pressable style={styles.analyzeCta} onPress={handleAnalyzePress}>
-          <View style={styles.analyzeCtaContent}>
-            <Text style={styles.analyzeCtaIcon}>📊</Text>
-            <View style={styles.analyzeCtaText}>
-              <Text style={styles.analyzeCtaTitle}>Analyze New Run</Text>
-              <Text style={styles.analyzeCtaSubtitle}>Get biomechanics insights</Text>
-            </View>
-          </View>
-          <Text style={styles.analyzeCtaArrow}>→</Text>
-        </Pressable>
+        {hasActivities ? (
+          <>
+            {/* Analyze CTA */}
+            <Pressable style={styles.analyzeCta} onPress={handleAnalyzePress}>
+              <View style={styles.analyzeCtaContent}>
+                <Ionicons name="analytics" size={32} color="#FFFFFF" />
+                <View style={styles.analyzeCtaText}>
+                  <Text style={styles.analyzeCtaTitle}>Analyze New Run</Text>
+                  <Text style={styles.analyzeCtaSubtitle}>Get biomechanics insights</Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color="#FFFFFF" />
+            </Pressable>
 
-        {/* Latest Analysis */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Latest Analysis</Text>
-          {latestActivity ? (
-            <LatestAnalysisCard activity={latestActivity} />
-          ) : (
-            <View style={styles.emptyCard}>
-              <Text style={styles.emptyText}>No activities yet</Text>
-              <Text style={styles.emptyHint}>
-                Sync with Garmin to see your runs
+            {/* Latest Analysis */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Latest Analysis</Text>
+              {latestActivity && <LatestAnalysisCard activity={latestActivity} />}
+            </View>
+
+            {/* Quick Actions */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Quick Actions</Text>
+              <View style={styles.quickActionsRow}>
+                <Pressable style={styles.quickAction} onPress={handleActivitiesPress}>
+                  <Ionicons name="fitness-outline" size={24} color="#1976D2" />
+                  <Text style={styles.quickActionLabel}>All Runs</Text>
+                </Pressable>
+                <Pressable style={styles.quickAction} onPress={handleAnalyzePress}>
+                  <Ionicons name="cloud-download-outline" size={24} color="#1976D2" />
+                  <Text style={styles.quickActionLabel}>Fetch New</Text>
+                </Pressable>
+              </View>
+            </View>
+          </>
+        ) : (
+          <>
+            {/* Empty State: Onboarding CTA */}
+            <Pressable style={styles.onboardingCta} onPress={handleAnalyzePress}>
+              <Ionicons name="analytics" size={48} color="#FFFFFF" />
+              <Text style={styles.onboardingCtaTitle}>
+                Connect your Garmin to analyze your running biomechanics
+              </Text>
+              <View style={styles.onboardingCtaButton}>
+                <Text style={styles.onboardingCtaButtonLabel}>Get Started</Text>
+                <Ionicons name="chevron-forward" size={18} color="#1976D2" />
+              </View>
+            </Pressable>
+
+            {/* Value Proposition */}
+            <View style={styles.valuePropCard}>
+              <Text style={styles.valuePropText}>
+                Atlas analyzes your running dynamics — cadence, ground contact, and more — to help you run better.
               </Text>
             </View>
-          )}
-        </View>
 
-        {/* Quick Actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.quickActionsRow}>
-            <Pressable style={styles.quickAction} onPress={handleActivitiesPress}>
-              <Text style={styles.quickActionIcon}>🏃</Text>
-              <Text style={styles.quickActionLabel}>All Runs</Text>
-            </Pressable>
-            <Pressable style={styles.quickAction} onPress={handleAnalyzePress}>
-              <Text style={styles.quickActionIcon}>📥</Text>
-              <Text style={styles.quickActionLabel}>Fetch New</Text>
-            </Pressable>
-          </View>
-        </View>
+            {/* Quick Actions (only All Runs in empty state) */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Quick Actions</Text>
+              <View style={styles.quickActionsRow}>
+                <Pressable style={styles.quickAction} onPress={handleActivitiesPress}>
+                  <Ionicons name="fitness-outline" size={24} color="#1976D2" />
+                  <Text style={styles.quickActionLabel}>All Runs</Text>
+                </Pressable>
+              </View>
+            </View>
+          </>
+        )}
 
         {/* Your Tools */}
         <View style={styles.section}>
@@ -203,7 +232,7 @@ export default function HomeScreen() {
               style={styles.toolCard}
               onPress={() => router.push("/tools/glucose")}
             >
-              <Text style={styles.toolIcon}>🩸</Text>
+              <Ionicons name="water-outline" size={32} color="#1976D2" />
               <Text style={styles.toolTitle}>Glucose</Text>
               <Text style={styles.toolSubtitle}>mmol/L ↔ mg/dL</Text>
             </Pressable>
@@ -211,7 +240,7 @@ export default function HomeScreen() {
               style={styles.toolCard}
               onPress={() => router.push("/tools/pace")}
             >
-              <Text style={styles.toolIcon}>⏱️</Text>
+              <Ionicons name="speedometer-outline" size={32} color="#1976D2" />
               <Text style={styles.toolTitle}>Pace</Text>
               <Text style={styles.toolSubtitle}>Speed & Race Times</Text>
             </Pressable>

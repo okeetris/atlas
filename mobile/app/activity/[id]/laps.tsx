@@ -39,7 +39,7 @@ const intensityColors: Record<string, string> = {
 };
 
 function LapRow({ lap }: { lap: Lap }) {
-  const intensityColor = lap.intensity ? intensityColors[lap.intensity] || "#757575" : "#757575";
+  const intensityColor = lap.intensity ? intensityColors[lap.intensity] || "#736F6C" : "#736F6C";
 
   return (
     <View style={styles.lapRow}>

@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   header: {
     flexDirection: "row",
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     paddingBottom: 16,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
   },
   title: {
     fontSize: 28,
@@ -104,6 +104,6 @@ export const styles = StyleSheet.create({
   emptyHint: {
     marginTop: 8,
     fontSize: 14,
-    color: "#757575",
+    color: "#736F6C",
   },
 });

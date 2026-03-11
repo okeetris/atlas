@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 2,
-    borderColor: "#E0E0E0",
+    borderColor: "#DBD9D6",
     borderRadius: 12,
     padding: 16,
     fontSize: 24,
@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cancelButton: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#F3F2EF",
   },
   cancelButtonText: {
     color: "#49454F",

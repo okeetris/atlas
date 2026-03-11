@@ -59,6 +59,16 @@ function getComplianceColor(percent: number): string {
   return "#F44336";
 }
 
+const gradeRank: Record<Grade, number> = { A: 0, B: 1, C: 2, D: 3 };
+
+function getOverallGradeColor(grades: { cadence: Grade; gct: Grade; gctBalance: Grade; verticalRatio: Grade }): string {
+  const all = [grades.cadence, grades.gct, grades.gctBalance, grades.verticalRatio];
+  // Use the median grade (second worst of 4) for a balanced signal
+  const sorted = [...all].sort((a, b) => gradeRank[a] - gradeRank[b]);
+  const median = sorted[1]; // second best = representative grade
+  return gradeColors[median];
+}
+
 function getActivityTypeLabel(activityType: string): string | null {
   switch (activityType) {
     case "treadmill_running":
@@ -77,9 +87,15 @@ export function ActivityCard({ activity, onPress }: ActivityCardProps) {
   const hasCompliance = activity.compliancePercent != null;
   const activityTypeLabel = getActivityTypeLabel(activity.activityType);
 
+  const borderColor = activity.grades ? getOverallGradeColor(activity.grades) : undefined;
+
   return (
     <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [
+        styles.card,
+        borderColor ? { borderLeftWidth: 4, borderLeftColor: borderColor } : undefined,
+        pressed && styles.cardPressed,
+      ]}
       onPress={onPress}
     >
       <View style={styles.header}>

@@ -2,15 +2,15 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
   },
   header: {
     flexDirection: "row",
@@ -46,9 +46,9 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingVertical: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
+    borderTopColor: "#EDECE9",
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#EDECE9",
   },
   summaryItem: {
     alignItems: "center",
@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 11,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 2,
   },
   expandButton: {
@@ -83,11 +83,11 @@ export const styles = StyleSheet.create({
     gap: 12,
   },
   stepCard: {
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
     borderRadius: 8,
     padding: 12,
     borderLeftWidth: 3,
-    borderLeftColor: "#E0E0E0",
+    borderLeftColor: "#DBD9D6",
   },
   stepHeader: {
     flexDirection: "row",
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
   },
   stepLapsLabel: {
     fontSize: 11,
-    color: "#9E9E9E",
+    color: "#9A9693",
     marginTop: 1,
   },
   stepPaceContainer: {
@@ -131,7 +131,7 @@ export const styles = StyleSheet.create({
   },
   paceBarTrack: {
     height: 8,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: "#DBD9D6",
     borderRadius: 4,
     position: "relative",
     overflow: "hidden",
@@ -158,7 +158,7 @@ export const styles = StyleSheet.create({
   },
   paceBarLabel: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
   },
   stepDetails: {
     flexDirection: "row",
@@ -176,7 +176,7 @@ export const styles = StyleSheet.create({
   },
   stepDetailLabel: {
     fontSize: 11,
-    color: "#9E9E9E",
+    color: "#9A9693",
   },
   stepDetailValue: {
     fontSize: 12,
@@ -189,7 +189,7 @@ export const styles = StyleSheet.create({
   },
   stepDetailElapsed: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
     fontStyle: "italic",
     marginLeft: 4,
   },

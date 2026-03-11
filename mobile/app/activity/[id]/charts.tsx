@@ -137,7 +137,12 @@ export default function ChartsTab() {
         <>
           <Text style={styles.sectionTitle}>Cadence & Ground Contact</Text>
           <Text style={styles.chartHint}>Touch and drag to see values</Text>
-          <InteractiveRunChart configs={chartConfigs} height={220} />
+          <InteractiveRunChart
+            configs={chartConfigs}
+            height={220}
+            referenceZone={{ min: 170, max: 180, color: "rgba(25, 118, 210, 0.10)" }}
+          />
+          <Text style={styles.zoneLabel}>Shaded zone: 170–180 spm target cadence</Text>
         </>
       )}
 

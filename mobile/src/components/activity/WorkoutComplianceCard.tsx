@@ -39,7 +39,7 @@ const statusConfig: Record<string, { icon: string; color: string; label: string 
   fast: { icon: "↑", color: "#2196F3", label: "Fast" },
   missed: { icon: "✗", color: "#F44336", label: "Missed" },
   skipped: { icon: "⏭", color: "#9C27B0", label: "Skipped" },
-  no_target: { icon: "-", color: "#9E9E9E", label: "No Target" },
+  no_target: { icon: "-", color: "#9A9693", label: "No Target" },
 };
 
 function PaceComplianceBar({ step }: { step: StepCompliance }) {
@@ -116,7 +116,7 @@ function StepCard({ step, index }: { step: StepCompliance; index: number }) {
           <Text style={[styles.stepStatusIcon, { color: config.color }]}>{config.icon}</Text>
         </View>
         <View style={styles.stepTitleContainer}>
-          <Text style={[styles.stepType, isSkipped && { textDecorationLine: "line-through", color: "#9E9E9E" }]}>
+          <Text style={[styles.stepType, isSkipped && { textDecorationLine: "line-through", color: "#9A9693" }]}>
             {step.stepType}
           </Text>
           {isSkipped && step.actualDurationSec != null && step.targetDurationSec ? (

@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   content: {
     padding: 16,
@@ -12,40 +12,62 @@ export const styles = StyleSheet.create({
   summaryRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   summaryStat: {
     alignItems: "center",
   },
   summaryValue: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 32,
+    fontWeight: "800",
     color: "#1976D2",
+    letterSpacing: -0.5,
   },
   summaryLabel: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#49454F",
     marginTop: 4,
+    textTransform: "uppercase" as const,
+    letterSpacing: 0.5,
+    fontWeight: "500",
   },
   glanceCard: {
     backgroundColor: "#E3F2FD",
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    borderLeftWidth: 3,
+    borderLeftColor: "#90CAF9",
+  },
+  glanceTextContainer: {
+    flex: 1,
   },
   glanceText: {
     fontSize: 15,
     fontWeight: "500",
     color: "#1565C0",
     lineHeight: 22,
+  },
+  glanceCTA: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#1976D2",
+    marginTop: 6,
+  },
+  glanceChevron: {
+    marginLeft: 8,
+    fontSize: 20,
+    color: "#1976D2",
   },
   sectionTitle: {
     fontSize: 16,
@@ -56,7 +78,7 @@ export const styles = StyleSheet.create({
   metricsGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 8,
     marginBottom: 24,
   },
   hrZonesContainer: {
@@ -64,19 +86,19 @@ export const styles = StyleSheet.create({
   },
   metricCard: {
     width: "47%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    elevation: 2,
+    backgroundColor: "#FEFEFE",
+    borderRadius: 10,
+    padding: 12,
+    elevation: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
   },
   metricCardExpanded: {
     width: "100%",
     elevation: 4,
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.125,
   },
   metricHeader: {
     flexDirection: "row",
@@ -99,7 +121,7 @@ export const styles = StyleSheet.create({
     gap: 4,
   },
   metricValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#1C1B1F",
   },
@@ -124,7 +146,7 @@ export const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
+    borderTopColor: "#DBD9D6",
   },
   thresholdsContainer: {
     marginBottom: 12,
@@ -149,7 +171,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 6,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#F3F2EF",
   },
   thresholdItemActive: {
     backgroundColor: "#E3F2FD",

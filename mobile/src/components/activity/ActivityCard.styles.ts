@@ -2,19 +2,19 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
     elevation: 2,
   },
   cardPressed: {
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#F3F2EF",
   },
   header: {
     marginBottom: 12,
@@ -87,7 +87,7 @@ export const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
+    borderTopColor: "#EDECE9",
   },
   gradeItem: {
     alignItems: "center",
@@ -95,7 +95,7 @@ export const styles = StyleSheet.create({
   },
   gradeLabel: {
     fontSize: 10,
-    color: "#9E9E9E",
+    color: "#9A9693",
     fontWeight: "500",
   },
   gradeBadge: {

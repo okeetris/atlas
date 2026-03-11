@@ -5,12 +5,12 @@ export const styles = StyleSheet.create({
     paddingTop: 8,
     backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
+    borderTopColor: "#DBD9D6",
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
   },
   tabIconContainer: {
     alignItems: "center",
@@ -18,15 +18,11 @@ export const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   tabIcon: {
-    fontSize: 24,
     marginBottom: 2,
-  },
-  tabIconFocused: {
-    transform: [{ scale: 1.1 }],
   },
   tabLabel: {
     fontSize: 11,
-    color: "#757575",
+    color: "#736F6C",
     fontWeight: "500",
   },
   tabLabelFocused: {

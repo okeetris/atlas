@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#F8F7F4",
   },
   content: {
     padding: 16,
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: "#757575",
+    color: "#736F6C",
   },
   sectionTitle: {
     fontSize: 16,
@@ -27,15 +27,15 @@ export const styles = StyleSheet.create({
     marginTop: 8,
   },
   card: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FEFEFE",
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
   },
   coachingItem: {
     flexDirection: "row",
@@ -69,6 +69,8 @@ export const styles = StyleSheet.create({
     padding: 20,
     flexDirection: "row",
     alignItems: "center",
+    borderLeftWidth: 3,
+    borderLeftColor: "#90CAF9",
   },
   focusIcon: {
     fontSize: 24,
@@ -85,7 +87,7 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    borderBottomColor: "#DBD9D6",
   },
   fatigueMetric: {
     fontSize: 12,
