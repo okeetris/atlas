@@ -42,8 +42,8 @@ Living document of decisions that have shaped the product direction. Update as n
 | 17 | Four-tab activity detail: Summary, Charts, Laps, Coaching | Single scroll was too long; tabs let users jump to what they care about |
 | 18 | Workout compliance on Summary tab, fatigue analysis on Coaching tab | Compliance is a key summary stat; fatigue is coaching insight |
 | 19 | Settings as header gear icon, not a tab bar item | Settings is infrequent — doesn't deserve permanent tab space |
-| 20 | Three main tabs: Home, Activities, Analyze | Core navigation loop |
-| 21 | Emoji icons on activity detail tabs | Visual differentiation for Summary/Charts/Laps/Coaching |
+| 20 | Three main tabs: Home, Runs, New | Core navigation loop — "New" replaces "Analyze" to avoid label truncation |
+| 21 | Ionicons throughout (tab bars, quick actions, tools) | Replaced emoji with @expo/vector-icons for consistent rendering, proper active/inactive tinting, and professional appearance |
 | 22 | Activity type badges (Treadmill, Trail, Track) on detail header and cards | Quick identification of run type from `sub_sport` FIT field |
 
 ## Authentication & Deployment
@@ -94,3 +94,13 @@ Living document of decisions that have shaped the product direction. Update as n
 | 39 | Steps without pace targets check distance compliance instead | Warmup/cooldown steps are "hit" if actual distance >= target |
 | 40 | Show compliance error banner when auth expires or workout not found | Orange warning instead of silently hiding compliance |
 | 41 | Fallback workout matching by name/distance when calendar returns null | Calendar API sometimes misses; try alternative lookup |
+
+## Design & Polish
+
+| # | Decision | Context |
+|---|----------|---------|
+| 42 | Warm off-white palette (#F8F7F4 background, #FEFEFE cards, tinted grays) | Pure white/gray felt sterile — subtle warmth adds personality without a rebrand |
+| 43 | Activity card left border colored by overall grade | Enables at-a-glance trend scanning on the Activities list without reading each badge |
+| 44 | Hero metrics at 32px/800 weight on Summary screen | Creates clear visual hierarchy — distance/time/pace anchor the page |
+| 45 | Cadence chart reference zone band (170-180 spm) | Raw line charts lack context — shaded zones give immediate meaning, matching the glucose chart pattern |
+| 46 | Consolidated empty state with onboarding CTA | Three separate CTAs for the same action (get data) caused confusion — single prominent CTA when no data exists |
