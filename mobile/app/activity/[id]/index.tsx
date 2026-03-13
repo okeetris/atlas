@@ -187,7 +187,7 @@ export default function SummaryTab() {
       return activity.hrZones.map((z) => ({
         zone: z.zone,
         name: z.name || `Zone ${z.zone}`,
-        color: z.color || "#9A9693",
+        color: z.color || colors.textHint,
         minHR: z.minHR || 0,
         maxHR: z.maxHR || 0,
         seconds: z.seconds,

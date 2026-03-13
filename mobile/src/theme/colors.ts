@@ -49,6 +49,14 @@ export const colors = {
   heartRate: "#E53935",
   glucose: "#AB47BC",
 
+  // Placeholder
+  placeholder: "#BDBDBD",
+  placeholderDark: "#666666",
+
+  // Pace Zones
+  threshold: "#FF9800",
+  sprint: "#9C27B0",
+
   // Shadows
   shadow: "#000000",
 } as const;

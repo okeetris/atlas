@@ -8,6 +8,7 @@ import { View, Text, ScrollView } from "react-native";
 import { useActivity } from "../../../src/contexts/ActivityContext";
 import type { FatigueComparison } from "../../../src/types";
 import { styles } from "../../../src/styles/app/activity-detail/coaching.styles";
+import { colors } from "../../../src/theme/colors";
 
 function WentWellItem({ text }: { text: string }) {
   return (
@@ -29,7 +30,7 @@ function AreaToAddressItem({ text }: { text: string }) {
 
 function FatigueCard({ item }: { item: FatigueComparison }) {
   const isGood = item.changeDirection === "improved" || item.changeDirection === "stable";
-  const changeColor = isGood ? "#4CAF50" : "#F44336";
+  const changeColor = isGood ? colors.success : colors.errorLight;
   const arrow = item.change > 0 ? "↑" : item.change < 0 ? "↓" : "→";
 
   return (

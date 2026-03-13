@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { colors } from "../../src/theme/colors";
 import { styles } from "../../src/styles/app/tabs/activities.styles";
 import { FlashList } from "@shopify/flash-list";
 import {
@@ -80,7 +81,7 @@ export default function ActivitiesScreen() {
           disabled={isRefreshing}
         >
           {isRefreshing ? (
-            <ActivityIndicator size="small" color="#1976D2" />
+            <ActivityIndicator size="small" color={colors.primary} />
           ) : (
             <Text style={styles.syncButtonText}>Sync</Text>
           )}
@@ -90,7 +91,7 @@ export default function ActivitiesScreen() {
       {/* Sync status */}
       {syncMutation.isPending && (
         <View style={styles.syncStatus}>
-          <ActivityIndicator size="small" color="#1976D2" />
+          <ActivityIndicator size="small" color={colors.primary} />
           <Text style={styles.syncStatusText}>Syncing with Garmin...</Text>
         </View>
       )}
@@ -112,7 +113,7 @@ export default function ActivitiesScreen() {
       {/* Loading state */}
       {isLoading && !activities && (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#1976D2" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Loading activities...</Text>
         </View>
       )}
@@ -142,7 +143,7 @@ export default function ActivitiesScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              colors={["#1976D2"]}
+              colors={[colors.primary]}
             />
           }
           ListEmptyComponent={

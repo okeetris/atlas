@@ -17,6 +17,7 @@ import {
 import { router } from "expo-router";
 import { useAuth } from "../src/contexts/AuthContext";
 import { styles } from "../src/styles/app/login.styles";
+import { colors } from "../src/theme/colors";
 
 export default function LoginScreen() {
   const { login, completeMFA, pendingMFA } = useAuth();
@@ -93,7 +94,7 @@ export default function LoginScreen() {
           <TextInput
             style={styles.input}
             placeholder="Verification code"
-            placeholderTextColor="#666"
+            placeholderTextColor={colors.placeholderDark}
             value={mfaCode}
             onChangeText={setMfaCode}
             keyboardType="number-pad"
@@ -109,7 +110,7 @@ export default function LoginScreen() {
             disabled={isLoading}
           >
             {isLoading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.white} />
             ) : (
               <Text style={styles.buttonText}>Verify</Text>
             )}
@@ -134,7 +135,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder="Email"
-          placeholderTextColor="#666"
+          placeholderTextColor={colors.placeholderDark}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
@@ -145,7 +146,7 @@ export default function LoginScreen() {
         <TextInput
           style={styles.input}
           placeholder="Password"
-          placeholderTextColor="#666"
+          placeholderTextColor={colors.placeholderDark}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
@@ -160,7 +161,7 @@ export default function LoginScreen() {
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={colors.white} />
           ) : (
             <Text style={styles.buttonText}>Sign In</Text>
           )}

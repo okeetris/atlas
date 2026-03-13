@@ -34,9 +34,9 @@ const intensityColors: Record<string, string> = {
   Easy: colors.gradeA,
   Moderate: colors.gradeB,
   Tempo: colors.gradeC,
-  Threshold: "#FF9800",
+  Threshold: colors.threshold,
   VO2max: colors.gradeD,
-  Sprint: "#9C27B0",
+  Sprint: colors.sprint,
 };
 
 function LapRow({ lap }: { lap: Lap }) {

@@ -13,6 +13,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { colors } from "../../src/theme/colors";
 import { styles } from "../../src/styles/app/tabs/analyze.styles";
 import {
   useActivities,
@@ -59,7 +60,11 @@ function RecentActivityItem({
 
 export default function AnalyzeScreen() {
   const router = useRouter();
-  const { data: activities, isLoading: activitiesLoading, isFetching: activitiesFetching } = useActivities();
+  const {
+    data: activities,
+    isLoading: activitiesLoading,
+    isFetching: activitiesFetching,
+  } = useActivities();
   const syncMutation = useSyncActivities();
   const mfaMutation = useSubmitMFA();
   const [showMFAModal, setShowMFAModal] = useState(false);
@@ -121,7 +126,10 @@ export default function AnalyzeScreen() {
         <Text style={styles.title}>Analyze Run</Text>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* Fetch Latest CTA */}
         <Pressable
           style={[
@@ -133,7 +141,7 @@ export default function AnalyzeScreen() {
         >
           {syncMutation.isPending ? (
             <>
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={colors.white} />
               <Text style={styles.fetchButtonText}>Fetching...</Text>
             </>
           ) : (
@@ -146,9 +154,7 @@ export default function AnalyzeScreen() {
 
         {syncMutation.isError && (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>
-              {syncMutation.error.message}
-            </Text>
+            <Text style={styles.errorText}>{syncMutation.error.message}</Text>
           </View>
         )}
 
@@ -164,7 +170,7 @@ export default function AnalyzeScreen() {
           <Text style={styles.sectionTitle}>Recent Activities</Text>
           {activitiesLoading || activitiesFetching ? (
             <View style={styles.emptyState}>
-              <ActivityIndicator size="large" color="#1976D2" />
+              <ActivityIndicator size="large" color={colors.primary} />
               <Text style={styles.emptyHint}>Loading activities...</Text>
             </View>
           ) : recentActivities.length > 0 ? (
@@ -181,7 +187,7 @@ export default function AnalyzeScreen() {
             <View style={styles.emptyState}>
               <Text style={styles.emptyText}>No activities yet</Text>
               <Text style={styles.emptyHint}>
-                Tap "Fetch Latest Run" to sync with Garmin
+                Tap &quot;Fetch Latest Run&quot; to sync with Garmin
               </Text>
             </View>
           )}

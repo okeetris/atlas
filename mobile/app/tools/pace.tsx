@@ -6,6 +6,7 @@
  */
 
 import { useState, useCallback, useRef } from "react";
+import { colors } from "../../src/theme/colors";
 import {
   View,
   Text,
@@ -291,7 +292,7 @@ function SpeedInput({
         onChangeText={onChange}
         keyboardType="decimal-pad"
         placeholder="0"
-        placeholderTextColor="#BDBDBD"
+        placeholderTextColor={colors.placeholder}
         selectTextOnFocus
       />
     </View>
@@ -320,7 +321,7 @@ function PaceInput({
             onChangeText={(v) => onChange("mins", v)}
             keyboardType="number-pad"
             placeholder="0"
-            placeholderTextColor="#BDBDBD"
+            placeholderTextColor={colors.placeholder}
             selectTextOnFocus
           />
         </View>
@@ -332,7 +333,7 @@ function PaceInput({
             onChangeText={(v) => onChange("secs", v)}
             keyboardType="number-pad"
             placeholder="00"
-            placeholderTextColor="#BDBDBD"
+            placeholderTextColor={colors.placeholder}
             selectTextOnFocus
           />
         </View>
@@ -363,7 +364,7 @@ function TimeInput({
             onChangeText={(v) => onChange("hours", v)}
             keyboardType="number-pad"
             placeholder="0"
-            placeholderTextColor="#BDBDBD"
+            placeholderTextColor={colors.placeholder}
             selectTextOnFocus
           />
         </View>
@@ -375,7 +376,7 @@ function TimeInput({
             onChangeText={(v) => onChange("mins", v)}
             keyboardType="number-pad"
             placeholder="00"
-            placeholderTextColor="#BDBDBD"
+            placeholderTextColor={colors.placeholder}
             selectTextOnFocus
           />
         </View>
@@ -387,7 +388,7 @@ function TimeInput({
             onChangeText={(v) => onChange("secs", v)}
             keyboardType="number-pad"
             placeholder="00"
-            placeholderTextColor="#BDBDBD"
+            placeholderTextColor={colors.placeholder}
             selectTextOnFocus
           />
         </View>
