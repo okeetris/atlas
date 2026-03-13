@@ -17,7 +17,7 @@ Atlas combines running analysis with practical training tools:
 ## Demo
 
 <p align="center">
-  <img src="./assets/demo.gif" width="300" alt="Atlas App Demo">
+  <img src="./mobile/assets/atlas_demo.gif" width="300" alt="Atlas App Demo">
 </p>
 
 ## Features
