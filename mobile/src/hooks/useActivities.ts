@@ -11,7 +11,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL, API_ENDPOINTS } from "../services/apiConfig";
 import { getAuthHeader } from "../services/authService";
 import { fetchJson } from "../services/api";
-import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitResponse } from "../types";
+import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitResponse, SyncResponse, SyncResult } from "../types";
+import { isMFARequired } from "../services/api";
 
 const ACTIVITIES_STORAGE_KEY = "cached_activities";
 
@@ -39,19 +40,6 @@ async function saveCachedActivities(activities: ActivitySummary[]): Promise<void
   } catch (error) {
     console.warn("Failed to save activities to cache:", error);
   }
-}
-
-interface SyncResponse {
-  synced: number;
-  activities: ActivitySummary[];
-  message: string;
-}
-
-// Union type for sync response (can be success or MFA required)
-type SyncResult = SyncResponse | MFARequiredResponse;
-
-function isMFARequired(response: SyncResult): response is MFARequiredResponse {
-  return "mfa_required" in response && response.mfa_required === true;
 }
 
 /**

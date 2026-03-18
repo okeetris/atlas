@@ -3,7 +3,7 @@ import {
   getAuthHeader,
   updateTokensIfRefreshed,
 } from "./authService";
-import type { ActivitySummary, ActivityDetails, HealthCheck, HRZonesResponse } from "../types";
+import type { ActivitySummary, ActivityDetails, HealthCheck, HRZonesResponse, SyncResponse, SyncResult, MFARequiredResponse } from "../types";
 
 /**
  * API Client for Running Coach Backend
@@ -131,22 +131,6 @@ export async function fetchActivityDetail(
 ): Promise<ActivityDetails> {
   return fetchJson<ActivityDetails>(API_ENDPOINTS.activityDetail(id));
 }
-
-/**
- * Sync response types
- */
-interface SyncResponse {
-  synced: number;
-  activities: ActivitySummary[];
-  message: string;
-}
-
-interface MFARequiredResponse {
-  mfa_required: true;
-  message: string;
-}
-
-type SyncResult = SyncResponse | MFARequiredResponse;
 
 /**
  * Sync activities from Garmin Connect

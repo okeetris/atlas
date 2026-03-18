@@ -4,7 +4,6 @@ Authentication router for Garmin Connect.
 Handles login flow including MFA, returns tokens for client-side storage.
 """
 
-import time
 from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -12,20 +11,7 @@ from pydantic import BaseModel
 from garminconnect import Garmin
 
 from dependencies.auth import encode_tokens_from_garth
-
-
-def _retry_garmin_call(fn, max_retries=3):
-    """Retry a Garmin API call with exponential backoff on 429."""
-    for attempt in range(max_retries + 1):
-        try:
-            return fn()
-        except Exception as e:
-            if "429" in str(e) and attempt < max_retries:
-                delay = (2 ** attempt) * 2
-                print(f"Garmin 429, retrying in {delay}s (attempt {attempt + 1}/{max_retries})")
-                time.sleep(delay)
-                continue
-            raise
+from utils.retry import retry_garmin_call
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -81,7 +67,7 @@ async def garmin_login(request: LoginRequest):
         # Create Garmin client with MFA handling
         garmin = Garmin(request.email, request.password, return_on_mfa=True)
 
-        result = _retry_garmin_call(garmin.login)
+        result = retry_garmin_call(garmin.login)
 
         # Check if MFA is required
         # When MFA is needed with return_on_mfa=True, login() returns a tuple:
@@ -151,7 +137,7 @@ async def garmin_mfa(request: MFARequest):
 
     try:
         # Resume login with MFA code using the stored client state
-        _retry_garmin_call(lambda: garmin.resume_login(client_state, request.code))
+        retry_garmin_call(lambda: garmin.resume_login(client_state, request.code))
 
         # Use garth's native dump to serialize tokens
         tokens_b64 = encode_tokens_from_garth(garmin.garth)

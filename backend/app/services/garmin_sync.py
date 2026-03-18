@@ -21,6 +21,8 @@ from typing import Optional
 
 from garminconnect import Garmin
 
+from utils.retry import retry_garmin_call
+
 
 class MFARequiredError(Exception):
     """Raised when MFA code is needed to complete login."""
@@ -179,13 +181,13 @@ class GarminSyncService:
         if self._try_load_tokens():
             try:
                 # Verify tokens work by making a simple API call
-                self.garmin.get_full_name()
+                retry_garmin_call(self.garmin.get_full_name)
                 return self.garmin
             except Exception:
                 pass  # Tokens invalid, need fresh login
 
         # Fresh login required
-        result = self.garmin.login()
+        result = retry_garmin_call(self.garmin.login)
 
         if result == "needs_mfa":
             # MFA required - store token and raise error
@@ -220,7 +222,7 @@ class GarminSyncService:
         """Fetch recent activities from Garmin Connect."""
         client = self._get_client()
         # Fetch more activities to account for filtering (3x requested to ensure enough running activities)
-        activities = client.get_activities(0, min(limit + 5, 30))
+        activities = retry_garmin_call(lambda: client.get_activities(0, min(limit + 5, 30)))
 
         # Filter to running activities (outdoor, treadmill, trail, track, etc.)
         running_types = {"running", "treadmill_running", "trail_running", "track_running"}
@@ -240,7 +242,7 @@ class GarminSyncService:
         client = self._get_client()
         try:
             # Try to get HR zones from user profile settings
-            profile = client.get_user_profile_settings()
+            profile = retry_garmin_call(client.get_user_profile_settings)
             if profile:
                 hr_zones_raw = profile.get("heartRateZones")
                 max_hr = profile.get("maxHR") or profile.get("maxHeartRate")
@@ -258,7 +260,7 @@ class GarminSyncService:
 
             # Fallback: try get_heart_rates for today (includes zone info sometimes)
             from datetime import date
-            hr_data = client.get_heart_rates(date.today().isoformat())
+            hr_data = retry_garmin_call(lambda: client.get_heart_rates(date.today().isoformat()))
             if hr_data:
                 # Heart rate zones might be in the response
                 zones_raw = hr_data.get("heartRateZones") or hr_data.get("hrZones")
@@ -289,7 +291,7 @@ class GarminSyncService:
         client = self._get_client()
         try:
             # get_activity_hr_in_timezones returns zone breakdown for the activity
-            hr_zones = client.get_activity_hr_in_timezones(activity_id)
+            hr_zones = retry_garmin_call(lambda: client.get_activity_hr_in_timezones(activity_id))
             if hr_zones:
                 # Sort by zone number first
                 hr_zones = sorted(hr_zones, key=lambda z: z.get("zoneNumber", 0))
@@ -333,8 +335,8 @@ class GarminSyncService:
 
         # Download from Garmin
         client = self._get_client()
-        zip_data = client.download_activity(
-            activity_id, dl_fmt=client.ActivityDownloadFormat.ORIGINAL
+        zip_data = retry_garmin_call(
+            lambda: client.download_activity(activity_id, dl_fmt=client.ActivityDownloadFormat.ORIGINAL)
         )
 
         # Extract FIT from ZIP
@@ -357,7 +359,7 @@ class GarminSyncService:
     def _parse_workout_details(self, workout_id: int) -> dict:
         """Parse a workout into structured format with steps and targets."""
         client = self._get_client()
-        workout = client.connectapi(f"/workout-service/workout/{workout_id}")
+        workout = retry_garmin_call(lambda: client.connectapi(f"/workout-service/workout/{workout_id}"))
 
         def extract_steps(step_list: list, repeat_count: int = 1) -> list:
             """Recursively extract steps, flattening repeat groups."""
@@ -425,7 +427,7 @@ class GarminSyncService:
         """
         try:
             client = self._get_client()
-            workouts = client.connectapi("/workout-service/workouts?start=0&limit=30")
+            workouts = retry_garmin_call(lambda: client.connectapi("/workout-service/workouts?start=0&limit=30"))
 
             best_match = None
             best_score = 0
@@ -489,7 +491,7 @@ class GarminSyncService:
         """
         try:
             client = self._get_client()
-            activity = client.connectapi(f"/activity-service/activity/{garmin_activity_id}")
+            activity = retry_garmin_call(lambda: client.connectapi(f"/activity-service/activity/{garmin_activity_id}"))
 
             # Check metadata for associated workout
             metadata = activity.get("metadataDTO", {})
@@ -534,7 +536,7 @@ class GarminSyncService:
             year = date_obj.year
             month = date_obj.month
 
-            calendar = client.connectapi(f"/calendar-service/year/{year}/month/{month}")
+            calendar = retry_garmin_call(lambda: client.connectapi(f"/calendar-service/year/{year}/month/{month}"))
 
             target_date = activity_date[:10]
             for item in calendar.get("calendarItems", []):

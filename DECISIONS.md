@@ -59,52 +59,53 @@ Living document of decisions that have shaped the product direction. Update as n
 | 29 | Centralize all API calls through `fetchJson` with retry wrapper | `syncActivities` and `fetchActivityDetails` previously used raw `fetch()`, bypassing error handling and retry logic — refactored to use the shared `fetchJson` helper |
 | 30 | Cache HR zones to disk alongside FIT files | Activity detail endpoint was hitting Garmin API for HR zones on every view — now cached as `.hrzones.json` next to the FIT file, matching the existing compliance cache pattern |
 | 31 | Suppress sync banner when `synced === 0` | Backend cooldown returns a valid SyncResponse with zero activities — showing "Sync available in 54s" as a success banner confused users |
+| 32 | Retry with exponential backoff on Garmin OAuth endpoints | Garmin rate-limits cloud provider IPs (Render/AWS) more aggressively than residential — `login()` and `resume_login()` wrapped with 2s/4s/8s backoff on 429, with friendly user-facing error messages |
 
 ## Charts & Visualization
 
 | # | Decision | Context |
 |---|----------|---------|
-| 32 | GCT Balance chart with 49-51% ideal zone shading | Visual target range for left/right balance |
-| 33 | Cadence-GCT scatter plot with linear regression | Shows biomechanical correlation between cadence and ground contact |
-| 34 | 15-point rolling average smoothing on time series charts | Reduces noise while preserving trends |
-| 35 | Interactive Skia charts with touch scrubbing | Native feel for exploring time series data |
-| 36 | Merge analyze-run and report into unified HTML output | Single command produces both analysis and interactive Plotly charts |
+| 33 | GCT Balance chart with 49-51% ideal zone shading | Visual target range for left/right balance |
+| 34 | Cadence-GCT scatter plot with linear regression | Shows biomechanical correlation between cadence and ground contact |
+| 35 | 15-point rolling average smoothing on time series charts | Reduces noise while preserving trends |
+| 36 | Interactive Skia charts with touch scrubbing | Native feel for exploring time series data |
+| 37 | Merge analyze-run and report into unified HTML output | Single command produces both analysis and interactive Plotly charts |
 
 ## Tools
 
 | # | Decision | Context |
 |---|----------|---------|
-| 37 | Glucose converter (mmol/L ↔ mg/dL) as standalone tool | Quick reference utility |
-| 38 | Pace converter with auto-updating fields (speeds, paces, race times) | All fields recalculate when any value changes |
+| 38 | Glucose converter (mmol/L ↔ mg/dL) as standalone tool | Quick reference utility |
+| 39 | Pace converter with auto-updating fields (speeds, paces, race times) | All fields recalculate when any value changes |
 
 ## Naming & Branding
 
 | # | Decision | Context |
 |---|----------|---------|
-| 39 | App name: Atlas (previously "Tristan's Toolkit") | More professional; reflects mapping your running journey |
+| 40 | App name: Atlas (previously "Tristan's Toolkit") | More professional; reflects mapping your running journey |
 
 ## Code Organization
 
 | # | Decision | Context |
 |---|----------|---------|
-| 40 | Extract all inline StyleSheet.create to separate `.styles.ts` files | Cleaner components; styles in `src/styles/` not `app/` (Expo Router treats `app/` files as routes) |
-| 41 | Pre-commit hook with ruff for Python linting | Automated code quality on every commit |
+| 41 | Extract all inline StyleSheet.create to separate `.styles.ts` files | Cleaner components; styles in `src/styles/` not `app/` (Expo Router treats `app/` files as routes) |
+| 42 | Pre-commit hook with ruff for Python linting | Automated code quality on every commit |
 
 ## Workout Compliance
 
 | # | Decision | Context |
 |---|----------|---------|
-| 42 | Parse nested RepeatGroupDTO structures, flatten repeat iterations | 4x interval becomes 4 individual steps for accurate per-step compliance |
-| 43 | Steps without pace targets check distance compliance instead | Warmup/cooldown steps are "hit" if actual distance >= target |
-| 44 | Show compliance error banner when auth expires or workout not found | Orange warning instead of silently hiding compliance |
-| 45 | Fallback workout matching by name/distance when calendar returns null | Calendar API sometimes misses; try alternative lookup |
+| 43 | Parse nested RepeatGroupDTO structures, flatten repeat iterations | 4x interval becomes 4 individual steps for accurate per-step compliance |
+| 44 | Steps without pace targets check distance compliance instead | Warmup/cooldown steps are "hit" if actual distance >= target |
+| 45 | Show compliance error banner when auth expires or workout not found | Orange warning instead of silently hiding compliance |
+| 46 | Fallback workout matching by name/distance when calendar returns null | Calendar API sometimes misses; try alternative lookup |
 
 ## Design & Polish
 
 | # | Decision | Context |
 |---|----------|---------|
-| 46 | Warm off-white palette (#F8F7F4 background, #FEFEFE cards, tinted grays) | Pure white/gray felt sterile — subtle warmth adds personality without a rebrand |
-| 47 | Activity card left border colored by overall grade | Enables at-a-glance trend scanning on the Activities list without reading each badge |
-| 48 | Hero metrics at 32px/800 weight on Summary screen | Creates clear visual hierarchy — distance/time/pace anchor the page |
-| 49 | Cadence chart reference zone band (170-180 spm) | Raw line charts lack context — shaded zones give immediate meaning, matching the glucose chart pattern |
-| 50 | Consolidated empty state with onboarding CTA | Three separate CTAs for the same action (get data) caused confusion — single prominent CTA when no data exists |
+| 47 | Warm off-white palette (#F8F7F4 background, #FEFEFE cards, tinted grays) | Pure white/gray felt sterile — subtle warmth adds personality without a rebrand |
+| 48 | Activity card left border colored by overall grade | Enables at-a-glance trend scanning on the Activities list without reading each badge |
+| 49 | Hero metrics at 32px/800 weight on Summary screen | Creates clear visual hierarchy — distance/time/pace anchor the page |
+| 50 | Cadence chart reference zone band (170-180 spm) | Raw line charts lack context — shaded zones give immediate meaning, matching the glucose chart pattern |
+| 51 | Consolidated empty state with onboarding CTA | Three separate CTAs for the same action (get data) caused confusion — single prominent CTA when no data exists |

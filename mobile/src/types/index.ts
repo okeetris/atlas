@@ -22,6 +22,14 @@ export interface MFASubmitResponse {
   message: string;
 }
 
+export interface SyncResponse {
+  synced: number;
+  activities: ActivitySummary[];
+  message: string;
+}
+
+export type SyncResult = SyncResponse | MFARequiredResponse;
+
 // Grade summary for activity cards
 export interface GradeSummary {
   cadence: Grade;
