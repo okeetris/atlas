@@ -12,6 +12,7 @@ import json
 import os
 import tarfile
 import tempfile
+import time
 import zipfile
 from datetime import datetime
 from io import BytesIO
@@ -219,7 +220,7 @@ class GarminSyncService:
         """Fetch recent activities from Garmin Connect."""
         client = self._get_client()
         # Fetch more activities to account for filtering (3x requested to ensure enough running activities)
-        activities = client.get_activities(0, limit * 3)
+        activities = client.get_activities(0, min(limit + 5, 30))
 
         # Filter to running activities (outdoor, treadmill, trail, track, etc.)
         running_types = {"running", "treadmill_running", "trail_running", "track_running"}
@@ -567,6 +568,8 @@ class GarminSyncService:
         for activity in activities:
             activity_id = activity["activityId"]
             try:
+                if not (self.fit_files_path / f"{activity_id}.fit").exists():
+                    time.sleep(0.5)
                 fit_path = self.download_activity_fit(activity_id)
                 synced.append({
                     "id": str(activity_id),

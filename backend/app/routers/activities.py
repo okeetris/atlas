@@ -4,9 +4,11 @@ Activities router.
 Endpoints for syncing and retrieving running activities.
 """
 
+import hashlib
 import json
 import os
 import shutil
+import time
 from pathlib import Path
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Header, Response
@@ -31,6 +33,9 @@ from models.activity import (
 from services.garmin_sync import get_garmin_service, MFARequiredError
 from services.fit_parser import parse_fit_file
 from services.workout_compliance import calculate_workout_compliance
+
+_sync_cooldowns: dict[str, float] = {}
+SYNC_COOLDOWN_SECONDS = 60
 
 router = APIRouter(prefix="/activities", tags=["activities"])
 
@@ -81,6 +86,28 @@ def save_compliance_cache(fit_path: Path, compliance: dict):
             json.dump(compliance, f)
     except Exception as e:
         print(f"Failed to cache compliance: {e}")
+
+
+def get_hr_zones_cache_path(fit_path: Path) -> Path:
+    return fit_path.with_suffix(".hrzones.json")
+
+def load_cached_hr_zones(fit_path: Path) -> Optional[list]:
+    cache_path = get_hr_zones_cache_path(fit_path)
+    if cache_path.exists():
+        try:
+            with open(cache_path) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    return None
+
+def save_hr_zones_cache(fit_path: Path, zones: list):
+    cache_path = get_hr_zones_cache_path(fit_path)
+    try:
+        with open(cache_path, "w") as f:
+            json.dump(zones, f)
+    except Exception as e:
+        print(f"Failed to cache HR zones: {e}")
 
 
 def extract_garmin_id(filename: str) -> str:
@@ -210,6 +237,7 @@ async def sync_activities(
     Returns X-Refreshed-Tokens header if tokens were refreshed.
     """
     token_dir = None
+    count = min(count, 20)
     try:
         # Decode tokens to temp directory if provided
         if authorization:
@@ -221,7 +249,20 @@ async def sync_activities(
                 raise HTTPException(status_code=401, detail=f"Invalid token: {e}")
 
         service = get_garmin_service(client_tokens=token_dir)
+
+        cooldown_key = hashlib.sha256((authorization or "anonymous").encode()).hexdigest()[:16]
+        now = time.time()
+        last_sync = _sync_cooldowns.get(cooldown_key, 0)
+        if now - last_sync < SYNC_COOLDOWN_SECONDS:
+            elapsed = int(now - last_sync)
+            return SyncResponse(
+                synced=0,
+                activities=[],
+                message=f"Sync available in {SYNC_COOLDOWN_SECONDS - elapsed}s",
+            )
+
         synced = service.sync_latest(count=count)
+        _sync_cooldowns[cooldown_key] = time.time()
 
         # Check if tokens were refreshed (returns encoded string now)
         refreshed_b64 = service.get_refreshed_tokens()
@@ -410,31 +451,36 @@ async def get_activity(
                 compliance_error = f"Failed to fetch workout: {e}"
                 print(f"Could not fetch workout compliance: {e}")
 
-        # Fetch HR zones for this activity from Garmin
         hr_zones = None
-        if garmin_activity_id and garmin_service:
+        cached_hr = load_cached_hr_zones(fit_file)
+        if cached_hr:
+            hr_zones = [ActivityHRZone(**z) for z in cached_hr]
+        elif garmin_activity_id and garmin_service:
             try:
                 hr_zones_data = garmin_service.get_activity_hr_zones(garmin_activity_id)
                 if hr_zones_data and hr_zones_data.get("zones"):
-                    # Calculate percentages and add display names/colors
                     zone_names = ["Recovery", "Easy", "Aerobic", "Threshold", "VO2max"]
                     zone_colors = ["#90CAF9", "#81C784", "#FFF176", "#FFB74D", "#E57373"]
                     total_seconds = sum(z.get("seconds", 0) for z in hr_zones_data["zones"])
 
                     hr_zones = []
+                    hr_zones_to_cache = []
                     for z in hr_zones_data["zones"]:
                         zone_num = z.get("zone", 0)
                         seconds = z.get("seconds", 0)
                         pct = round(seconds / total_seconds * 100) if total_seconds > 0 else 0
-                        hr_zones.append(ActivityHRZone(
-                            zone=zone_num,
-                            minHR=z.get("minHR"),
-                            maxHR=z.get("maxHR"),
-                            seconds=seconds,
-                            percentage=pct,
-                            name=zone_names[zone_num - 1] if zone_num <= len(zone_names) else f"Zone {zone_num}",
-                            color=zone_colors[zone_num - 1] if zone_num <= len(zone_colors) else "#9E9E9E",
-                        ))
+                        zone_data = {
+                            "zone": zone_num,
+                            "minHR": z.get("minHR"),
+                            "maxHR": z.get("maxHR"),
+                            "seconds": seconds,
+                            "percentage": pct,
+                            "name": zone_names[zone_num - 1] if zone_num <= len(zone_names) else f"Zone {zone_num}",
+                            "color": zone_colors[zone_num - 1] if zone_num <= len(zone_colors) else "#9E9E9E",
+                        }
+                        hr_zones.append(ActivityHRZone(**zone_data))
+                        hr_zones_to_cache.append(zone_data)
+                    save_hr_zones_cache(fit_file, hr_zones_to_cache)
             except Exception as e:
                 print(f"Could not fetch HR zones: {e}")
 

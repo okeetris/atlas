@@ -21,10 +21,33 @@ class ApiError extends Error {
   }
 }
 
-interface FetchOptions {
+export interface FetchOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: object;
   includeAuth?: boolean;
+}
+
+async function retryOn429<T>(fn: () => Promise<T>, maxRetries = 3): Promise<T> {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (
+        error instanceof ApiError &&
+        error.status === 429 &&
+        attempt < maxRetries
+      ) {
+        const retryAfter = (error as any).retryAfter;
+        const delayMs = retryAfter
+          ? retryAfter * 1000
+          : Math.pow(2, attempt) * 1000 + Math.random() * 500;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw new ApiError(429, "Rate limited after max retries");
 }
 
 async function fetchJson<T>(
@@ -35,41 +58,48 @@ async function fetchJson<T>(
   const url = `${API_BASE_URL}${endpoint}`;
 
   try {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
+    return retryOn429(async () => {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
 
-    // Include auth token if available and requested
-    if (includeAuth) {
-      const authHeader = await getAuthHeader();
-      if (authHeader) {
-        headers["Authorization"] = authHeader;
+      // Include auth token if available and requested
+      if (includeAuth) {
+        const authHeader = await getAuthHeader();
+        if (authHeader) {
+          headers["Authorization"] = authHeader;
+        }
       }
-    }
 
-    const fetchOptions: RequestInit = {
-      method,
-      headers,
-    };
+      const fetchOptions: RequestInit = {
+        method,
+        headers,
+      };
 
-    if (body) {
-      fetchOptions.body = JSON.stringify(body);
-    }
+      if (body) {
+        fetchOptions.body = JSON.stringify(body);
+      }
 
-    const response = await fetch(url, fetchOptions);
+      const response = await fetch(url, fetchOptions);
 
-    // Check for refreshed tokens and save them
-    await updateTokensIfRefreshed(response);
+      // Check for refreshed tokens and save them
+      await updateTokensIfRefreshed(response);
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new ApiError(
-        response.status,
-        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
-      );
-    }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const err = new ApiError(
+          response.status,
+          errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+        );
+        if (response.status === 429) {
+          const retryAfter = response.headers.get("Retry-After");
+          if (retryAfter) (err as any).retryAfter = parseInt(retryAfter, 10);
+        }
+        throw err;
+      }
 
-    return response.json();
+      return response.json();
+    });
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
@@ -147,4 +177,4 @@ export async function fetchHRZones(): Promise<HRZonesResponse | null> {
   }
 }
 
-export { ApiError };
+export { ApiError, fetchJson };

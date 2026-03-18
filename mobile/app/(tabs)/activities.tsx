@@ -4,7 +4,7 @@
  * List of all running activities with sync functionality.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -33,6 +33,7 @@ export default function ActivitiesScreen() {
   const mfaMutation = useSubmitMFA();
   const [showMFAModal, setShowMFAModal] = useState(false);
   const [mfaError, setMfaError] = useState<string | null>(null);
+  const lastSyncRef = useRef<number>(0);
 
   // Check if sync result requires MFA
   useEffect(() => {
@@ -43,6 +44,9 @@ export default function ActivitiesScreen() {
   }, [syncMutation.data]);
 
   const handleRefresh = () => {
+    const now = Date.now();
+    if (now - lastSyncRef.current < 30_000 || syncMutation.isPending) return;
+    lastSyncRef.current = now;
     syncMutation.mutate(20);
   };
 
@@ -104,7 +108,7 @@ export default function ActivitiesScreen() {
         </View>
       )}
 
-      {syncMutation.isSuccess && !syncMutation.isPending && (
+      {syncMutation.isSuccess && !syncMutation.isPending && !isMFARequired(syncMutation.data) && (syncMutation.data as any).synced > 0 && (
         <View style={[styles.syncStatus, styles.syncSuccess]}>
           <Text style={styles.successText}>{syncMutation.data.message}</Text>
         </View>

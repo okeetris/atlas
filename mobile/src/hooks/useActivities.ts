@@ -9,7 +9,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL, API_ENDPOINTS } from "../services/apiConfig";
-import { getAuthHeader, updateTokensIfRefreshed } from "../services/authService";
+import { getAuthHeader } from "../services/authService";
+import { fetchJson } from "../services/api";
 import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitResponse } from "../types";
 
 const ACTIVITIES_STORAGE_KEY = "cached_activities";
@@ -162,27 +163,9 @@ function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]):
  * May return MFA required response instead of sync data.
  */
 async function syncActivities(count: number = 10): Promise<SyncResult> {
-  const headers: Record<string, string> = {};
-
-  // Include auth token if available
-  const authHeader = await getAuthHeader();
-  if (authHeader) {
-    headers["Authorization"] = authHeader;
-  }
-
-  const response = await fetch(
-    `${API_BASE_URL}${API_ENDPOINTS.activities}/sync?count=${count}`,
-    { method: "POST", headers }
-  );
-
-  // Check for refreshed tokens
-  await updateTokensIfRefreshed(response);
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Failed to sync activities");
-  }
-  return response.json();
+  return fetchJson<SyncResult>(`${API_ENDPOINTS.activities}/sync?count=${count}`, {
+    method: "POST",
+  });
 }
 
 /**
@@ -218,8 +201,8 @@ export function useActivities() {
     queryKey: ["activities"],
     queryFn: fetchActivities,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
-    refetchOnWindowFocus: true,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -235,6 +218,7 @@ export function useSyncActivities() {
   const queryClient = useQueryClient();
 
   return useMutation({
+    mutationKey: ["sync-activities"],
     mutationFn: (count: number = 10) => syncActivities(count),
     onSuccess: async (data) => {
       // Only update cache if actual sync happened (not MFA required)
@@ -277,21 +261,7 @@ export function useSubmitMFA() {
  * Includes auth header to enable workout compliance fetching.
  */
 async function fetchActivityDetails(id: string): Promise<ActivityDetails> {
-  const headers: Record<string, string> = {};
-  const authHeader = await getAuthHeader();
-  if (authHeader) {
-    headers["Authorization"] = authHeader;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.activities}/${id}`, { headers });
-
-  // Update tokens if refreshed
-  await updateTokensIfRefreshed(response);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch activity: ${response.statusText}`);
-  }
-  return response.json();
+  return fetchJson<ActivityDetails>(`${API_ENDPOINTS.activities}/${id}`);
 }
 
 /**
