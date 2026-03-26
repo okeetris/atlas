@@ -6,12 +6,10 @@
  */
 
 import { useMemo } from "react";
-import { View, Text, Dimensions } from "react-native";
+import { View, Text, useWindowDimensions } from "react-native";
 import { Canvas, Circle, Line, vec } from "@shopify/react-native-skia";
 import { styles } from "./CadenceGCTScatter.styles";
 import { colors } from "../../theme/colors";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface DataPoint {
   cadence: number;
@@ -64,7 +62,8 @@ function sampleData(data: DataPoint[], maxPoints: number = 200): DataPoint[] {
 }
 
 export function CadenceGCTScatter({ data, height = 200 }: CadenceGCTScatterProps) {
-  const width = SCREEN_WIDTH - 32;
+  const { width: screenWidth } = useWindowDimensions();
+  const width = screenWidth - 32;
   const chartWidth = width - PADDING.left - PADDING.right;
   const chartHeight = height - PADDING.top - PADDING.bottom;
 

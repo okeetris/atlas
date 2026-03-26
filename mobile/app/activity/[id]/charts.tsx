@@ -12,6 +12,7 @@ import { colors } from "../../../src/theme/colors";
 import { InteractiveRunChart } from "../../../src/components/charts/InteractiveRunChart";
 import { GCTBalanceChart } from "../../../src/components/charts/GCTBalanceChart";
 import { CadenceGCTScatter } from "../../../src/components/charts/CadenceGCTScatter";
+import { ChartErrorBoundary } from "../../../src/components/charts/ChartErrorBoundary";
 import type { TimeSeriesDataPoint } from "../../../src/types";
 
 export default function ChartsTab() {
@@ -135,7 +136,7 @@ export default function ChartsTab() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Cadence & GCT */}
       {chartConfigs.length > 0 && (
-        <>
+        <ChartErrorBoundary>
           <Text style={styles.sectionTitle}>Cadence & Ground Contact</Text>
           <Text style={styles.chartHint}>Touch and drag to see values</Text>
           <InteractiveRunChart
@@ -144,45 +145,45 @@ export default function ChartsTab() {
             referenceZone={{ min: 170, max: 180, color: "rgba(25, 118, 210, 0.10)" /* colors.primary @ 10% */ }}
           />
           <Text style={styles.zoneLabel}>Shaded zone: 170–180 spm target cadence</Text>
-        </>
+        </ChartErrorBoundary>
       )}
 
       {/* Heart Rate */}
       {hrChartConfigs.length > 0 && (
-        <>
+        <ChartErrorBoundary>
           <Text style={styles.sectionTitle}>Heart Rate</Text>
           <InteractiveRunChart configs={hrChartConfigs} height={180} />
-        </>
+        </ChartErrorBoundary>
       )}
 
       {/* Glucose */}
       {glucoseChartConfigs.length > 0 && (
-        <>
+        <ChartErrorBoundary>
           <Text style={styles.sectionTitle}>Glucose</Text>
           <InteractiveRunChart
             configs={glucoseChartConfigs}
             height={180}
             referenceZone={{ min: 72, max: 180, color: "rgba(76, 175, 80, 0.15)" /* colors.success @ 15% */ }}
           />
-        </>
+        </ChartErrorBoundary>
       )}
 
       {/* GCT Balance */}
       {gctBalanceData.length > 10 && (
-        <>
+        <ChartErrorBoundary>
           <Text style={styles.sectionTitle}>GCT Balance</Text>
           <Text style={styles.chartHint}>49-51% is ideal (balanced stride)</Text>
           <GCTBalanceChart data={gctBalanceData} />
-        </>
+        </ChartErrorBoundary>
       )}
 
       {/* Cadence-GCT Correlation */}
       {cadenceGctData.length > 10 && (
-        <>
+        <ChartErrorBoundary>
           <Text style={styles.sectionTitle}>Cadence vs GCT</Text>
           <Text style={styles.chartHint}>Higher cadence typically means lower ground contact time</Text>
           <CadenceGCTScatter data={cadenceGctData} />
-        </>
+        </ChartErrorBoundary>
       )}
     </ScrollView>
   );

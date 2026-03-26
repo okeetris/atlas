@@ -7,7 +7,7 @@
  */
 
 import { useMemo, useState, useCallback } from "react";
-import { View, Text, Dimensions, PanResponder } from "react-native";
+import { View, Text, useWindowDimensions, PanResponder } from "react-native";
 import {
   Canvas,
   Path,
@@ -19,9 +19,7 @@ import {
 } from "@shopify/react-native-skia";
 import { styles } from "./InteractiveRunChart.styles";
 import { colors } from "../../theme/colors";
-import { smoothData } from "../../utils/chartUtils";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import { smoothData, findNearestByTimestamp } from "../../utils/chartUtils";
 
 interface DataPoint {
   timestamp: number;
@@ -68,7 +66,8 @@ export function InteractiveRunChart({
   padding = DEFAULT_PADDING,
   referenceZone,
 }: InteractiveRunChartProps) {
-  const width = SCREEN_WIDTH - 32;
+  const { width: screenWidth } = useWindowDimensions();
+  const width = screenWidth - 32;
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
 
@@ -177,15 +176,7 @@ export function InteractiveRunChart({
         ((x - padding.left) / chartWidth) * (timeRange.max - timeRange.min);
 
       const values = configs.map((config) => {
-        let closest = config.data[0];
-        let minDist = Infinity;
-        config.data.forEach((point) => {
-          const dist = Math.abs(point.timestamp - timestamp);
-          if (dist < minDist) {
-            minDist = dist;
-            closest = point;
-          }
-        });
+        const closest = findNearestByTimestamp(config.data, timestamp);
         return {
           label: config.label,
           value: closest?.value ?? 0,

@@ -6,7 +6,7 @@
  */
 
 import { useMemo, useState, useCallback } from "react";
-import { View, Text, Dimensions, PanResponder } from "react-native";
+import { View, Text, useWindowDimensions, PanResponder } from "react-native";
 import {
   Canvas,
   Path,
@@ -18,9 +18,7 @@ import {
 } from "@shopify/react-native-skia";
 import { styles } from "./GCTBalanceChart.styles";
 import { colors } from "../../theme/colors";
-import { smoothData } from "../../utils/chartUtils";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import { smoothData, findNearestByTimestamp } from "../../utils/chartUtils";
 
 interface DataPoint {
   timestamp: number;
@@ -39,7 +37,8 @@ const CHART_MAX = 54;
 const PADDING = { top: 20, right: 16, bottom: 30, left: 40 };
 
 export function GCTBalanceChart({ data, height = 180 }: GCTBalanceChartProps) {
-  const width = SCREEN_WIDTH - 32;
+  const { width: screenWidth } = useWindowDimensions();
+  const width = screenWidth - 32;
   const chartWidth = width - PADDING.left - PADDING.right;
   const chartHeight = height - PADDING.top - PADDING.bottom;
 
@@ -99,16 +98,7 @@ export function GCTBalanceChart({ data, height = 180 }: GCTBalanceChartProps) {
         timeRange.min +
         ((x - PADDING.left) / chartWidth) * (timeRange.max - timeRange.min);
 
-      let closest = data[0];
-      let minDist = Infinity;
-      data.forEach((point) => {
-        const dist = Math.abs(point.timestamp - timestamp);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = point;
-        }
-      });
-
+      const closest = findNearestByTimestamp(data, timestamp);
       return { timestamp, value: closest?.value ?? 50 };
     },
     [data, timeRange, chartWidth]
