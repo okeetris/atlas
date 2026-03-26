@@ -11,7 +11,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL, API_ENDPOINTS } from "../services/apiConfig";
 import { getAuthHeader } from "../services/authService";
 import { fetchJson } from "../services/api";
-import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitResponse, SyncResponse, SyncResult } from "../types";
+import type {
+  ActivitySummary,
+  ActivityDetails,
+  MFARequiredResponse,
+  MFASubmitResponse,
+  SyncResponse,
+  SyncResult,
+} from "../types";
 
 /**
  * Type guard for MFA-required sync responses.
@@ -20,7 +27,9 @@ import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitRe
  * { mfa_required: true } instead of activity data. This discriminated
  * union guard lets callers branch on the response shape safely.
  */
-export function isMFARequired(response: SyncResult): response is MFARequiredResponse {
+export function isMFARequired(
+  response: SyncResult,
+): response is MFARequiredResponse {
   return "mfa_required" in response && response.mfa_required === true;
 }
 
@@ -44,9 +53,14 @@ async function loadCachedActivities(): Promise<ActivitySummary[]> {
 /**
  * Save activities to device storage.
  */
-async function saveCachedActivities(activities: ActivitySummary[]): Promise<void> {
+async function saveCachedActivities(
+  activities: ActivitySummary[],
+): Promise<void> {
   try {
-    await AsyncStorage.setItem(ACTIVITIES_STORAGE_KEY, JSON.stringify(activities));
+    await AsyncStorage.setItem(
+      ACTIVITIES_STORAGE_KEY,
+      JSON.stringify(activities),
+    );
   } catch (error) {
     console.warn("Failed to save activities to cache:", error);
   }
@@ -72,7 +86,9 @@ async function fetchActivities(): Promise<ActivitySummary[]> {
       headers["Authorization"] = authHeader;
     }
 
-    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.activities}`, { headers });
+    const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.activities}`, {
+      headers,
+    });
     if (response.ok) {
       const backendData = await response.json();
       // If backend has data, merge with cache (backend takes precedence for same IDs)
@@ -84,7 +100,7 @@ async function fetchActivities(): Promise<ActivitySummary[]> {
     }
   } catch (error) {
     // Backend unavailable, use cache
-    console.warn("Backend unavailable, using cached activities");
+    console.warn("Backend unavailable, using cached activities, error:", error);
   }
 
   return cached;
@@ -122,7 +138,10 @@ function normalizeStartTime(startTime: string): string {
  *   parsing), compliance percent, and workout name (from detail fetches)
  * - Result is sorted by startTime descending (newest first)
  */
-function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]): ActivitySummary[] {
+function mergeActivities(
+  backend: ActivitySummary[],
+  cached: ActivitySummary[],
+): ActivitySummary[] {
   const byId = new Map<string, ActivitySummary>();
   const byNormalizedTime = new Map<string, ActivitySummary>(); // for finding duplicates
 
@@ -141,7 +160,9 @@ function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]):
     // Find matching cached entry (by ID or startTime)
     let cachedEntry = byId.get(activity.id);
     if (!cachedEntry && activity.startTime) {
-      cachedEntry = byNormalizedTime.get(normalizeStartTime(activity.startTime));
+      cachedEntry = byNormalizedTime.get(
+        normalizeStartTime(activity.startTime),
+      );
     }
 
     if (cachedEntry) {
@@ -152,7 +173,8 @@ function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]):
         // Preserve grades if backend doesn't have them
         grades: activity.grades || cachedEntry.grades,
         // Preserve compliance if backend doesn't have it
-        compliancePercent: activity.compliancePercent ?? cachedEntry.compliancePercent,
+        compliancePercent:
+          activity.compliancePercent ?? cachedEntry.compliancePercent,
         workoutName: activity.workoutName || cachedEntry.workoutName,
       };
 
@@ -167,7 +189,7 @@ function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]):
 
   // Sort by startTime descending
   return Array.from(byId.values()).sort((a, b) =>
-    (b.startTime || "").localeCompare(a.startTime || "")
+    (b.startTime || "").localeCompare(a.startTime || ""),
   );
 }
 
@@ -176,9 +198,12 @@ function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]):
  * May return MFA required response instead of sync data.
  */
 async function syncActivities(count: number = 10): Promise<SyncResult> {
-  return fetchJson<SyncResult>(`${API_ENDPOINTS.activities}/sync?count=${count}`, {
-    method: "POST",
-  });
+  return fetchJson<SyncResult>(
+    `${API_ENDPOINTS.activities}/sync?count=${count}`,
+    {
+      method: "POST",
+    },
+  );
 }
 
 /**
@@ -231,7 +256,8 @@ export function useSyncActivities() {
         const syncData = data as SyncResponse;
         if (syncData.activities && syncData.activities.length > 0) {
           // Get existing cached activities and merge with new ones
-          const existing = queryClient.getQueryData<ActivitySummary[]>(["activities"]) || [];
+          const existing =
+            queryClient.getQueryData<ActivitySummary[]>(["activities"]) || [];
           const merged = mergeActivities(syncData.activities, existing);
 
           // Update query cache
@@ -244,7 +270,6 @@ export function useSyncActivities() {
     },
   });
 }
-
 
 /**
  * Hook to submit MFA code.
@@ -282,16 +307,19 @@ export function useActivityDetails(activityId: string | null) {
 
       // Update the activities list cache with compliance data
       if (details.workoutCompliance) {
-        const activities = queryClient.getQueryData<ActivitySummary[]>(["activities"]);
+        const activities = queryClient.getQueryData<ActivitySummary[]>([
+          "activities",
+        ]);
         if (activities) {
           const updated = activities.map((a) =>
             a.id === activityId
               ? {
                   ...a,
-                  compliancePercent: details.workoutCompliance!.compliancePercent,
+                  compliancePercent:
+                    details.workoutCompliance!.compliancePercent,
                   workoutName: details.workoutCompliance!.workoutName,
                 }
-              : a
+              : a,
           );
           queryClient.setQueryData(["activities"], updated);
           // Also persist to device storage
