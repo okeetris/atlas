@@ -160,19 +160,10 @@ async function syncActivities(count: number = 10): Promise<SyncResult> {
  * Submit MFA code to complete Garmin authentication.
  */
 async function submitMFACode(code: string): Promise<MFASubmitResponse> {
-  const response = await fetch(
-    `${API_BASE_URL}${API_ENDPOINTS.activities}/mfa`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    }
-  );
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "MFA verification failed");
-  }
-  return response.json();
+  return fetchJson<MFASubmitResponse>(`${API_ENDPOINTS.activities}/mfa`, {
+    method: "POST",
+    body: { code },
+  });
 }
 
 /**

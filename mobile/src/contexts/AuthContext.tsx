@@ -10,6 +10,7 @@ import {
   clearTokens,
   loginToGarmin,
   submitMFA,
+  onAuthExpired,
   LoginResponse,
   MFAResponse,
 } from "../services/authService";
@@ -46,6 +47,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     checkAuth();
+  }, []);
+
+  // Auto-logout when a 401 is received from the API
+  useEffect(() => {
+    return onAuthExpired(() => {
+      setIsLoggedIn(false);
+      setPendingMFA(null);
+    });
   }, []);
 
   const login = async (

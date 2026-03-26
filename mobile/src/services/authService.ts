@@ -162,8 +162,35 @@ export async function submitMFA(
 }
 
 /**
- * Check if we're authenticated (has valid tokens)
+ * Check if stored tokens are expired based on oauth2_expires_at.
+ * Returns true if tokens exist and are not expired.
  */
 export async function isAuthenticated(): Promise<boolean> {
-  return hasStoredTokens();
+  const tokens = await getStoredTokens();
+  if (!tokens) return false;
+
+  if (tokens.oauth2_expires_at) {
+    const now = Date.now() / 1000;
+    if (now >= tokens.oauth2_expires_at) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/** Event listeners for auth state changes (e.g. 401 responses). */
+type AuthListener = () => void;
+const authExpiredListeners: AuthListener[] = [];
+
+export function onAuthExpired(listener: AuthListener): () => void {
+  authExpiredListeners.push(listener);
+  return () => {
+    const idx = authExpiredListeners.indexOf(listener);
+    if (idx >= 0) authExpiredListeners.splice(idx, 1);
+  };
+}
+
+export function notifyAuthExpired(): void {
+  authExpiredListeners.forEach((fn) => fn());
 }

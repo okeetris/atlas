@@ -2,6 +2,8 @@ import { API_BASE_URL, API_ENDPOINTS } from "./apiConfig";
 import {
   getAuthHeader,
   updateTokensIfRefreshed,
+  clearTokens,
+  notifyAuthExpired,
 } from "./authService";
 import type { ActivitySummary, ActivityDetails, HealthCheck, HRZonesResponse, SyncResponse, SyncResult, MFARequiredResponse } from "../types";
 
@@ -87,6 +89,13 @@ async function fetchJson<T>(
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+
+        // Handle expired auth — clear tokens and notify listeners
+        if (response.status === 401) {
+          await clearTokens();
+          notifyAuthExpired();
+        }
+
         const err = new ApiError(
           response.status,
           errorData.detail || `HTTP ${response.status}: ${response.statusText}`
