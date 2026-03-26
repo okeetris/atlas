@@ -5,7 +5,7 @@ import {
   clearTokens,
   notifyAuthExpired,
 } from "./authService";
-import type { ActivitySummary, ActivityDetails, HealthCheck, HRZonesResponse, SyncResponse, SyncResult, MFARequiredResponse } from "../types";
+import type { ActivitySummary, ActivityDetails, HealthCheck, HRZonesResponse } from "../types";
 
 /**
  * API Client for Running Coach Backend
@@ -139,22 +139,6 @@ export async function fetchActivityDetail(
   id: string
 ): Promise<ActivityDetails> {
   return fetchJson<ActivityDetails>(API_ENDPOINTS.activityDetail(id));
-}
-
-/**
- * Sync activities from Garmin Connect
- */
-export async function syncActivities(count: number = 10): Promise<SyncResult> {
-  return fetchJson<SyncResult>(`${API_ENDPOINTS.activities}/sync?count=${count}`, {
-    method: "POST",
-  });
-}
-
-/**
- * Check if sync response requires MFA
- */
-export function isMFARequired(response: SyncResult): response is MFARequiredResponse {
-  return "mfa_required" in response && response.mfa_required === true;
 }
 
 /**

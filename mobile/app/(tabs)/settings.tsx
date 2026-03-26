@@ -20,10 +20,7 @@ import { colors } from "../../src/theme/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  syncActivities,
-  isMFARequired,
-} from "../../src/services/api";
+import { useSyncActivities, isMFARequired } from "../../src/hooks/useActivities";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useBackendStatus } from "../../src/hooks/useBackendStatus";
 
@@ -42,10 +39,10 @@ export default function SettingsScreen() {
   const queryClient = useQueryClient();
   const { isLoggedIn, logout, isLoading: authLoading } = useAuth();
   const { status: backendStatus, isOnline: isBackendConnected } = useBackendStatus();
+  const syncMutation = useSyncActivities();
   const [units, setUnits] = useState<Units>("metric");
   const [darkMode, setDarkMode] = useState(false);
   const [lastSync, setLastSync] = useState<string | null>(null);
-  const [isSyncing, setIsSyncing] = useState(false);
 
   // Load settings on mount
   useEffect(() => {
@@ -100,7 +97,7 @@ export default function SettingsScreen() {
     // TODO: Apply dark mode theme
   };
 
-  const handleSync = async () => {
+  const handleSync = () => {
     if (!isLoggedIn) {
       Alert.alert(
         "Not Connected",
@@ -113,33 +110,28 @@ export default function SettingsScreen() {
       return;
     }
 
-    setIsSyncing(true);
-    try {
-      const data = await syncActivities(10);
-
-      if (isMFARequired(data)) {
-        Alert.alert(
-          "Re-authentication Required",
-          "Your Garmin session expired. Please sign in again.",
-          [
-            { text: "Cancel", style: "cancel" },
-            { text: "Sign In", onPress: handleConnectGarmin },
-          ],
-        );
-      } else {
-        const now = new Date().toISOString();
-        setLastSync(now);
-        await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC, now);
-        Alert.alert("Sync Complete", `Synced ${data.synced} activities`);
-      }
-    } catch (error) {
-      Alert.alert(
-        "Sync Failed",
-        "Could not sync activities. Please try again.",
-      );
-    } finally {
-      setIsSyncing(false);
-    }
+    syncMutation.mutate(10, {
+      onSuccess: async (data) => {
+        if (isMFARequired(data)) {
+          Alert.alert(
+            "Re-authentication Required",
+            "Your Garmin session expired. Please sign in again.",
+            [
+              { text: "Cancel", style: "cancel" },
+              { text: "Sign In", onPress: handleConnectGarmin },
+            ],
+          );
+        } else {
+          const now = new Date().toISOString();
+          setLastSync(now);
+          await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC, now);
+          Alert.alert("Sync Complete", `Synced ${data.synced} activities`);
+        }
+      },
+      onError: () => {
+        Alert.alert("Sync Failed", "Could not sync activities. Please try again.");
+      },
+    });
   };
 
   const handleClearCache = () => {
@@ -269,11 +261,11 @@ export default function SettingsScreen() {
         {isLoggedIn ? (
           <>
             <Pressable
-              style={[styles.button, isSyncing && styles.buttonDisabled]}
+              style={[styles.button, syncMutation.isPending && styles.buttonDisabled]}
               onPress={handleSync}
-              disabled={isSyncing}
+              disabled={syncMutation.isPending}
             >
-              {isSyncing ? (
+              {syncMutation.isPending ? (
                 <ActivityIndicator size="small" color={colors.white} />
               ) : (
                 <Text style={styles.buttonText}>Sync Now</Text>

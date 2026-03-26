@@ -12,7 +12,13 @@ import { API_BASE_URL, API_ENDPOINTS } from "../services/apiConfig";
 import { getAuthHeader } from "../services/authService";
 import { fetchJson } from "../services/api";
 import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitResponse, SyncResponse, SyncResult } from "../types";
-import { isMFARequired } from "../services/api";
+
+/**
+ * Check if sync response requires MFA.
+ */
+export function isMFARequired(response: SyncResult): response is MFARequiredResponse {
+  return "mfa_required" in response && response.mfa_required === true;
+}
 
 const ACTIVITIES_STORAGE_KEY = "cached_activities";
 
@@ -219,10 +225,6 @@ export function useSyncActivities() {
   });
 }
 
-/**
- * Check if sync result requires MFA.
- */
-export { isMFARequired };
 
 /**
  * Hook to submit MFA code.
