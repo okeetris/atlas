@@ -88,7 +88,10 @@ def parse_fit_file(fit_path: str) -> dict:
     if not fit_path.exists():
         raise FileNotFoundError(f"FIT file not found: {fit_path}")
 
-    fitfile = FitFile(str(fit_path))
+    try:
+        fitfile = FitFile(str(fit_path))
+    except Exception as e:
+        raise ValueError(f"Corrupt or unreadable FIT file: {e}")
 
     # Extract activity summary from session
     summary = extract_session_summary(fitfile)
@@ -106,12 +109,7 @@ def parse_fit_file(fit_path: str) -> dict:
     fatigue = compute_fatigue_comparison(records)
 
     # Compute best efforts at race distance milestones
-    best_efforts = compute_best_efforts(
-        records,
-        summary.get("totalDistance", 0),
-        timer_time=summary.get("totalDuration", 0),
-        elapsed_time=summary.get("totalElapsedDuration") or summary.get("totalDuration", 0),
-    )
+    best_efforts = compute_best_efforts(records, summary.get("totalDistance", 0))
 
     # Detect running dynamics pod (HRM-600 or similar)
     # Require GCT balance data - watches without pods don't have this
@@ -266,7 +264,11 @@ def extract_records(fitfile: FitFile) -> list[dict]:
 
 
 def extract_laps(fitfile: FitFile) -> list[dict]:
-    """Extract lap data from FIT file."""
+    """Extract lap data from FIT file.
+
+    Includes FIT intensity and lap_trigger fields so consumers (e.g.
+    workout_compliance) can distinguish recovery laps from active intervals.
+    """
     laps = []
     lap_num = 0
 
@@ -298,8 +300,9 @@ def extract_laps(fitfile: FitFile) -> list[dict]:
         else:
             lap["avgPace"] = 0
 
-        # Double cadence if stored as half-cadence
-        if lap["avgCadence"] and lap["avgCadence"] < 120:
+        # Double cadence if stored as half-cadence. Lap records don't have
+        # speed, so use pace (derived from distance/time) as the running check.
+        if lap["avgCadence"] and lap["avgCadence"] < 120 and lap["avgPace"] > 0 and lap["avgPace"] < 500:
             lap["avgCadence"] = lap["avgCadence"] * 2
 
         laps.append(lap)
@@ -315,10 +318,12 @@ def compute_metrics(records: list[dict]) -> dict:
     zero-cadence and high-GCT readings from traffic lights and water
     breaks skew averages and produce lower grades than actual running form.
     """
-    # Filter for active running records — exclude stops/walks
+    # Filter for active running records — exclude stops/walks.
+    # Default cadence to 101 (passing) for records without cadence field
+    # so that watches without running dynamics still contribute HR/GCT data.
     active = [
         r for r in records
-        if r.get("cadence", 0) > 100 and r.get("pace", float("inf")) < 600
+        if r.get("cadence", 101) > 100 and r.get("pace", float("inf")) < 600
     ]
     if not active:
         active = records  # Fallback if filtering removes everything
@@ -394,8 +399,6 @@ def _interpolate_elapsed_at_distance(records: list[dict], target_m: float) -> Op
 def compute_best_efforts(
     records: list[dict],
     total_distance_m: float,
-    timer_time: float = 0,
-    elapsed_time: float = 0,
 ) -> list[dict]:
     """Compute elapsed time at common race distance milestones.
 
@@ -457,7 +460,7 @@ def compute_fatigue_comparison(records: list[dict]) -> list[dict]:
         first = avg(first_half, field)
         second = avg(second_half, field)
 
-        if first and second:
+        if first is not None and second is not None:
             change = ((second - first) / first) * 100
             # Determine direction based on metric type
             if higher_is_better:
