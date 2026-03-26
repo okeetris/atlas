@@ -1,7 +1,14 @@
 /**
  * Authentication Context
  *
- * Provides auth state and methods across the app.
+ * Provides auth state and methods across the app. Manages the full
+ * Garmin login lifecycle: initial auth → MFA challenge → token storage.
+ *
+ * Two ways auth state resets:
+ * 1. User calls logout() explicitly
+ * 2. API returns 401 → fetchJson calls notifyAuthExpired() → the
+ *    onAuthExpired listener below resets isLoggedIn, which triggers
+ *    the app to show the login screen automatically
  */
 
 import React, { createContext, useContext, useEffect, useState } from "react";

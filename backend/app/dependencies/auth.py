@@ -18,12 +18,15 @@ from fastapi import Header, HTTPException
 
 
 def decode_tokens_to_dir(authorization: str) -> str:
-    """
-    Decode tokens from Authorization header to a temp directory.
+    """Decode client-provided Garmin tokens into a temp directory.
 
-    Expected format: Bearer <base64_encoded_tar_gz>
-    Returns path to temp directory with oauth1_token.json and oauth2_token.json.
-    Caller is responsible for cleaning up the directory.
+    The mobile app stores tokens as a base64-encoded tar.gz archive
+    containing garth's oauth1_token.json and oauth2_token.json files.
+    This function extracts them so the Garmin client can be initialized
+    for a single stateless request. The caller must clean up the temp
+    directory when done (typically in a finally block).
+
+    This is the server-side counterpart to getAuthHeader() in authService.ts.
     """
     if not authorization.startswith("Bearer "):
         raise HTTPException(
@@ -89,11 +92,11 @@ async def require_token_dir(
 
 
 def encode_tokens_from_garth(garth_client) -> str:
-    """
-    Encode tokens from a garth client for sending to client.
+    """Serialize garth tokens for transport back to the mobile client.
 
-    Uses garth's native dump to preserve all fields.
-    Returns base64-encoded tar.gz string.
+    Uses garth's native dump (preserving all OAuth fields) then packages
+    as base64 tar.gz. This is used both for initial login responses and
+    for the X-Refreshed-Tokens header when silent token refresh occurs.
     """
     tmpdir = tempfile.mkdtemp()
     try:

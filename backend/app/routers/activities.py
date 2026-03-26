@@ -34,6 +34,9 @@ from services.garmin_sync import get_garmin_service, MFARequiredError
 from services.fit_parser import parse_fit_file
 from services.workout_compliance import calculate_workout_compliance
 
+# In-memory per-user sync cooldown. Keyed by SHA256 hash of Authorization
+# header. Prevents the same user from hitting Garmin's API more than once
+# per 60 seconds. In a multi-instance deployment, this would move to Redis.
 _sync_cooldowns: dict[str, float] = {}
 SYNC_COOLDOWN_SECONDS = 60
 
@@ -111,11 +114,15 @@ def save_hr_zones_cache(fit_path: Path, zones: list):
 
 
 def extract_garmin_id(filename: str) -> str:
-    """Extract the Garmin activity ID from a filename.
+    """Extract the numerical Garmin activity ID from a FIT filename.
 
-    Handles both formats:
-    - Descriptive: 2026-01-08_New_York_-_Quality_Session_21487950438
-    - ID only: 21487950438
+    Garmin assigns numerical IDs to activities, but filenames vary:
+    - Initial sync: "21487950438.fit" (ID only)
+    - Later sync: "2026-01-08_Quality_Session_21487950438.fit" (descriptive)
+
+    Both contain the same activity — extracting the trailing numeric ID
+    allows deduplication regardless of filename format. This was added
+    after discovering that re-syncing created duplicate entries.
     """
     # If it's all digits, it's the ID
     if filename.isdigit():
@@ -517,7 +524,13 @@ async def get_activity(
 
 
 def generate_coaching_insights(metrics: dict, fatigue: list) -> CoachingInsights:
-    """Generate coaching insights from metrics and fatigue data."""
+    """Generate human-readable coaching insights from grades and fatigue data.
+
+    Translates raw metrics into actionable advice: what went well, what
+    to improve, and a single focus cue for the next run. The at-a-glance
+    summary is calibrated by A-grade count (3+ = excellent, 2 = solid,
+    fewer = room for improvement).
+    """
     well = []
     issues = []
     cue = "Focus on smooth, efficient running"

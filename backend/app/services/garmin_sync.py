@@ -143,10 +143,15 @@ class GarminSyncService:
         return garmin
 
     def get_refreshed_tokens(self) -> Optional[str]:
-        """
-        Check if tokens were refreshed and return new encoded tokens if so.
+        """Check if Garmin silently refreshed OAuth tokens during this request.
 
-        Returns base64-encoded tar.gz of token files, or None if not refreshed.
+        Compares the current access token against the one captured at request
+        start. If they differ, garth performed a transparent token refresh.
+        Returns the new tokens as base64 tar.gz for the X-Refreshed-Tokens
+        header, which the mobile client intercepts and persists to secure store.
+
+        This is the server half of the cooperative stateless token refresh
+        pattern — the client half is updateTokensIfRefreshed() in authService.ts.
         """
         if not self.garmin or not self._initial_oauth2_token:
             return None
@@ -326,7 +331,14 @@ class GarminSyncService:
         return None
 
     def download_activity_fit(self, activity_id: int) -> Path:
-        """Download FIT file for an activity if not already cached."""
+        """Download a FIT file from Garmin Connect, with local file caching.
+
+        Garmin returns FIT files wrapped in ZIP archives. This method handles
+        the download, ZIP extraction, and caching to avoid re-downloading
+        on subsequent requests. On the Render free tier (ephemeral storage),
+        these files are lost on cold start — the mobile client's AsyncStorage
+        cache is the durable copy.
+        """
         fit_path = self.fit_files_path / f"{activity_id}.fit"
 
         # Return cached file if exists
@@ -357,7 +369,15 @@ class GarminSyncService:
         return fit_path
 
     def _parse_workout_details(self, workout_id: int) -> dict:
-        """Parse a workout into structured format with steps and targets."""
+        """Fetch and flatten a Garmin workout into structured steps.
+
+        Garmin workouts use nested RepeatGroupDTO structures for intervals
+        (e.g. 4x800m becomes a repeat group containing an interval + recovery).
+        This method recursively flattens those into individual steps, converts
+        speed targets from m/s to sec/km pace, and extracts distance/duration
+        end conditions — producing the flat step list needed for compliance
+        comparison.
+        """
         client = self._get_client()
         workout = retry_garmin_call(lambda: client.connectapi(f"/workout-service/workout/{workout_id}"))
 
@@ -512,15 +532,18 @@ class GarminSyncService:
         self, activity_date: str, activity_name: str = None, activity_distance_m: float = None,
         garmin_activity_id: int = None
     ) -> Optional[dict]:
-        """
-        Fetch the workout for an activity.
+        """Fetch the scheduled workout for an activity using a three-tier lookup.
 
-        Tries in order:
-        1. Activity's associated workout (from Garmin API) - most reliable for past activities
-        2. Calendar lookup by date (only works for same-day)
-        3. Name/distance matching fallback
+        1. Activity metadata: Check the activity's associatedWorkoutId field —
+           most reliable because Garmin links activities to workouts directly.
+        2. Calendar lookup: Search the training calendar for the activity date.
+           Only works for same-day lookups; past dates may not return results.
+        3. Name/distance matching: Fuzzy match against recent workouts using
+           keyword scoring (quality > tempo > easy) with distance tolerance.
 
-        Returns workout details including steps and target paces.
+        Returns structured workout with flattened steps and target paces, or
+        None if no workout found. The matchedBy field indicates which method
+        succeeded for debugging.
         """
         try:
             client = self._get_client()
@@ -560,9 +583,12 @@ class GarminSyncService:
             return None
 
     def sync_latest(self, count: int = 5) -> list[dict]:
-        """
-        Sync latest activities - fetch metadata and download FIT files.
-        Returns list of activity summaries.
+        """Sync latest running activities from Garmin Connect.
+
+        Downloads FIT files for each activity, throttled at 0.5s between
+        downloads to avoid Garmin API rate limiting. Cloud provider IPs
+        (Render/AWS) are throttled more aggressively than residential —
+        without this delay, syncing 10+ activities triggers 429 errors.
         """
         activities = self.get_recent_activities(limit=count)
 

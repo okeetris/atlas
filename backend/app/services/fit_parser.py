@@ -34,7 +34,13 @@ RACE_DISTANCES = [
 
 
 def grade_metric(metric: str, value: float) -> str:
-    """Assign A/B/C/D grade to a metric value."""
+    """Assign A/B/C/D grade to a metric value based on established thresholds.
+
+    Handles bidirectional metrics: cadence is higher-is-better, while GCT,
+    GCT balance (deviation from 50%), and vertical ratio are lower-is-better.
+    Thresholds are sourced from sports science literature on recreational
+    vs elite runners.
+    """
     thresholds = GRADES.get(metric)
     if not thresholds:
         return "B"  # Default
@@ -60,14 +66,23 @@ def grade_metric(metric: str, value: float) -> str:
 
 
 def parse_fit_file(fit_path: str) -> dict:
-    """
-    Parse a FIT file and extract running dynamics data.
+    """Parse a Garmin FIT binary file and extract structured running data.
 
-    Returns dict with:
-    - summary: Activity summary (distance, duration, pace)
-    - metrics: Running dynamics metrics with grades
-    - timeSeries: 1-second records for charting
-    - laps: Lap breakdown
+    This is the core analysis entry point. A single FIT file contains all
+    sensor data from a run — heart rate, cadence, GCT, GPS, laps, etc. —
+    encoded as binary protocol buffers. We use fitparse to decode these
+    and produce:
+
+    - summary: Session-level stats (distance, duration, pace, activity type)
+    - metrics: Averaged running dynamics with A-D grades
+    - timeSeries: Per-second records for interactive Skia charts
+    - laps: Garmin auto-lap splits with pace, cadence, HR
+    - fatigue: First-half vs second-half comparison (direction-aware)
+    - bestEfforts: Moving time at race distance milestones (1K to marathon)
+    - hasRunningDynamics: Whether an external pod (HRM-600) was detected
+
+    Running dynamics detection requires >50% of records to have GCT balance
+    data — watches alone don't report this field.
     """
     fit_path = Path(fit_path)
     if not fit_path.exists():
@@ -116,7 +131,15 @@ def parse_fit_file(fit_path: str) -> dict:
 
 
 def extract_session_summary(fitfile: FitFile) -> dict:
-    """Extract session-level summary from FIT file."""
+    """Extract session-level summary from the FIT file's session message.
+
+    Key decisions:
+    - Uses total_timer_time (active running) for duration/pace, not
+      total_elapsed_time which includes pauses and rest intervals
+    - Appends 'Z' to timestamps since FIT stores UTC — without this,
+      JavaScript Date parsing shifts dates by the local timezone offset
+    - Maps sub_sport field to activity type (treadmill, trail, track)
+    """
     summary = {
         "startTime": None,
         "totalDistance": 0,
@@ -168,7 +191,16 @@ def extract_session_summary(fitfile: FitFile) -> dict:
 
 
 def extract_records(fitfile: FitFile) -> list[dict]:
-    """Extract 1-second record data for time series charts."""
+    """Extract per-second sensor records for time series charts.
+
+    Maps Garmin-specific field names to our schema (e.g. stance_time → gct,
+    stance_time_balance → gctBalance). Handles Garmin's half-cadence encoding
+    where values <120 need doubling. Timestamps are converted to seconds
+    from activity start for chart x-axis positioning.
+
+    Also extracts glucose_level from CGM-equipped devices and cumulative
+    distance for best-effort calculations.
+    """
     records = []
     start_time = None
 
@@ -374,7 +406,14 @@ def compute_best_efforts(
 
 
 def compute_fatigue_comparison(records: list[dict]) -> list[dict]:
-    """Compare first half vs second half metrics to detect fatigue."""
+    """Compare first-half vs second-half metrics to detect fatigue.
+
+    Each metric is direction-aware: cadence increasing = improved (runner
+    maintaining turnover), GCT/VR increasing = degraded (form breaking down).
+    A ±2% threshold defines the stable zone. Heart rate is intentionally
+    excluded because cardiac drift (HR rising over time) is physiologically
+    inevitable and not actionable coaching insight.
+    """
     if len(records) < 20:
         return []
 

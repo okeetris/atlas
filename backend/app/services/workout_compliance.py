@@ -45,9 +45,12 @@ def calculate_step_compliance(
     actual_elapsed_sec: float,
     laps_used: list,
 ) -> dict:
-    """
-    Calculate compliance for a single workout step.
-    Returns compliance metrics and status.
+    """Score a single workout step against its target.
+
+    Pace compliance uses a 5% slow-side tolerance (hitting 4:45 on a 4:30
+    target is "close"/partial, not "missed"). Steps without pace targets
+    fall back to distance compliance (≥90% = partial, ≥100% = hit).
+    Status values: hit, partial, fast, missed, skipped, no_target.
     """
     step_type = step.get("type", "unknown")
 
@@ -121,15 +124,19 @@ def map_laps_to_steps(
     session_distance_m: float = 0,
     session_duration_sec: float = 0
 ) -> list:
-    """
-    Map actual laps to workout steps sequentially.
+    """Map actual Garmin auto-laps to planned workout steps sequentially.
 
-    For each step:
-    - If step has target distance, accumulate laps until ~90% of target reached
-    - If step has target duration, use time-based matching
-    - Otherwise, use single lap per step
+    The challenge: Garmin creates laps based on distance triggers (every km)
+    or manual presses, while workout steps are defined by target distance/time.
+    A single step like "Run 3km at tempo" might span 3 auto-laps.
 
-    For single-step workouts, uses session data if laps don't cover full distance.
+    Strategy:
+    - Distance-based steps: accumulate laps until ≥90% of target distance
+    - Time-based steps: accumulate laps until ≥80% of target duration
+    - No target: one lap per step
+    - Last step gets all remaining laps (captures cooldown/extra distance)
+    - Single-step workouts use session totals if laps are incomplete
+      (common when Garmin's lap distance sum < actual GPS distance)
     """
     if not steps or not laps:
         return []
@@ -250,14 +257,17 @@ def map_laps_to_steps(
 
 
 def detect_skipped_steps(step_breakdown: list, laps: list) -> list:
-    """
-    Post-process mapped steps to detect skips using duration thresholds
-    and FIT intensity/trigger fields.
+    """Post-process step mapping to detect intentionally skipped steps.
 
-    Checks recovery, rest, warmup, and cooldown steps for:
-    - Abnormally short duration vs target (< 25%)
-    - Under 30s absolute (any non-interval step this short was skipped)
-    - Manual lap trigger on a timed step with very short duration
+    Runners commonly skip recovery intervals or cooldowns in structured
+    workouts. Rather than marking these as "missed" (implying failure),
+    we flag them as "skipped" using multiple signals:
+    - Duration <25% of target (ran through the step without stopping)
+    - Absolute duration <30s (any non-interval step this short was skipped)
+    - Manual lap trigger on a very short step (user pressed lap to skip)
+
+    Only applies to skippable step types (recovery, rest, warmup, cooldown)
+    — active/interval steps are never reclassified as skipped.
     """
     SKIP_DURATION_RATIO = 0.25
     SKIP_DISTANCE_RATIO = 0.25
@@ -315,9 +325,13 @@ def calculate_workout_compliance(
     total_distance_km: float,
     total_duration_sec: float,
 ) -> Optional[dict]:
-    """
-    Calculate overall workout compliance.
-    Returns compliance summary with per-step breakdown.
+    """Calculate overall workout compliance by comparing laps to planned steps.
+
+    Orchestrates the full compliance pipeline: map laps → score each step →
+    detect skips → aggregate. Scoring: hit=100%, partial/fast=50%,
+    missed/skipped=0%. Only steps with pace targets or skip status count
+    toward the percentage — warmups with just a distance target that were
+    completed don't penalize the score.
     """
     if not workout:
         return None
