@@ -60,6 +60,9 @@ Living document of decisions that have shaped the product direction. Update as n
 | 30 | Cache HR zones to disk alongside FIT files | Activity detail endpoint was hitting Garmin API for HR zones on every view — now cached as `.hrzones.json` next to the FIT file, matching the existing compliance cache pattern |
 | 31 | Suppress sync banner when `synced === 0` | Backend cooldown returns a valid SyncResponse with zero activities — showing "Sync available in 54s" as a success banner confused users |
 | 32 | Retry with exponential backoff on Garmin OAuth endpoints | Garmin rate-limits cloud provider IPs (Render/AWS) more aggressively than residential — `login()` and `resume_login()` wrapped with 2s/4s/8s backoff on 429, with friendly user-facing error messages |
+| 56 | Auto-logout on 401 responses via event emitter pattern | `fetchJson` clears tokens and notifies `AuthContext` on 401, triggering automatic redirect to login instead of generic error messages |
+| 57 | Client-side token expiry validation using `oauth2_expires_at` | `isAuthenticated()` checks expiry timestamp before returning true — proactively detects stale tokens instead of waiting for API failures |
+| 58 | MFA submission routed through `fetchJson` auth wrapper | Previously used raw `fetch` without auth headers — consolidated through the shared API client for consistent error handling and retry logic |
 
 ## Charts & Visualization
 
@@ -69,6 +72,8 @@ Living document of decisions that have shaped the product direction. Update as n
 | 34 | Cadence-GCT scatter plot with linear regression | Shows biomechanical correlation between cadence and ground contact |
 | 35 | 15-point rolling average smoothing on time series charts | Reduces noise while preserving trends |
 | 36 | Interactive Skia charts with touch scrubbing | Native feel for exploring time series data |
+| 59 | Binary search (O(log n)) for chart touch handlers instead of linear scan | Touch-drag on charts was doing O(n) linear scan per move event — replaced with binary search on sorted timestamps for smooth scrubbing with large datasets |
+| 60 | `useWindowDimensions` hook instead of static `Dimensions.get("window")` | Three chart components captured screen width at module load time — wouldn't update on device rotation or split-screen |
 | 37 | Merge analyze-run and report into unified HTML output | Single command produces both analysis and interactive Plotly charts |
 
 ## Tools
@@ -90,6 +95,10 @@ Living document of decisions that have shaped the product direction. Update as n
 |---|----------|---------|
 | 41 | Extract all inline StyleSheet.create to separate `.styles.ts` files | Cleaner components; styles in `src/styles/` not `app/` (Expo Router treats `app/` files as routes) |
 | 42 | Pre-commit hook with ruff for Python linting | Automated code quality on every commit |
+| 52 | Shared `src/utils/formatters.ts` for date, pace, duration, distance formatting | Consolidated 6+ duplicate format functions across screens and components into a single source of truth — also fixed a fractional-seconds bug in ActivityCard |
+| 53 | Shared `src/utils/chartUtils.ts` for smoothData and binary search | Chart data processing (rolling average, nearest-point lookup) extracted from InteractiveRunChart and GCTBalanceChart |
+| 54 | `ChartErrorBoundary` wrapping all Skia charts | Skia render errors crashed the entire app — error boundary contains failures to individual chart sections |
+| 55 | Single sync API via `useSyncActivities` hook, removed duplicate from `api.ts` | Settings screen was calling `api.syncActivities` directly, bypassing TanStack Query cache — activities list didn't update after sync from settings |
 
 ## Workout Compliance
 
@@ -109,3 +118,4 @@ Living document of decisions that have shaped the product direction. Update as n
 | 49 | Hero metrics at 32px/800 weight on Summary screen | Creates clear visual hierarchy — distance/time/pace anchor the page |
 | 50 | Cadence chart reference zone band (170-180 spm) | Raw line charts lack context — shaded zones give immediate meaning, matching the glucose chart pattern |
 | 51 | Consolidated empty state with onboarding CTA | Three separate CTAs for the same action (get data) caused confusion — single prominent CTA when no data exists |
+| 61 | `useCallback` with proper deps in `useBackendStatus` | Health check polling used closures captured in `setInterval` — stale refs meant disconnect/reconnect state transitions could silently fail |
