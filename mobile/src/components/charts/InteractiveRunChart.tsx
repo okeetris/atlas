@@ -51,7 +51,13 @@ interface InteractiveRunChartProps {
 
 const DEFAULT_PADDING = { top: 20, right: 16, bottom: 30, left: 28 };
 
-// Filter out artifact data points (stops, pauses)
+/**
+ * Filter out artifact data points caused by stops and pauses.
+ *
+ * Raw FIT data includes readings from when the runner stops (traffic
+ * lights, water breaks) which produce extreme values that skew charts.
+ * Thresholds: cadence < 120 spm and GCT > 350ms indicate non-running.
+ */
 function filterArtifacts(data: DataPoint[], key: string): DataPoint[] {
   return data.filter((p) => {
     if (key === "cadence") return p.value >= 120; // Filter low cadence (stops)

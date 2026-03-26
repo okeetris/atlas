@@ -14,7 +14,11 @@ import { fetchJson } from "../services/api";
 import type { ActivitySummary, ActivityDetails, MFARequiredResponse, MFASubmitResponse, SyncResponse, SyncResult } from "../types";
 
 /**
- * Check if sync response requires MFA.
+ * Type guard for MFA-required sync responses.
+ *
+ * When Garmin's session expires during a sync, the backend returns
+ * { mfa_required: true } instead of activity data. This discriminated
+ * union guard lets callers branch on the response shape safely.
  */
 export function isMFARequired(response: SyncResult): response is MFARequiredResponse {
   return "mfa_required" in response && response.mfa_required === true;
@@ -49,8 +53,12 @@ async function saveCachedActivities(activities: ActivitySummary[]): Promise<void
 }
 
 /**
- * Fetch activities list from backend, falling back to device cache.
- * Backend has ephemeral storage, so we primarily rely on device cache.
+ * Fetch activities with cache-first strategy.
+ *
+ * The backend runs on Render free tier with ephemeral storage — FIT
+ * files and parsed data don't persist between cold starts. Device
+ * cache (AsyncStorage) is therefore the primary data source. Backend
+ * is checked opportunistically for any newer data and merged in.
  */
 async function fetchActivities(): Promise<ActivitySummary[]> {
   // First try to load from device cache (primary source due to ephemeral backend storage)
@@ -83,8 +91,12 @@ async function fetchActivities(): Promise<ActivitySummary[]> {
 }
 
 /**
- * Normalize startTime to minute precision for deduplication.
- * Strips timezone and seconds to handle format differences between sources.
+ * Normalize startTime to minute precision for cross-source deduplication.
+ *
+ * Garmin returns timestamps in different formats depending on the API
+ * endpoint (ISO with/without timezone, varying second precision). Truncating
+ * to "YYYY-MM-DDTHH:MM" allows matching the same activity across sources
+ * even when the raw timestamps differ by seconds or timezone notation.
  */
 function normalizeStartTime(startTime: string): string {
   if (!startTime) return "";
@@ -99,9 +111,16 @@ function normalizeStartTime(startTime: string): string {
 }
 
 /**
- * Merge activities from backend and cache, combining data from both sources.
- * Backend provides fresh metadata, cache may have grades from FIT parsing.
- * Uses normalized startTime as secondary deduplication key.
+ * Merge activities from backend and device cache into a single deduplicated list.
+ *
+ * Deduplication uses two keys: activity ID (primary) and normalized startTime
+ * (secondary fallback for when Garmin reassigns IDs across API versions).
+ *
+ * Merge strategy:
+ * - Backend wins for basic metadata (name, distance, time)
+ * - Cache wins for enriched data the backend may lack: grades (from FIT
+ *   parsing), compliance percent, and workout name (from detail fetches)
+ * - Result is sorted by startTime descending (newest first)
  */
 function mergeActivities(backend: ActivitySummary[], cached: ActivitySummary[]): ActivitySummary[] {
   const byId = new Map<string, ActivitySummary>();
@@ -173,13 +192,11 @@ async function submitMFACode(code: string): Promise<MFASubmitResponse> {
 }
 
 /**
- * Hook to fetch and cache activities list.
+ * Hook for the activities list with TanStack Query caching.
  *
- * Features:
- * - Fetches on mount (sync-on-open)
- * - Caches for 5 minutes (staleTime)
- * - Refetches in background when stale
- * - Refetches every 5 minutes while app is open
+ * Aggressive polling and auto-refetch are intentionally disabled to
+ * prevent Garmin API rate limiting (429s). Data stays cached for 5
+ * minutes; users trigger fresh syncs explicitly via pull-to-refresh.
  */
 export function useActivities() {
   return useQuery({
@@ -192,12 +209,15 @@ export function useActivities() {
 }
 
 /**
- * Hook to trigger Garmin sync.
+ * Hook to trigger a Garmin Connect sync.
  *
- * After successful sync, invalidates the activities cache
- * to trigger a refetch with the new data.
+ * This is the single entry point for syncing — both the Activities screen
+ * and Settings screen use this hook to ensure synced data flows through
+ * the TanStack Query cache and updates the UI consistently.
  *
- * Returns mutation with additional `needsMFA` flag in data when MFA is required.
+ * On success, merges new activities with the existing cache and persists
+ * to AsyncStorage. If Garmin requires MFA, returns a discriminated union
+ * response that callers can check with isMFARequired().
  */
 export function useSyncActivities() {
   const queryClient = useQueryClient();
@@ -246,8 +266,11 @@ async function fetchActivityDetails(id: string): Promise<ActivityDetails> {
 }
 
 /**
- * Hook to fetch full activity details with metrics.
- * Updates the activities list cache with compliance data when fetched.
+ * Hook to fetch parsed activity details (metrics, laps, charts, compliance).
+ *
+ * Side effect: when compliance data is present in the response, it's
+ * written back to the activities list cache so that compliance badges
+ * appear on list cards without requiring a separate fetch.
  */
 export function useActivityDetails(activityId: string | null) {
   const queryClient = useQueryClient();

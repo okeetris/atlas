@@ -29,6 +29,14 @@ export interface FetchOptions {
   includeAuth?: boolean;
 }
 
+/**
+ * Retry wrapper for Garmin API rate limiting (HTTP 429).
+ *
+ * Uses exponential backoff with jitter (1s, 2s, 4s + random 0-500ms)
+ * and respects the Retry-After header when present. Required because
+ * Garmin aggressively throttles cloud provider IPs (Render/AWS) —
+ * requests that succeed locally fail in production without backoff.
+ */
 async function retryOn429<T>(fn: () => Promise<T>, maxRetries = 3): Promise<T> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
@@ -52,6 +60,17 @@ async function retryOn429<T>(fn: () => Promise<T>, maxRetries = 3): Promise<T> {
   throw new ApiError(429, "Rate limited after max retries");
 }
 
+/**
+ * Central API client — all backend requests flow through here.
+ *
+ * Responsibilities:
+ * - Attaches Garmin auth tokens from secure store via Authorization header
+ * - Checks for silently refreshed tokens (X-Refreshed-Tokens header) and
+ *   persists them back to secure store (stateless token refresh pattern)
+ * - Intercepts 401 responses: clears stale tokens and notifies AuthContext
+ *   to trigger auto-redirect to login
+ * - Wraps all calls in retryOn429 for rate limit resilience
+ */
 async function fetchJson<T>(
   endpoint: string,
   options: FetchOptions = {}

@@ -7,7 +7,13 @@ export interface ChartDataPoint {
   value: number;
 }
 
-/** Apply rolling average to smooth time series data. */
+/**
+ * Apply rolling average to smooth time series data.
+ *
+ * Reduces noise in raw sensor readings (cadence, GCT, HR) while
+ * preserving macro trends. Default 15-point window balances
+ * responsiveness vs. smoothness for typical 1-second recording intervals.
+ */
 export function smoothData(
   data: ChartDataPoint[],
   windowSize: number = 15
@@ -25,7 +31,14 @@ export function smoothData(
   return result;
 }
 
-/** Binary search for nearest data point by timestamp. Assumes sorted data. */
+/**
+ * Binary search for the nearest data point by timestamp (O(log n)).
+ *
+ * Used by chart touch handlers to find the closest value during
+ * scrubbing. Replaces the original O(n) linear scan which caused
+ * visible jank when dragging across datasets with thousands of points.
+ * Assumes data is sorted by timestamp ascending (natural FIT order).
+ */
 export function findNearestByTimestamp<T extends { timestamp: number }>(
   data: T[],
   targetTimestamp: number

@@ -43,8 +43,11 @@ export async function hasStoredTokens(): Promise<boolean> {
 }
 
 /**
- * Get stored tokens for API calls
- * Returns base64-encoded token string for Authorization header
+ * Retrieve stored tokens as a Bearer header value.
+ *
+ * Tokens are base64-encoded tar.gz archives containing Garmin OAuth1 +
+ * OAuth2 credentials. The backend decodes this into a temp directory to
+ * initialize the Garmin client for each request (stateless auth pattern).
  */
 export async function getAuthHeader(): Promise<string | null> {
   try {
@@ -79,7 +82,13 @@ export async function storeTokens(tokensB64: string): Promise<void> {
 }
 
 /**
- * Update tokens if they were refreshed (from X-Refreshed-Tokens header)
+ * Cooperative token refresh interceptor.
+ *
+ * The backend detects when Garmin silently refreshes OAuth tokens during
+ * a request and returns the new tokens in a custom X-Refreshed-Tokens
+ * header. This function inspects every API response and persists any
+ * refreshed tokens to secure store — keeping the client in sync without
+ * requiring the backend to maintain session state.
  */
 export async function updateTokensIfRefreshed(
   response: Response
@@ -98,7 +107,16 @@ export async function clearTokens(): Promise<void> {
 }
 
 /**
- * Login to Garmin Connect
+ * Initiate Garmin Connect login.
+ *
+ * Sends credentials to the backend which authenticates with Garmin's
+ * unofficial OAuth flow. Three possible outcomes:
+ * - "success": tokens returned and stored in secure store
+ * - "mfa_required": Garmin requires a verification code — caller
+ *   should show MFA input and follow up with submitMFA()
+ * - "error": authentication failed
+ *
+ * Credentials are only sent to our backend and never stored server-side.
  */
 export async function loginToGarmin(
   email: string,
@@ -162,8 +180,11 @@ export async function submitMFA(
 }
 
 /**
- * Check if stored tokens are expired based on oauth2_expires_at.
- * Returns true if tokens exist and are not expired.
+ * Check if the user has valid, non-expired Garmin tokens.
+ *
+ * Decodes the stored tokens and validates oauth2_expires_at against
+ * the current time. This catches expired sessions proactively rather
+ * than waiting for a 401 from the backend.
  */
 export async function isAuthenticated(): Promise<boolean> {
   const tokens = await getStoredTokens();
@@ -179,7 +200,14 @@ export async function isAuthenticated(): Promise<boolean> {
   return true;
 }
 
-/** Event listeners for auth state changes (e.g. 401 responses). */
+/**
+ * Simple event emitter for auth expiry events.
+ *
+ * When fetchJson receives a 401, it calls notifyAuthExpired() which
+ * triggers all registered listeners. AuthContext subscribes on mount
+ * to auto-reset login state, causing the app to redirect to the login
+ * screen without the user seeing a cryptic error.
+ */
 type AuthListener = () => void;
 const authExpiredListeners: AuthListener[] = [];
 
