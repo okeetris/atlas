@@ -13,6 +13,7 @@ import {
   useState,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 import { AppState, type AppStateStatus } from "react-native";
 import { API_BASE_URL, API_ENDPOINTS } from "../services/apiConfig";
@@ -68,22 +69,19 @@ export function BackendStatusProvider({ children }: { children: React.ReactNode 
   const wasConnectedRef = useRef(false);
   const checkInProgressRef = useRef(false);
 
-  const clearPolling = () => {
+  const clearPolling = useCallback(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-  };
+  }, []);
 
-  const doHealthCheck = async () => {
-    // Prevent concurrent checks from racing
+  const doHealthCheck = useCallback(async () => {
     if (checkInProgressRef.current) return;
     checkInProgressRef.current = true;
 
     try {
       const result = await pingHealth();
-
-      // null = aborted/cancelled, ignore completely
       if (result === null) return;
 
       if (result) {
@@ -93,17 +91,16 @@ export function BackendStatusProvider({ children }: { children: React.ReactNode 
       } else if (wasConnectedRef.current) {
         setStatus("disconnected");
       }
-      // If never connected yet, stay in "connecting" — polling continues
     } finally {
       checkInProgressRef.current = false;
     }
-  };
+  }, [clearPolling]);
 
-  const ensurePolling = () => {
+  const ensurePolling = useCallback(() => {
     if (intervalRef.current) return;
     console.log(`[BackendStatus] Starting health poll (every ${POLL_INTERVAL_MS / 1000}s)`);
     intervalRef.current = setInterval(doHealthCheck, POLL_INTERVAL_MS);
-  };
+  }, [doHealthCheck]);
 
   // Initial check + polling on mount
   useEffect(() => {
@@ -115,7 +112,7 @@ export function BackendStatusProvider({ children }: { children: React.ReactNode 
       console.log("[BackendStatus] Unmounting — clearing poll");
       clearPolling();
     };
-  }, []);
+  }, [doHealthCheck, ensurePolling, clearPolling]);
 
   // Re-check when app comes to foreground
   useEffect(() => {
@@ -131,14 +128,14 @@ export function BackendStatusProvider({ children }: { children: React.ReactNode 
 
     const subscription = AppState.addEventListener("change", handleAppState);
     return () => subscription.remove();
-  }, []);
+  }, [doHealthCheck, ensurePolling]);
 
   // Restart polling when we lose connection
   useEffect(() => {
     if (status === "disconnected") {
       ensurePolling();
     }
-  }, [status]);
+  }, [status, ensurePolling]);
 
   const value: BackendStatusContextValue = {
     status,

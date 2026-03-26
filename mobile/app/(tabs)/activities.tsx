@@ -158,6 +158,7 @@ export default function ActivitiesScreen() {
               </Text>
             </View>
           }
+          estimatedItemSize={120}
           contentContainerStyle={styles.listContent}
         />
       )}

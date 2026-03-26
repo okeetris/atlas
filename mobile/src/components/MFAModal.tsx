@@ -38,6 +38,7 @@ export function MFAModal({
   const handleSubmit = () => {
     if (code.length >= 4) {
       onSubmit(code.trim());
+      setCode("");
     }
   };
 
