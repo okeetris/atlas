@@ -60,7 +60,7 @@ export async function getAuthHeader(): Promise<string | null> {
 }
 
 /**
- * Get decoded tokens (for display/debugging)
+ * Get decoded tokens (for display/debugging) and checking if expired proactively
  */
 export async function getStoredTokens(): Promise<GarminTokens | null> {
   try {
@@ -91,7 +91,7 @@ export async function storeTokens(tokensB64: string): Promise<void> {
  * requiring the backend to maintain session state.
  */
 export async function updateTokensIfRefreshed(
-  response: Response
+  response: Response,
 ): Promise<void> {
   const refreshedTokens = response.headers.get("X-Refreshed-Tokens");
   if (refreshedTokens) {
@@ -120,7 +120,7 @@ export async function clearTokens(): Promise<void> {
  */
 export async function loginToGarmin(
   email: string,
-  password: string
+  password: string,
 ): Promise<LoginResponse> {
   const response = await fetch(`${API_BASE_URL}/auth/garmin/login`, {
     method: "POST",
@@ -152,7 +152,7 @@ export async function loginToGarmin(
  */
 export async function submitMFA(
   email: string,
-  code: string
+  code: string,
 ): Promise<MFAResponse> {
   const response = await fetch(`${API_BASE_URL}/auth/garmin/mfa`, {
     method: "POST",

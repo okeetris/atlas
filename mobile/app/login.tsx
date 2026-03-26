@@ -48,7 +48,7 @@ export default function LoginScreen() {
         setError(response.message);
       }
     } catch (e) {
-      setError("Login failed. Please try again.");
+      setError(`Login failed. Please try again. ${e}`);
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +72,7 @@ export default function LoginScreen() {
         setError(response.message);
       }
     } catch (e) {
-      setError("Verification failed. Please try again.");
+      setError(`Verification failed. Please try again. ${e}`);
     } finally {
       setIsLoading(false);
     }
@@ -175,4 +175,3 @@ export default function LoginScreen() {
     </KeyboardAvoidingView>
   );
 }
-

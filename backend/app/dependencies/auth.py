@@ -6,15 +6,12 @@ Tokens are stored client-side and passed with each request as base64-encoded tar
 """
 
 import base64
-import json
 import os
 import shutil
 import tarfile
 import tempfile
 from io import BytesIO
-from typing import Optional
-
-from fastapi import Header, HTTPException
+from fastapi import HTTPException
 
 
 def decode_tokens_to_dir(authorization: str) -> str:
@@ -63,34 +60,6 @@ def decode_tokens_to_dir(authorization: str) -> str:
         )
 
 
-async def get_token_dir(
-    authorization: Optional[str] = Header(None),
-) -> Optional[str]:
-    """
-    FastAPI dependency to extract Garmin tokens to a temp directory.
-
-    Returns path to temp directory, or None if no authorization header.
-    Caller must clean up the directory when done.
-    """
-    if not authorization:
-        return None
-
-    return decode_tokens_to_dir(authorization)
-
-
-async def require_token_dir(
-    authorization: str = Header(...),
-) -> str:
-    """
-    FastAPI dependency that requires Garmin tokens.
-
-    Returns path to temp directory with token files.
-    Raises 401 if no authorization header provided.
-    Caller must clean up the directory when done.
-    """
-    return decode_tokens_to_dir(authorization)
-
-
 def encode_tokens_from_garth(garth_client) -> str:
     """Serialize garth tokens for transport back to the mobile client.
 
@@ -118,11 +87,3 @@ def encode_tokens_from_garth(garth_client) -> str:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
-def get_access_token_from_dir(token_dir: str) -> Optional[str]:
-    """Extract access token from token directory for refresh detection."""
-    try:
-        with open(f"{token_dir}/oauth2_token.json") as f:
-            data = json.load(f)
-            return data.get("access_token")
-    except Exception:
-        return None

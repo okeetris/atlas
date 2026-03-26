@@ -83,16 +83,6 @@ async def garmin_login(request: LoginRequest):
                     message="MFA code required. Check your email or SMS for the verification code.",
                 )
 
-        # Also check for plain string "needs_mfa" (older library versions)
-        if result == "needs_mfa":
-            client_state = garmin.garth.oauth1_token
-            _pending_mfa[request.email] = (garmin, client_state)
-
-            return LoginResponse(
-                status="mfa_required",
-                message="MFA code required. Check your email or SMS for the verification code.",
-            )
-
         # Login successful - use garth's native dump to serialize tokens
         tokens_b64 = encode_tokens_from_garth(garmin.garth)
 
@@ -163,13 +153,3 @@ async def garmin_mfa(request: MFARequest):
             raise HTTPException(status_code=401, detail="Invalid MFA code")
 
         raise HTTPException(status_code=500, detail=f"MFA failed: {error_msg}")
-
-
-@router.post("/garmin/logout")
-async def garmin_logout():
-    """
-    Logout hint endpoint.
-
-    Client should clear stored tokens. Server doesn't store anything.
-    """
-    return {"status": "success", "message": "Clear tokens from device storage"}
