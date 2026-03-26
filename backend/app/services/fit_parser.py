@@ -207,6 +207,7 @@ def extract_records(fitfile: FitFile) -> list[dict]:
     for record in fitfile.get_messages("record"):
         data = {}
 
+        raw_cadence = None
         for field in record.fields:
             name = field.name
             value = field.value
@@ -227,8 +228,9 @@ def extract_records(fitfile: FitFile) -> list[dict]:
             if name == "heart_rate":
                 data["heartRate"] = value
             elif name == "cadence":
-                # Garmin stores half-cadence, double it
-                data["cadence"] = value * 2 if value < 120 else value
+                # Defer cadence processing — need speed to determine if
+                # this is half-cadence encoding or genuine walking cadence
+                raw_cadence = value
             elif name in ["enhanced_speed", "speed"]:
                 if value and value > 0:
                     # Convert m/s to sec/km pace
@@ -249,6 +251,13 @@ def extract_records(fitfile: FitFile) -> list[dict]:
                 data["glucoseLevel"] = value
             elif name == "distance":
                 data["distance"] = value  # cumulative meters from start
+
+        # Resolve deferred cadence — Garmin stores half-cadence for running,
+        # but walking cadence (80-115 spm) is genuine. Use speed to decide:
+        # if pace suggests running (< 8:20/km), double it.
+        if raw_cadence is not None:
+            is_running = data.get("pace") and data["pace"] < 500
+            data["cadence"] = raw_cadence * 2 if raw_cadence < 120 and is_running else raw_cadence
 
         if data and "timestamp" in data:
             records.append(data)
@@ -299,10 +308,23 @@ def extract_laps(fitfile: FitFile) -> list[dict]:
 
 
 def compute_metrics(records: list[dict]) -> dict:
-    """Compute summary metrics with grades from records."""
+    """Compute summary metrics with grades from active running records.
+
+    Filters out artifact data (stops, pauses, walking) before averaging
+    to match the client-side filterArtifacts behavior. Without this,
+    zero-cadence and high-GCT readings from traffic lights and water
+    breaks skew averages and produce lower grades than actual running form.
+    """
+    # Filter for active running records — exclude stops/walks
+    active = [
+        r for r in records
+        if r.get("cadence", 0) > 100 and r.get("pace", float("inf")) < 600
+    ]
+    if not active:
+        active = records  # Fallback if filtering removes everything
 
     def avg(field: str) -> Optional[float]:
-        values = [r[field] for r in records if field in r and r[field] is not None]
+        values = [r[field] for r in active if field in r and r[field] is not None]
         return statistics.mean(values) if values else None
 
     cadence = avg("cadence")
@@ -313,33 +335,33 @@ def compute_metrics(records: list[dict]) -> dict:
 
     metrics = {}
 
-    if cadence:
+    if cadence is not None:
         metrics["avgCadence"] = {
             "value": round(cadence, 1),
             "grade": grade_metric("cadence", cadence),
         }
 
-    if gct:
+    if gct is not None:
         metrics["avgGct"] = {
             "value": round(gct, 1),
             "grade": grade_metric("gct", gct),
         }
 
-    if gct_balance:
+    if gct_balance is not None:
         deviation = abs(gct_balance - 50)
         metrics["avgGctBalance"] = {
             "value": round(gct_balance, 1),
             "grade": grade_metric("gct_balance", deviation),
         }
 
-    if vertical_ratio:
+    if vertical_ratio is not None:
         metrics["avgVerticalRatio"] = {
             "value": round(vertical_ratio, 1),
             "grade": grade_metric("vertical_ratio", vertical_ratio),
         }
 
-    if heart_rate:
-        metrics["avgHeartRate"] = {"value": round(heart_rate, 1), "grade": "B"}
+    if heart_rate is not None:
+        metrics["avgHeartRate"] = {"value": round(heart_rate, 1)}
 
     return metrics
 
@@ -375,17 +397,15 @@ def compute_best_efforts(
     timer_time: float = 0,
     elapsed_time: float = 0,
 ) -> list[dict]:
-    """Compute moving time at common race distance milestones.
+    """Compute elapsed time at common race distance milestones.
 
-    Interpolates wall-clock time at each distance from records, then scales
-    by timer_time/elapsed_time to convert to moving time. This uses Garmin's
-    session-level timer_time as ground truth for pause subtraction.
+    Interpolates wall-clock time at each distance from per-second records.
+    Reports the raw interpolated time rather than applying a session-wide
+    pause ratio — a session-level scale factor would incorrectly reduce
+    short efforts (e.g. 1K) when pauses occurred later in the run.
     """
     if not records or total_distance_m <= 0:
         return []
-
-    # Scale factor: convert elapsed (wall clock) to moving time
-    scale = timer_time / elapsed_time if elapsed_time > 0 and timer_time > 0 else 1.0
 
     efforts = []
     for name, distance in RACE_DISTANCES:
@@ -393,12 +413,11 @@ def compute_best_efforts(
             continue
         elapsed = _interpolate_elapsed_at_distance(records, distance)
         if elapsed is not None:
-            moving_time = elapsed * scale
-            avg_pace_sec_km = moving_time / (distance / 1000)
+            avg_pace_sec_km = elapsed / (distance / 1000)
             efforts.append({
                 "name": name,
                 "distanceMeters": distance,
-                "elapsedTimeSec": round(moving_time, 1),
+                "elapsedTimeSec": round(elapsed, 1),
                 "avgPaceSecKm": round(avg_pace_sec_km, 1),
             })
 
