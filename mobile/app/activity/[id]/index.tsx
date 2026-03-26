@@ -24,36 +24,13 @@ import { HRZonesCard } from "../../../src/components/activity/HRZonesCard";
 import { BestEffortsCard } from "../../../src/components/activity/BestEffortsCard";
 import { METRIC_INFO } from "../../../src/constants/metricInfo";
 import { calculateHRZones, type HRZone } from "../../../src/utils/hrZones";
+import { formatDurationClock, formatPace, gradeColors } from "../../../src/utils/formatters";
 import type { Grade, GradeValue, TimeSeriesDataPoint } from "../../../src/types";
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
-
-function formatDuration(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-  if (hrs > 0) {
-    return `${hrs}:${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  }
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-function formatPace(secPerKm: number): string {
-  if (!secPerKm || secPerKm === 0) return "--:--";
-  const mins = Math.floor(secPerKm / 60);
-  const secs = Math.floor(secPerKm % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}/km`;
-}
-
-const gradeColors: Record<Grade, string> = {
-  A: colors.gradeA,
-  B: colors.gradeB,
-  C: colors.gradeC,
-  D: colors.gradeD,
-};
 
 function GradeBadge({ grade }: { grade: Grade }) {
   return (
@@ -213,7 +190,7 @@ export default function SummaryTab() {
         </View>
         <View style={styles.summaryStat}>
           <Text style={styles.summaryValue}>
-            {formatDuration(activity.durationSeconds)}
+            {formatDurationClock(activity.durationSeconds)}
           </Text>
           <Text style={styles.summaryLabel}>time</Text>
         </View>

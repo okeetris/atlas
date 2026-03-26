@@ -10,28 +10,11 @@ import { View, Text, Pressable, LayoutAnimation } from "react-native";
 import type { WorkoutCompliance, StepCompliance } from "../../types";
 import { styles } from "./WorkoutComplianceCard.styles";
 import { colors } from "../../theme/colors";
+import { formatDistance, formatDurationClock } from "../../utils/formatters";
 
 interface Props {
   compliance: WorkoutCompliance;
   defaultExpanded?: boolean;
-}
-
-function formatDistance(meters: number): string {
-  if (meters >= 1000) {
-    return `${(meters / 1000).toFixed(2)} km`;
-  }
-  return `${Math.round(meters)} m`;
-}
-
-function formatDuration(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  if (mins >= 60) {
-    const hrs = Math.floor(mins / 60);
-    const remainMins = mins % 60;
-    return `${hrs}:${remainMins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  }
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
 
 const statusConfig: Record<string, { icon: string; color: string; label: string }> = {
@@ -122,7 +105,7 @@ function StepCard({ step, index }: { step: StepCompliance; index: number }) {
           </Text>
           {isSkipped && step.actualDurationSec != null && step.targetDurationSec ? (
             <Text style={[styles.stepLapsLabel, { color: config.color }]}>
-              Skipped — {formatDuration(step.actualDurationSec)} of {formatDuration(step.targetDurationSec)} target
+              Skipped — {formatDurationClock(step.actualDurationSec)} of {formatDurationClock(step.targetDurationSec)} target
             </Text>
           ) : isSkipped && step.actualDistanceM != null && step.targetDistanceM ? (
             <Text style={[styles.stepLapsLabel, { color: config.color }]}>
@@ -165,13 +148,13 @@ function StepCard({ step, index }: { step: StepCompliance; index: number }) {
         {step.actualDurationSec && step.actualDurationSec > 0 && (
           <View style={styles.stepDetailItem}>
             <Text style={styles.stepDetailLabel}>Duration</Text>
-            <Text style={styles.stepDetailValue}>{formatDuration(step.actualDurationSec)}</Text>
+            <Text style={styles.stepDetailValue}>{formatDurationClock(step.actualDurationSec)}</Text>
             {step.targetDurationSec && (
-              <Text style={styles.stepDetailTarget}>/ {formatDuration(step.targetDurationSec)}</Text>
+              <Text style={styles.stepDetailTarget}>/ {formatDurationClock(step.targetDurationSec)}</Text>
             )}
             {step.actualElapsedSec && (
               <Text style={styles.stepDetailElapsed}>
-                ({formatDuration(step.actualElapsedSec)} elapsed)
+                ({formatDurationClock(step.actualElapsedSec)} elapsed)
               </Text>
             )}
           </View>

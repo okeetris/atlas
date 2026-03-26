@@ -11,47 +11,7 @@ import { useActivities } from "../../src/hooks/useActivities";
 import type { ActivitySummary, Grade } from "../../src/types";
 import { styles } from "../../src/styles/app/tabs/index.styles";
 import { colors } from "../../src/theme/colors";
-
-const gradeColors: Record<Grade, string> = {
-  A: colors.gradeA,
-  B: colors.gradeB,
-  C: colors.gradeC,
-  D: colors.gradeD,
-};
-
-function formatDate(dateString: string): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  const now = new Date();
-
-  // Compare by calendar date in local timezone
-  const dateLocal = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const nowLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const diffDays = Math.round((nowLocal.getTime() - dateLocal.getTime()) / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function formatPace(secPerKm: number): string {
-  if (!secPerKm || secPerKm === 0) return "--:--";
-  const mins = Math.floor(secPerKm / 60);
-  const secs = Math.floor(secPerKm % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}/km`;
-}
-
-function formatDuration(seconds: number): string {
-  if (!seconds || seconds === 0) return "";
-  const hours = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  if (hours > 0) {
-    return `${hours}h ${mins}m`;
-  }
-  return `${mins} min`;
-}
+import { formatRelativeDate, formatDurationCompact, gradeColors } from "../../src/utils/formatters";
 
 function GradeBadge({ grade }: { grade: Grade }) {
   return (
@@ -71,7 +31,7 @@ function LatestAnalysisCard({ activity }: { activity: ActivitySummary }) {
   return (
     <Pressable style={styles.latestCard} onPress={handlePress}>
       <View style={styles.latestHeader}>
-        <Text style={styles.latestDate}>{formatDate(activity.startTime)}</Text>
+        <Text style={styles.latestDate}>{formatRelativeDate(activity.startTime)}</Text>
         {activity.compliancePercent !== undefined && (
           <View style={styles.complianceBadge}>
             <Text style={styles.complianceText}>{activity.compliancePercent}%</Text>
@@ -82,7 +42,7 @@ function LatestAnalysisCard({ activity }: { activity: ActivitySummary }) {
         {activity.workoutName || activity.activityName}
       </Text>
       <Text style={styles.latestStats}>
-        {activity.distanceKm.toFixed(1)} km • {formatDuration(activity.durationSeconds)}
+        {activity.distanceKm.toFixed(1)} km • {formatDurationCompact(activity.durationSeconds)}
       </Text>
 
       {/* Placeholder grades - will be populated when we add grades to summary */}

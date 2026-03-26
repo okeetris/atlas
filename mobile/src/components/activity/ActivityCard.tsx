@@ -5,19 +5,18 @@
 import { View, Text, Pressable } from "react-native";
 import type { ActivitySummary, Grade } from "../../types";
 import { styles } from "./ActivityCard.styles";
-import { colors } from "../../theme/colors";
+import {
+  formatDurationClock,
+  formatPaceFromDistance,
+  formatDate,
+  gradeColors,
+  getComplianceColor,
+} from "../../utils/formatters";
 
 interface ActivityCardProps {
   activity: ActivitySummary;
   onPress?: () => void;
 }
-
-const gradeColors: Record<Grade, string> = {
-  A: colors.gradeA,
-  B: colors.gradeB,
-  C: colors.gradeC,
-  D: colors.gradeD,
-};
 
 function GradeBadge({ grade, label }: { grade: Grade; label: string }) {
   return (
@@ -28,36 +27,6 @@ function GradeBadge({ grade, label }: { grade: Grade; label: string }) {
       </View>
     </View>
   );
-}
-
-function formatDuration(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-function formatPace(distanceKm: number, durationSeconds: number): string {
-  if (distanceKm === 0) return "--:--";
-  const paceSeconds = durationSeconds / distanceKm;
-  const mins = Math.floor(paceSeconds / 60);
-  const secs = Math.floor(paceSeconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}/km`;
-}
-
-function formatDate(dateString: string): string {
-  if (!dateString) return "Unknown date";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function getComplianceColor(percent: number): string {
-  if (percent >= 80) return colors.gradeA;
-  if (percent >= 50) return colors.gradeC;
-  return colors.gradeD;
 }
 
 const gradeRank: Record<Grade, number> = { A: 0, B: 1, C: 2, D: 3 };
@@ -84,7 +53,7 @@ function getActivityTypeLabel(activityType: string): string | null {
 }
 
 export function ActivityCard({ activity, onPress }: ActivityCardProps) {
-  const pace = formatPace(activity.distanceKm, activity.durationSeconds);
+  const pace = formatPaceFromDistance(activity.distanceKm, activity.durationSeconds);
   const hasCompliance = activity.compliancePercent != null;
   const activityTypeLabel = getActivityTypeLabel(activity.activityType);
 
@@ -136,7 +105,7 @@ export function ActivityCard({ activity, onPress }: ActivityCardProps) {
         </View>
         <View style={styles.stat}>
           <Text style={styles.statValue}>
-            {formatDuration(activity.durationSeconds)}
+            {formatDurationClock(activity.durationSeconds)}
           </Text>
           <Text style={styles.statLabel}>time</Text>
         </View>

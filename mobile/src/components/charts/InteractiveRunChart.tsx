@@ -19,6 +19,7 @@ import {
 } from "@shopify/react-native-skia";
 import { styles } from "./InteractiveRunChart.styles";
 import { colors } from "../../theme/colors";
+import { smoothData } from "../../utils/chartUtils";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -59,21 +60,6 @@ function filterArtifacts(data: DataPoint[], key: string): DataPoint[] {
     if (key === "gct") return p.value <= 350; // Filter high GCT (stops)
     return true;
   });
-}
-
-// Apply rolling average to smooth data
-function smoothData(data: DataPoint[], windowSize: number = 15): DataPoint[] {
-  if (data.length < windowSize) return data;
-
-  const result: DataPoint[] = [];
-  for (let i = 0; i < data.length; i++) {
-    const start = Math.max(0, i - Math.floor(windowSize / 2));
-    const end = Math.min(data.length, i + Math.floor(windowSize / 2) + 1);
-    const window = data.slice(start, end);
-    const avg = window.reduce((sum, p) => sum + p.value, 0) / window.length;
-    result.push({ timestamp: data[i].timestamp, value: avg });
-  }
-  return result;
 }
 
 export function InteractiveRunChart({
