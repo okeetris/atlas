@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from garminconnect import Garmin
+import garth.sso
 
 from dependencies.auth import encode_tokens_from_garth
 from utils.retry import retry_garmin_call
@@ -75,8 +76,21 @@ async def garmin_login(request: LoginRequest):
         if isinstance(result, tuple) and len(result) == 2:
             mfa_indicator, client_state = result
             if mfa_indicator == "needs_mfa" and isinstance(client_state, dict):
-                # Store client and state for MFA completion
-                _pending_mfa[request.email] = (garmin, client_state)
+                # Extract CSRF token now while last_resp is still alive
+                # (it gets GC'd or lost if the service restarts before MFA)
+                csrf_token = None
+                client = client_state.get("client")
+                if client and client.last_resp:
+                    csrf_token = garth.sso.get_csrf_token(
+                        client.last_resp.text
+                    )
+
+                # Store client, state, and extracted CSRF for MFA completion
+                _pending_mfa[request.email] = (
+                    garmin,
+                    client_state,
+                    csrf_token,
+                )
 
                 return LoginResponse(
                     status="mfa_required",
@@ -122,8 +136,24 @@ async def garmin_mfa(request: MFARequest):
             detail="No pending MFA session. Please login again.",
         )
 
-    # Extract garmin client and client_state from stored tuple
-    garmin, client_state = pending
+    # Extract garmin client, client_state, and pre-captured CSRF token
+    if len(pending) != 3:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid pending MFA session state. Please login again.",
+        )
+    garmin, client_state, csrf_token = pending
+
+    if not csrf_token:
+        raise HTTPException(
+            status_code=500,
+            detail="MFA failed: CSRF token was not captured during login. Please login again.",
+        )
+
+    # Monkey-patch garth's CSRF lookup to use our pre-captured token,
+    # since client.last_resp may have been GC'd between requests
+    original_get_csrf = garth.sso.get_csrf_token
+    garth.sso.get_csrf_token = lambda _: csrf_token
 
     try:
         # Resume login with MFA code using the stored client state
@@ -153,3 +183,5 @@ async def garmin_mfa(request: MFARequest):
             raise HTTPException(status_code=401, detail="Invalid MFA code")
 
         raise HTTPException(status_code=500, detail=f"MFA failed: {error_msg}")
+    finally:
+        garth.sso.get_csrf_token = original_get_csrf
