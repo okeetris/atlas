@@ -4,7 +4,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-Python-05998b?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7)](https://render.com/)
 
-Your intelligent running coach and athlete's toolkit. React Native mobile app with Python FastAPI backend that integrates with Garmin Connect to analyze running activities, track glucose levels, and provide training utilities.
+My intelligent running coach and athlete's toolkit. React Native mobile app with Python FastAPI backend that integrates with Garmin Connect to analyze my running activities, track glucose levels, and provide training utilities.
 
 ## Overview
 
@@ -24,7 +24,7 @@ Atlas combines running analysis with practical training tools:
 
 ### Running Coach
 
-- **Garmin Connect Sync** - Securely authenticates with Garmin (MFA supported) and fetches running activities
+- **Garmin Connect Sync** - Securely authenticates with my Garmin account (MFA supported) and fetches running activities
 - **Biomechanics Analysis** - Parses FIT files for running dynamics from HRM-Pro/HRM-Run sensors:
   - Cadence (steps per minute)
   - Ground Contact Time (GCT)
@@ -36,7 +36,7 @@ Atlas combines running analysis with practical training tools:
 - **Fatigue Analysis** - First half vs second half comparison to detect degradation
 - **Best Efforts** - Elapsed moving time at race distance milestones (1km, 1mi, 5K, 10K, 15K, Half Marathon, 30K, Marathon) with average pace
 - **Heart Rate Zones** - Displays Garmin's per-activity time-in-zone breakdown
-- **Coaching Insights** - Tailored feedback based on your metrics
+- **Coaching Insights** - Tailored feedback based on my metrics
 - **Interactive Charts** - GPU-accelerated time-series charts (cadence, GCT, heart rate, glucose) with touch scrubbing
 - **Connection Banner** - Animated status banner showing backend connectivity (connecting/connected/disconnected) without blocking offline features
 
@@ -100,7 +100,7 @@ flowchart LR
 - Python 3.10+
 - Expo CLI: `npm install -g expo-cli`
 - Docker (optional, for containerized backend)
-- Garmin Connect account with HRM-Pro/HRM-Run sensor
+- Garmin Connect account with HRM-Pro/HRM-Run sensor (I use an HRM-600)
 
 ### Backend Setup
 
