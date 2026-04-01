@@ -1,7 +1,15 @@
 /**
- * Root Layout
+ * Root Layout — the app entry point.
  *
- * Sets up providers (QueryClient, Auth, etc.) and global configuration.
+ * Provider hierarchy (outermost → innermost):
+ * 1. SafeAreaProvider — safe area insets for notches/status bars
+ * 2. QueryClientProvider — TanStack Query for server state (caching, sync)
+ * 3. AuthProvider — Garmin auth state + 401 auto-logout listener
+ * 4. BackendStatusProvider — health polling, connection status for banner
+ * 5. GestureHandlerRootView — required for Skia chart touch interaction
+ *
+ * The ConnectionBanner sits above the Stack navigator so it overlays
+ * all screens (connecting/connected/disconnected states).
  */
 
 import { Stack } from "expo-router";
@@ -14,7 +22,10 @@ import { BackendStatusProvider } from "../src/hooks/useBackendStatus";
 import { ConnectionBanner } from "../src/components/ConnectionBanner";
 import { styles } from "../src/styles/app/layout.styles";
 
-// Create QueryClient instance
+// TanStack Query config: 5-minute stale time serves cached data instantly
+// while background refetch happens. 2 retries for transient failures.
+// refetchOnWindowFocus and refetchInterval are disabled at the hook level
+// to prevent Garmin API rate limiting.
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
